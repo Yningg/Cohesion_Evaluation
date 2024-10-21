@@ -1,0 +1,4 @@
+nohup python accuracy_globalsearch_me.py --dataset Chicago_COVID >> .D:/Cohesion_Evaluation/Representative_algorithms/TransZero_LS_GS/logs/test_all_global_me.txt 2>&1 &&
+python accuracy_globalsearch_me.py --dataset BTW17 >> .D:/Cohesion_Evaluation/Representative_algorithms/TransZero_LS_GS/logs/test_all_global_me.txt 2>&1 &&
+python accuracy_globalsearch_me.py --dataset Crawled_Dataset144 >> .D:/Cohesion_Evaluation/Representative_algorithms/TransZero_LS_GS/logs/test_all_global_me.txt 2>&1 &&
+python accuracy_globalsearch_me.py --dataset Crawled_Dataset26 >> .D:/Cohesion_Evaluation/Representative_algorithms/TransZero_LS_GS/logs/test_all_global_me.txt 2>&1 &
