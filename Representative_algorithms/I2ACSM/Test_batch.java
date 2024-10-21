@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.Map.Entry;
+import java.util.stream.Gatherer.Integrator.Greedy;
 
 import com.heu.cswg.model.Graph;
 import com.heu.cswg.model.Vertex;
@@ -28,7 +29,7 @@ public class Test_batch {
 		String dataset_name = "BTW17"; // "BTW17", "Chicago_COVID", "Crawled_Dataset144", "Crawled_Dataset26"
 		String dataset_dir = "./Input_Datasets/I2ACSM_Dataset/";
 		String query_node_dir = "./Input_Datasets/Query_nodes/";
-		String results_path = "./Original_Output/I2ACSM_Results/I2ACSM_results_" + dataset_name + ".txt";
+		String results_path = "./Original_Output/CSD_Results/CSD_results_" + dataset_name + ".txt";
 
 		String query_node_path = query_node_dir + dataset_name + "_query_node.txt";
 		String graph_path = dataset_dir + dataset_name + "_non_attributed.txt";
@@ -53,14 +54,17 @@ public class Test_batch {
 		// Set the parameters
 		List<Integer> d_list = Arrays.asList(1, 2, 3, 4, 5, 6); // Refer to paper: distance from the query node
 		List<Integer> k_list = Arrays.asList(1, 2, 3, 4, 5, 6); // Refer to paper: k-truss
+		List<Float> p_list = Arrays.asList(0.1f, 0.2f, 0.3f, 0.4f, 0.5f, 0.6f, 0.7f); // Refer to paper: influence threshold
 
-		// Generate the parameter combinations for d and k
-		List<Entry<Integer, Integer>> combinations = new ArrayList<>();
+		// Generate the parameter combinations for d, k and p
+		List<ParameterCombination> combinations = new ArrayList<>();
 
         // Generate the combinations
         for (Integer d : d_list) {
             for (Integer k : k_list) {
-                combinations.add(new SimpleEntry<>(d, k));
+                for (Float p : p_list) {
+                    combinations.add(new ParameterCombination(d, k, p));
+                }
             }
         }
 
@@ -72,14 +76,11 @@ public class Test_batch {
 
 		for (Long qId: query_node_list) {
 			long startTime=System.currentTimeMillis();  // Record the start time
-			float best_score = 0;
-			List<Vertex> best_community = new ArrayList<>();
-			List<Long> best_community_vertex_list = new ArrayList<>();
-			List<Integer> best_parameters = new ArrayList<>();
 
-			for (Entry<Integer, Integer> combination : combinations) {
-				int d = combination.getKey();
-				int k = combination.getValue();
+			for (ParameterCombination combination : combinations) {
+				int d = combination.getD();
+				int k = combination.getK();
+				float p = combination.getP();
 				
 				Preproccess o = new Preproccess();
 				Greedy o1 = new Greedy();
@@ -88,13 +89,17 @@ public class Test_batch {
 				List<Vertex> dlist = o.findDVertex(G, G.getVertexMap().get(qId), d); // Find the vertex set that is d away from the query node
 				Graph G0 = o.inducedSubGraph(dlist, G); // build the subgraph obatined by dlist
 
-				G0 = o.influenceMaintain(G0, (float) 0.6, G.getVertexMap().get(qId));
+				G0 = o.influenceMaintain(G0, (float) p, G.getVertexMap().get(qId));
 			
 				float score = o1.function(G0, G,G.getVertexMap().get(qId));
 				System.out.println("Current G0 score: "+score);
 				System.out.println("The number of nodes generated for the first time: "+ dlist.size()); 
 				o.kdTrussMaintain(G0, G.getVertexMap().get(qId),k,d);//cut the obtained subgraph into (k, d)-truss
 				System.out.println("The number of graph nodes after first trimming: " + G0.getVertexMap().size());
+				
+				List<Vertex> community = new ArrayList<>();
+                List<Long> community_vertex_list = new ArrayList<>();
+                List<Object> parameters = Arrays.asList(d, k, p);
 
 				if (G0.getVertexMap().size() == 0) {
 					System.out.println("The number of graph nodes after first trimming is 0");
@@ -106,30 +111,26 @@ public class Test_batch {
 				
 					// if the result graph has nodes, then calculate the score and compare with the best score
 					if (A.getVertexIdList().size() > 0) {
-						float current_score = o1.function(A, G, G.getVertexMap().get(qId));
-						if (current_score > best_score) {
-							best_score = current_score;
-							best_community = A.getVertexIdList();
-							best_parameters = Arrays.asList(d, k);
+						float function_score = o1.function(A, G, G.getVertexMap().get(qId));
+						community = A.getVertexIdList();
 
-							// Get vertex id list from the community
-							
-							for (Vertex vertex : best_community) {
-								best_community_vertex_list.add(vertex.getId());
-							}
-							System.out.println("Current best score from query node " + qId + ": " + best_score);
-							System.out.println("Current best parameters from query node " + qId + ": " + best_parameters);
-							System.out.println("Current best community from query node " + qId + ": " + best_community_vertex_list);
+						// Get vertex id list from the community
+						for (Vertex vertex : community) {
+							community_vertex_list.add(vertex.getId());
 						}
+
+						results.add(qId + "\t" + function_score + "\t" + parameters + "\t" + community_vertex_list);	
+					}
+					else
+					{
+						results.add(qId + "\t" + 0 + "\t" + parameters + "\t" + community_vertex_list);
 					}
 				}
-					
+			}
 			// Store the the best score, best parameters, and best community for each query node
 			long endTime = System.currentTimeMillis(); // Record the end time
 			System.out.println("Running time: " + (endTime-startTime) + "ms");
 			System.out.println("----------------------");
-			}
-			results.add(qId + "\t" + best_score + "\t" + best_parameters + "\t" + best_community_vertex_list);	
 		}
 
 		// Write the results into a txt file, with the first line: Query node\tBest score\tBest parameters\tBest community
