@@ -51,10 +51,10 @@ def process_combination(graph_path, theta, k, query_node, method, alpha, start_t
 
 
 if __name__ == '__main__':
-    dataset_name = "Chicago_COVID" # "BTW17", "Chicago_COVID", "Crawled_Dataset144", "Crawled_Dataset26"
+    dataset_name = "BTW17" # "BTW17", "Chicago_COVID", "Crawled_Dataset144", "Crawled_Dataset26"
     CRC_dataset_dir = "./Input_Datasets/WCF-CRC_Dataset/"
-    query_node_dir = "./Input_Datasets/Query_nodes/"
-    result_dir = "./Original_Output/WCF-CRC_results/"
+    query_node_dir = "./Input_Datasets/Query_Nodes/"
+    result_dir = "./Original_Output/WCF-CRC_Results/"
 
     result_file = result_dir + "WCF-CRC_results_" + dataset_name + ".txt"
     graph_path = CRC_dataset_dir + dataset_name + "/"
