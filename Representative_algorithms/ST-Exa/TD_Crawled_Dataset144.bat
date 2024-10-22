@@ -1,2 +1,0 @@
-@echo off
-.\TD.exe "D:\Cohesion_Evaluation\Input_Datasets\ST-Exa_Dataset\Crawled_Dataset144\Crawled_Dataset144.txt" "D:\Cohesion_Evaluation\Input_Datasets\ST-Exa_Dataset\Crawled_Dataset144\tru-Crawled_Dataset144.txt"
