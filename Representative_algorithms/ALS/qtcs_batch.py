@@ -614,8 +614,8 @@ def process_query_node(query_node, G_qtcs, alpha):
 if __name__ == '__main__':
     dataset_name = "BTW17" # "BTW17", "Chicago_COVID", "Crawled_Dataset144", "Crawled_Dataset26"
     dataset_dir = "./Input_Datasets/ALS_Dataset/"
-    query_node_dir = "./Input_Datasets/Query_nodes/"
-    result_dir = "./Original_Output/ALS_Results/"
+    query_node_dir = "./Original_Datasets/Query_nodes/"
+    result_dir = "./Algorithm_Output/ALS_Results/"
     result_file = result_dir + "ALS_results_" + dataset_name + ".txt"
 
 
