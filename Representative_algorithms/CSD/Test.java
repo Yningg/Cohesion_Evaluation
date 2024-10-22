@@ -25,9 +25,9 @@ public class Test {
 
     public static void main(String [] args){
         String dataName = "BTW17"; // "BTW17", "Chicago_COVID", "Crawled_Dataset144", "Crawled_Dataset26"
-        String query_node_dir = "./Input_Datasets/Query_nodes/";
+        String query_node_dir = "./Original_Datasets/Query_nodes/";
         String query_node_file = query_node_dir + dataName + "_mapped_query_node.txt";
-        String results_path = "./Original_Output/" + "CSD_results_" + dataName + ".txt";
+        String results_path = "./Algorithm_Output/CSD_Results/" + "CSD_results_" + dataName + ".txt";
 
         // Read query node list directly from file
         List<Integer> query_nodes = new ArrayList<>();
