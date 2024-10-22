@@ -7,16 +7,8 @@ import networkx as nx
 import numpy as np
 import tqdm
 from joblib import Parallel, delayed
+import General_function as gf
 
-
-# Build the graph with the original nodes and edges attributes
-def graph_construction(attribute_file):
-    # Read the attribute file and add the attributes to the graph
-    attributed_G = nx.read_edgelist(attribute_file, nodetype=str, data=(('timestamp', str), ('sentiment', str)), create_using=nx.MultiGraph()) # type: ignore
-    
-    print(f"Original graph info: {attributed_G.number_of_nodes()} nodes, {attributed_G.number_of_edges()} edges, density: {nx.density(attributed_G)}")
-
-    return attributed_G
 
 
 # Read the node mapping file
@@ -30,54 +22,6 @@ def read_node_mapping(node_mapping_file):
     return node_mapping
 
 
-def process_ALS_CRC_I2ACSM_results(file):
-    results = []
-    with open(file, 'r') as f:
-        lines = f.readlines()
-        for line in lines:
-            parts = line.strip().split("\t")
-            node = int(parts[0])
-            score = float(parts[1])
-            params = ast.literal_eval(parts[2])
-            community_node_list = ast.literal_eval(parts[3])
-            results.append([node, score, params, community_node_list])
-    return results
-
-
-
-def process_CSD_STExa_Repeeling_results(file, node_mapping):
-    results = []
-    with open(file, 'r') as f:
-        lines = f.readlines()
-        for line in lines:
-            parts = line.strip().split("\t")
-            node = int(parts[0])
-            node = node_mapping[node]
-
-            params = ast.literal_eval(parts[1])
-            
-            community_node_list = ast.literal_eval(parts[2])
-            community_node_list = [node_mapping[node] for node in community_node_list]
-
-            results.append([node, params, community_node_list])
-    return results
-
-
-
-def process_TransZero_results(file, node_mapping):
-    results = []
-    with open(file, 'r') as f:
-        lines = f.readlines()
-        for line in lines:
-            parts = line.strip().split('\t')
-            node = ast.literal_eval(parts[0])[0]
-            node = node_mapping[node]
-            
-            community_node_list = ast.literal_eval(parts[1])
-            community_node_list = [node_mapping[node] for node in community_node_list]
-            results.append([node, community_node_list])
-
-    return results
 
 # Group the results according to the query node: 100 query node --> 100 groups
 def group_results(results):
@@ -143,18 +87,18 @@ def output_network_stats(algorithm, results_dir, dataset_list, dim_index):
         node_mapping_file = node_mapping_dir + dataset + "_node_mapping.txt"
 
         # Build the graph with original nodes and edges attributes
-        G = graph_construction(attribute_file)
+        G = gf.graph_construction(attribute_file)
 
         # Read the node mapping file
         node_mapping = read_node_mapping(node_mapping_file)
 
         # Read the results
         if algorithm in ["ALS", "WCF-CRC", "I2ACSM"]:
-            results = process_ALS_CRC_I2ACSM_results(results_dir + file)
+            results = gf.process_ALS_CRC_I2ACSM_results(results_dir + file)
         elif algorithm in ["CSD", "ST-Exa", "Repeeling"]:
-            results = process_CSD_STExa_Repeeling_results(results_dir + file, node_mapping)
+            results = gf.process_CSD_STExa_Repeeling_results(results_dir + file, node_mapping)
         elif algorithm in ["TransZero_LS", "TransZero_GS"]:
-            results = process_TransZero_results(results_dir + file, node_mapping)
+            results = gf.process_TransZero_results(results_dir + file, node_mapping)
         
         
         print(f"Number of results: {len(results)}")
