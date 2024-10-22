@@ -10,19 +10,6 @@ from joblib import Parallel, delayed
 import General_function as gf
 
 
-
-# Read the node mapping file
-def read_node_mapping(node_mapping_file):
-    node_mapping = {}
-    with open(node_mapping_file, 'r') as f:
-        lines = f.readlines()
-        # Reverse the mapping to map the new nodes back to the original nodes
-        node_mapping = {int(line.split("\t")[1]): int(line.split("\t")[0]) for line in lines}
-    
-    return node_mapping
-
-
-
 # Group the results according to the query node: 100 query node --> 100 groups
 def group_results(results):
     grouped_results = {}
@@ -90,7 +77,7 @@ def output_network_stats(algorithm, results_dir, dataset_list, dim_index):
         G = gf.graph_construction(attribute_file)
 
         # Read the node mapping file
-        node_mapping = read_node_mapping(node_mapping_file)
+        node_mapping = gf.read_node_mapping(node_mapping_file)
 
         # Read the results
         if algorithm in ["ALS", "WCF-CRC", "I2ACSM"]:
