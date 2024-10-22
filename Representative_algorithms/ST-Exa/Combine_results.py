@@ -23,7 +23,7 @@ def read_results(result_dir, files):
             lines = f.readlines()
             for line in lines:
                 community_node_list = get_community_list(line)
-                results.append((query_node, [int(lower_bound), int(upper_bound)], community_node_list))
+                results.append((int(query_node), [int(lower_bound), int(upper_bound)], community_node_list))
     return results
 
 
