@@ -9,7 +9,7 @@ Format:
 import os
 
 # Path to the dataset
-dataset_name = ["Crawled_Dataset26", "Crawled_Dataset144", "Chicago_COVID", "BTW17"]
+dataset_name = ["BTW17", "Chicago_COVID", "Crawled_Dataset144", "Crawled_Dataset26"]
 data_path = "D:\\Cohesion_Evaluation\\Input_Datasets\\ST-Exa_Dataset\\"
 
 

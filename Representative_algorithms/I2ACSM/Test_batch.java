@@ -27,9 +27,9 @@ public class Test_batch {
 	public static  void firsttest()
 	{	
 		String dataset_name = "BTW17"; // "BTW17", "Chicago_COVID", "Crawled_Dataset144", "Crawled_Dataset26"
-		String dataset_dir = "./Input_Datasets/I2ACSM_Dataset/";
-		String query_node_dir = "./Input_Datasets/Query_nodes/";
-		String results_path = "./Original_Output/I2ACSM_Results/I2ACSM_results_" + dataset_name + ".txt";
+		String dataset_dir = "D:/Cohesion_Evaluation/Input_Datasets/I2ACSM_Dataset/";
+		String query_node_dir = "D:/Cohesion_Evaluation/Input_Datasets/Query_nodes/";
+		String results_path = "D:/Cohesion_Evaluation/Algorithm_Output/I2ACSM_Results/I2ACSM_results_" + dataset_name + ".txt";
 
 		String query_node_path = query_node_dir + dataset_name + "_query_node.txt";
 		String graph_path = dataset_dir + dataset_name + "_non_attributed.txt";

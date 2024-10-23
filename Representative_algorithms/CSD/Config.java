@@ -5,7 +5,7 @@ package csd;
  */
 public class Config {
     //File Path
-    public static String root = "./Input_Datasets/CSD_Dataset/";
+    public static String root = "D:/Cohesion_Evaluation/Input_Datasets/CSD_Dataset/";
 
     public static String DataName = "Crawled_Dataset144";
     public static String rootFold = root + DataName + "/";

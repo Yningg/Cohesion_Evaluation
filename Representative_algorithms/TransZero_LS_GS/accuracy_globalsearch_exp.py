@@ -73,7 +73,7 @@ if __name__ == "__main__":
     embedding_tensor = torch.from_numpy(np.load(args.EmbeddingPath + args.embedding_tensor_name + '.npy'))
     
     # load queries and labels
-    query = load_query("D:/Cohesion_Evaluation/TransZero_LS_GS_Dataset/", args.dataset, embedding_tensor.shape[0])
+    query = load_query("D:/Cohesion_Evaluation/Input_Datasets/TransZero_LS_GS_Dataset/", args.dataset, embedding_tensor.shape[0])
 
     start = time.time()
     query_feature = torch.mm(query, embedding_tensor) # (query_num, embedding_dim)

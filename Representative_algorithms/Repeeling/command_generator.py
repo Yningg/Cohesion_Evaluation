@@ -24,7 +24,7 @@ for dataset_name in ["BTW17", "Chicago_COVID", "Crawled_Dataset26", "Crawled_Dat
     query_node_file = "D:/Cohesion_Evaluation/Input_Datasets/Query_Nodes/" + dataset_name + "_mapped_query_node.txt"
 
     # Path to the Result file
-    result_fir = "D:\\Cohesion_Evaluation\\Original_Output\\Repeeling_Results\\" + dataset_name + "\\"
+    result_fir = "D:\\Cohesion_Evaluation\\Algorithm_Output\\Repeeling_Results\\" + dataset_name + "\\"
 
 
     querynodes = []
