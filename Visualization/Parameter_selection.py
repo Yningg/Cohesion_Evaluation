@@ -238,11 +238,11 @@ def draw_graph_ALS(cohesiveness_mean, cohesiveness_std, structural_mean, structu
 attribute_dir = "D:/Cohesion_Evaluation/Original_Datasets/Preprocessed_Datasets/"
 results_dir = "D:/Cohesion_Evaluation/Cohesiveness_Output/"
 
-# Parameters for the STExa results
+# Parameters for the ST-Exa results
 STExa_params_list = [[1, 10], [11, 20], [21, 30], [31, 40], [41, 50], [51, 60], [61, 70], [71, 80]]
 ALS_params_list = [0.1, 0.15, 0.2, 0.25, 0.3]
 
-algo = "STExa"
+algo = "ST-Exa"
 measures = ['EL', 'SIT', 'CED', 'GIP', 'GID']
 
 color_list = [(112, 163, 196), (245, 180, 111), (223, 91, 63), (251, 236, 171), (175, 175, 175), (219, 219, 219)]
@@ -264,7 +264,7 @@ if algo == "ALS":
     
     draw_graph_ALS(cohesiveness_mean, cohesiveness_std, structural_mean, structural_std, "ALS", "Chicago_COVID", 0, 400)
     # {0.1: [18.84, 4.86794, 1.01], 0.15: [18.22, 4.66386, 1.01], 0.2: [16.81, 4.225239999999999, 1.12], 0.25: [14.78, 3.52806, 1.32], 0.3: [12.4, 2.7065300000000003, 1.46]}
-elif algo == "STExa":
+elif algo == "ST-Exa":
     structural_measures = [r'$d$', r'$Size$', r'$Deg_{min}$']
     # cohesiveness_mean, cohesiveness_std, structural_mean, structural_std = read_results(results_dir, "STExa", "Chicago_COVID", 1, 3)
     
@@ -273,6 +273,6 @@ elif algo == "STExa":
     structural_mean = {('11', '20'): [ 4.96, 19.91, 15.4 ], ('1', '10'): [ 3.76,  9.11, 24.03], ('21', '30'): [ 5.34653465, 30.        , 14.43564356], ('31', '40'): [ 5.73, 39.99, 14.25], ('41', '50'): [ 5.8989899 , 50.        , 10.17171717], ('51', '60'): [ 6.19, 60.  , 10.56], ('61', '70'): [ 6.35, 70.  ,  9.8 ], ('71', '80'): [ 6.62, 79.99,  7.76]}
     structural_std = {('11', '20'): [ 1.56792857,  0.80118662, 14.15697708], ('1', '10'): [ 1.43610585,  2.23112079, 32.74582569], ('21', '30'): [ 1.81542153,  0.        , 13.03264435], ('31', '40'): [ 1.85932784,  0.09949874, 13.14410514], ('41', '50'): [1.99238423, 0.        , 7.65419328], ('51', '60'): [2.15728997, 0.        , 8.35741587], ('61', '70'): [2.29510348, 0.        , 8.40119039], ('71', '80'): [2.34      , 0.09949874, 5.13053603]}
     
-    draw_graph(cohesiveness_mean, cohesiveness_std, structural_mean, structural_std, "STExa", "Chicago_COVID", 0, 90)
+    draw_graph(cohesiveness_mean, cohesiveness_std, structural_mean, structural_std, "ST-Exa", "Chicago_COVID", 0, 90)
 
 

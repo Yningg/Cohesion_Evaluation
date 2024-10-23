@@ -56,8 +56,8 @@ def process_algo_results(algo_result_dir, algorithm, file):
                 parts = line.strip().split("\t")
                 node = str(parts[0])
                 community_node_list = ast.literal_eval(parts[1])
-                coheisveness_dim = ast.literal_eval(parts[2]) 
                 if len(community_node_list) > 0:
+                    coheisveness_dim = ast.literal_eval(parts[2]) 
                     if node not in results:
                         results[node] = []
                     results[node].append([node, community_node_list, coheisveness_dim])
@@ -71,7 +71,7 @@ def load_results(dataset, result_dir, algo_list):
     # In each algo result, extract the results with valid community nodes, and store the results as a dictionary
     for algo in algo_list:
         algo_dir = result_dir + algo + "_results/"
-        algo_results = process_algo_results(algo_dir, algo, algo + "_results_" + dataset + ".txt")
+        algo_results = process_algo_results(algo_dir, algo, algo + "_results_" + dataset + "_exp_0.0001.txt")
         total_results[algo] = algo_results
     
     print("Finished processing results")
