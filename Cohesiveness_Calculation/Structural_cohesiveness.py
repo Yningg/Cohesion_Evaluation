@@ -84,7 +84,7 @@ def output_network_stats(algorithm, results_dir, dataset_list, dim_index):
             results = gf.process_ALS_CRC_I2ACSM_results(results_dir + file)
         elif algorithm in ["CSD", "ST-Exa", "Repeeling"]:
             results = gf.process_CSD_STExa_Repeeling_results(results_dir + file, node_mapping)
-        elif algorithm in ["TransZero_LS", "TransZero_GS"]:
+        elif algorithm in ["TransZero_LS"]:
             results = gf.process_TransZero_results(results_dir + file, node_mapping)
         
         
@@ -119,7 +119,7 @@ if __name__ == "__main__":
     algo_results_dir = "D:/Cohesion_Evaluation/Algorithm_Output/"
     node_mapping_dir = "D:/Cohesion_Evaluation/Original_Datasets/Node_Mapping/"
 
-    algo_index ={"ALS": 3, "WCF-CRC": 3, "CSD": 2, "ST-Exa": 2, "Repeeling": 2, "I2ACSM": 3, "TransZero_LS": 1, "TransZero_GS": 1}
+    algo_index ={"ALS": 3, "WCF-CRC": 3, "CSD": 2, "ST-Exa": 2, "Repeeling": 2, "I2ACSM": 3, "TransZero_LS": 1}
 
     for algorithm, dim_index in algo_index.items():
         if algorithm == "Repeeling":
