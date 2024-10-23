@@ -10,17 +10,17 @@ import pandas as pd
 import os
 import random
 
+import sys
+target_path = "./"
+sys.path.append(target_path)
+import Cohesiveness_Calculation.General_function as gf
+
+
 seed = 2024
 random.seed(seed)
 query_num = 100
 degree_percentage = 0.1
 
-
-# Load the network
-def load_network(file_path, file_name):
-    G = nx.read_edgelist(file_path + file_name, create_using=nx.MultiDiGraph(), nodetype=str, data=(('timestamp', str), ('sentiment', str), ), delimiter='\t') # type: ignore
-    print(f"Graph info: nodes: {G.number_of_nodes()}, edges: {G.number_of_edges()}, density: {nx.density(G)}")
-    return G
 
 
 def generate_query_nodes(G, query_num, degree_percentage):
@@ -78,11 +78,10 @@ if __name__ == "__main__":
         network_file_name = dataset_name + "_attributed.txt"
 
         # Load the network
-        G = load_network(network_file_path, network_file_name)
+        G = gf.graph_construction(network_file_path + network_file_name)
 
         # Choose query node based on the degree of the nodes
         query_nodes = generate_query_nodes(G, query_num, degree_percentage)
-
 
         # Output the query nodes into a .txt file, each line is a query node
         node2txt(network_target_path, dataset_name, query_nodes)
