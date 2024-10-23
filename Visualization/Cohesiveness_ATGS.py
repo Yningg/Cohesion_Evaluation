@@ -77,7 +77,7 @@ def load_mu_results(dataset_list, condense_result_dir, mu_list, algo_list):
     return total_results
 
 
-def draw_graphs(total_results, dataset_list, params_list, algo_list, algo_label_list, color_list, hatch_list, font_size, x_label, threshold, CED_y_min, CED_y_max, CED_y_num, GID_y_min, GID_y_max, GID_y_num, save_label):
+def draw_graphs(total_results, dataset_list, params_list, algo_list, algo_label_list, color_list, hatch_list, font_size, x_label, threshold, CED_y_min, CED_y_max, CED_y_num, save_label, ncols):
     for measure, measure_idx in measure_label.items():
         fig, ax = plt.subplots(figsize=(10, 5))
 
@@ -143,7 +143,7 @@ def draw_graphs(total_results, dataset_list, params_list, algo_list, algo_label_
             ax.set_ylabel(measure, fontsize=font_size)
 
             # Add legend on the upper center, two rows
-            ax.legend(loc='upper center', bbox_to_anchor=(0.5, 1.23), ncol=4, fontsize=16, columnspacing=0.5)
+            ax.legend(loc='upper center', bbox_to_anchor=(0.5, 1.23), ncol=ncols, fontsize=16, columnspacing=0.5)
 
             # Adjust layout
             plt.tight_layout(rect=[0, 0, 1, 1]) # type: ignore
@@ -182,10 +182,6 @@ if __name__ == "__main__":
  
     dataset_list = ["BTW17", "Chicago_COVID", "Crawled_Dataset144", "Crawled_Dataset26"]
 
-    total_lambda_results = load_lambda_results(dataset_list, condense_result_dir, lambda_list, algo_list)
-    total_mu_results = load_mu_results(dataset_list, condense_result_dir, mu_list, algo_list)
-
-
     font_size = 19
     lambda_threshold = 1e-9
     mu_threshold = 1e-9
@@ -194,15 +190,22 @@ if __name__ == "__main__":
     # Draw two sets of graphs for lambda and mu
     for dataset in dataset_list:
         if dataset == "BTW17":
-            draw_graphs(total_lambda_results, dataset_list, lambda_list, algo_list, algo_label_list, color_list, hatch_list, font_size, r"$\lambda$", lambda_threshold, -1.2, 0.25, 7, 0, 0.4, 6, "lambda")
-            draw_graphs(total_mu_results, dataset_list, mu_list, algo_list, algo_label_list, color_list, hatch_list, font_size, r"$\mu$", mu_threshold, -0.01, 1.49, 6, 0, 0.4, 6, "mu")
+            total_lambda_results = load_lambda_results(dataset_list, condense_result_dir, lambda_list, algo_list)
+            total_mu_results = load_mu_results(dataset_list, condense_result_dir, mu_list, algo_list)
+            draw_graphs(total_lambda_results, dataset_list, lambda_list, algo_list, algo_label_list, color_list, hatch_list, font_size, r"$\lambda$", lambda_threshold, -1.2, 0.25, 7, "lambda", 4)
+            draw_graphs(total_mu_results, dataset_list, mu_list, algo_list, algo_label_list, color_list, hatch_list, font_size, r"$\mu$", mu_threshold, -0.01, 1.49, 6,"mu", 4)
         elif dataset == "Chicago_COVID":
-            draw_graphs(total_lambda_results, dataset_list, lambda_list, algo_list, algo_label_list, color_list, hatch_list, font_size, r"$\lambda$", lambda_threshold, -0.02, 0.16, 6, 0, 7, 6, "lambda")
-            draw_graphs(total_mu_results, dataset_list, mu_list, algo_list, algo_label_list, color_list, hatch_list, font_size, r"$\mu$", mu_threshold, -1, 1.5, 7, 0, 7, 6, "mu")
+            total_lambda_results = load_lambda_results(dataset_list, condense_result_dir, lambda_list, algo_list)
+            total_mu_results = load_mu_results(dataset_list, condense_result_dir, mu_list, algo_list)
+            draw_graphs(total_lambda_results, dataset_list, lambda_list, algo_list, algo_label_list, color_list, hatch_list, font_size, r"$\lambda$", lambda_threshold, -0.02, 0.16, 6, "lambda", 4)
+            draw_graphs(total_mu_results, dataset_list, mu_list, algo_list, algo_label_list, color_list, hatch_list, font_size, r"$\mu$", mu_threshold, -1, 1.5, 7, "mu", 4)
         elif dataset == "Crawled_Dataset144":
-            draw_graphs(total_lambda_results, dataset_list, lambda_list, algo_sublist, algo_label_sublist, color_sublist, hatch_sublist, font_size, r"$\lambda$", lambda_threshold, -2.7, 0.6, 6, 0, 4, 6, "lambda")
-            draw_graphs(total_mu_results, dataset_list, mu_list, algo_sublist, algo_label_sublist, color_sublist, hatch_sublist, font_size, r"$\mu$", mu_threshold, -12, 12, 6, 0, 4, 6, "mu")
-        
+            total_lambda_results = load_lambda_results(dataset_list, condense_result_dir, lambda_list, algo_sublist)
+            total_mu_results = load_mu_results(dataset_list, condense_result_dir, mu_list, algo_sublist)
+            draw_graphs(total_lambda_results, dataset_list, lambda_list, algo_sublist, algo_label_sublist, color_sublist, hatch_sublist, font_size, r"$\lambda$", lambda_threshold, -2.7, 0.6, 6, "lambda", 3)
+            draw_graphs(total_mu_results, dataset_list, mu_list, algo_sublist, algo_label_sublist, color_sublist, hatch_sublist, font_size, r"$\mu$", mu_threshold, -12, 12, 6, "mu", 3)  
         elif dataset == "Crawled_Dataset26":
-            draw_graphs(total_lambda_results, dataset_list, lambda_list, algo_sublist, algo_label_sublist, color_sublist, hatch_sublist, font_size, r"$\lambda$", lambda_threshold, -5, 165, 6, 0, 1.5, 6, "lambda")
-            draw_graphs(total_mu_results, dataset_list, mu_list, algo_sublist, algo_label_sublist, color_sublist, hatch_sublist, font_size, r"$\mu$", mu_threshold, -1.5, 6, 5, 0, 1.5, 6, "mu")
+            total_lambda_results = load_lambda_results(dataset_list, condense_result_dir, lambda_list, algo_sublist)
+            total_mu_results = load_mu_results(dataset_list, condense_result_dir, mu_list, algo_sublist)
+            draw_graphs(total_lambda_results, dataset_list, lambda_list, algo_sublist, algo_label_sublist, color_sublist, hatch_sublist, font_size, r"$\lambda$", lambda_threshold, -5, 165, 6, "lambda", 3)
+            draw_graphs(total_mu_results, dataset_list, mu_list, algo_sublist, algo_label_sublist, color_sublist, hatch_sublist, font_size, r"$\mu$", mu_threshold, -1.5, 6, 5, "mu", 3)
