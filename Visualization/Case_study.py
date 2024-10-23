@@ -31,11 +31,12 @@ def process_algo_results(algo_result_dir, algorithm, file):
                 params = ast.literal_eval(parts[2])
                 community_node_list = list(ast.literal_eval(parts[3]))
                 community_node_list = [str(node) for node in community_node_list]
-                coheisveness_dim = ast.literal_eval(parts[4])
-                if node not in results:
-                    results[node] = []
-                results[node].append([node, value, params, community_node_list, coheisveness_dim])
-        
+                if len(community_node_list) > 0:
+                    coheisveness_dim = ast.literal_eval(parts[4])
+                    if node not in results:
+                        results[node] = []
+                    results[node].append([node, value, params, community_node_list, coheisveness_dim])
+            
         elif algorithm in ["ST-Exa", "CSD", "Repeeling"]:
             for line in lines:
                 parts = line.strip().split("\t")
@@ -56,10 +57,11 @@ def process_algo_results(algo_result_dir, algorithm, file):
                 node = str(parts[0])
                 community_node_list = ast.literal_eval(parts[1])
                 coheisveness_dim = ast.literal_eval(parts[2]) 
-                if node not in results:
-                    results[node] = []
-                results[node].append([node, community_node_list, coheisveness_dim])
-            
+                if len(community_node_list) > 0:
+                    if node not in results:
+                        results[node] = []
+                    results[node].append([node, community_node_list, coheisveness_dim])
+                
     return results
 
 
