@@ -31,12 +31,12 @@ Code for the paper "How Cohesive Are Community Search Results on Online Social N
     | Learning-based  | TransZero_LS & TransZero_GS|[Efficient Unsupervised Community Search with Pre-trained Graph Transformer](https://github.com/guaiyoui/TransZero)            | Python |
 
 2. For each algorithms, only the revised scripts are provided to save the space, with only input and output changed, other code are directly use the exsiting code without changes
-    (1) ALS: replace `qtcs.py` with `qtcs_batch.py`
-    (2) WCF-CRC: replace `run.py` with `run_batch.py`
-    (3) CSD: replace `Test.java` with revised `Test.java`, replace `DataReader.java` with updated `DataReader.java` under the "util" folder
-    (4) ST-Exa and Repeeling: No code has been changed, the commands to run the code are written in corresponding `.bat` file for execution  
-    (5) I2ACSM: replace `Test.java` with `Test_batch.java`
-    (5) TransZero_LS and TransZero_GS: all changed files and intermediate results are provided
++ ALS: replace `qtcs.py` with `qtcs_batch.py`
++ WCF-CRC: replace `run.py` with `run_batch.py`
++ CSD: replace `Test.java` with revised `Test.java`, replace `DataReader.java` with updated `DataReader.java` under the "util" folder
++ ST-Exa and Repeeling: No code has been changed, the commands to run the code are written in corresponding `.bat` file for execution  
++ I2ACSM: replace `Test.java` with `Test_batch.java`
++ TransZero_LS and TransZero_GS: all changed files and intermediate results are provided
 
 
 # Cohesiveness_Output
