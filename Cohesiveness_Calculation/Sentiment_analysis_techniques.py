@@ -107,7 +107,7 @@ def process_results(algorithm, dataset, results_dir, output_dir, decay_method, v
             delayed(process_CSD_STExa_Repeeling_item)(node, parameter_list, community_node_list, edge_stream, tadj_list, lastest_timestamp, value, decay_method, cohesiveness_dict)
             for node, parameter_list, community_node_list in tqdm.tqdm(results)
         )
-    elif algorithm in ["TransZero_LS", "TransZero_GS"]:
+    elif algorithm == "TransZero_LS":
         cohesiveness_results = Parallel(n_jobs=n_jobs)(
             delayed(process_TransZero_item)(node, community_node_list, node_mapping, edge_stream, tadj_list, lastest_timestamp, value, decay_method, cohesiveness_dict)
         for node, community_node_list in tqdm.tqdm(results)
@@ -140,7 +140,7 @@ if __name__ == "__main__":
     algo_results_dir = "D:/Cohesion_Evaluation/Algorithm_Output/"
     cohesiveness_dir = "D:/Cohesion_Evaluation/Cohesiveness_Output/"
 
-    algo_list =["ALS", "WCF-CRC", "CSD", "ST-Exa", "Repeeling", "I2ACSM", "TransZero_LS", "TransZero_GS"]
+    algo_list =["ALS", "WCF-CRC", "CSD", "ST-Exa", "Repeeling", "I2ACSM", "TransZero_LS"]
 
     # Parameters for the sensitivity analysis (sentiment analysis methods)
     decay_method = 'exp'
