@@ -15,7 +15,7 @@ data_path = "D:\\Cohesion_Evaluation\\Input_Datasets\\ST-Exa_Dataset\\"
 
 
 # Path to the exe file
-exe_path = "D:\\Cohesion_Evaluation\\Representative_algorithms\\ST-Exa\\"
+exe_path = "D:\\Cohesion_Evaluation\\Representative_Algorithms\\ST-Exa\\"
 exe_name = "STExa.exe"
 
 # Parameters 

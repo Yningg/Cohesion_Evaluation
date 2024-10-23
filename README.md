@@ -4,7 +4,7 @@ Code and dataset for the paper "How Cohesive Are Community Search Results on Onl
     .
     ├── Original_Datasets           # Preprocessed datasets, scripts to generate queries and node mapping, and print network statistics
     ├── Input_Datasets              # Scripts to generate transformed graphs for each algorithms, and corresponding transformed graphs
-    ├── Representative_algorithms   # Code to running representative algorithms
+    ├── Representative_Algorithms   # Code to running representative algorithms
     ├── Algorithm_Output            # The inital CS output from representative algorithms
     ├── Cohesiveness_Calculation    # The scripts for calculating structural and psychology-informed cohesiveness, and conducting sensitivity analysis
     ├── Cohesiveness_Output         # Cohesiveness calculation results, the script to condense the results, and the corresponding condensed results
@@ -18,7 +18,7 @@ Code and dataset for the paper "How Cohesive Are Community Search Results on Onl
 3. Query_Nodes: Code, query nodes, and mapped query nodes are all provided
 
 
-### Representative_algorithms
+### Representative_Algorithms
 1. The links to all available codebases for representative algorithms can be found in the following table:
     | Type      | Algorithm | Title                                                                                            | Code   |
     |-----------|-----------|--------------------------------------------------------------------------------------------------|--------|

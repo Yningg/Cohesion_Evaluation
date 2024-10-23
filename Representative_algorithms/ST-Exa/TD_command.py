@@ -11,7 +11,7 @@ dataset_name = ["Crawled_Dataset26", "Crawled_Dataset144", "Chicago_COVID", "BTW
 data_path = "D:\\Cohesion_Evaluation\\Input_Datasets\\ST-Exa_Dataset\\"
 
 # Path to the exe file
-exe_path = "D:\\Cohesion_Evaluation\\Representative_algorithms\\ST-Exa\\"
+exe_path = "D:\\Cohesion_Evaluation\\Representative_Algorithms\\ST-Exa\\"
 
 
 for dataset in dataset_name:

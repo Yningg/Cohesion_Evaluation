@@ -10,11 +10,11 @@ import os
 
 
 # Path to the exe file
-exe_file = "D:\\Cohesion_Evaluation\\Representative_algorithms\\Repeeling\\"
+exe_file = "D:\\Cohesion_Evaluation\\Representative_Algorithms\\Repeeling\\"
 exe_name = "repeel-all.exe"
 
 # Path for storing the bat file
-bat_file_path = "D:/Cohesion_Evaluation/Representative_algorithm/Repeeling/"
+bat_file_path = "D:/Cohesion_Evaluation/Representative_Algorithm/Repeeling/"
 
 for dataset_name in ["BTW17", "Chicago_COVID", "Crawled_Dataset26", "Crawled_Dataset144"]:
     # Path to the dataset
