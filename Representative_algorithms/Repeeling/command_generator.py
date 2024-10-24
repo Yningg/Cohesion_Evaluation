@@ -18,10 +18,10 @@ bat_file_path = "D:/Cohesion_Evaluation/Representative_Algorithm/Repeeling/"
 
 for dataset_name in ["BTW17", "Chicago_COVID", "Crawled_Dataset26", "Crawled_Dataset144"]:
     # Path to the dataset
-    data_path = "D:\\Cohesion_Evaluation\\Repeeling_Dataset\\" + dataset_name + "\\" + dataset_name + ".txt"
+    data_path = "D:\\Cohesion_Evaluation\\Input_Datasets\\Repeeling_Dataset\\" + dataset_name + "\\" + dataset_name + ".txt"
 
     # Path to query node file
-    query_node_file = "D:/Cohesion_Evaluation/Input_Datasets/Query_Nodes/" + dataset_name + "_mapped_query_node.txt"
+    query_node_file = "D:/Cohesion_Evaluation/Original_Datasets/Query_Nodes/" + dataset_name + "_mapped_query_node.txt"
 
     # Path to the Result file
     result_fir = "D:\\Cohesion_Evaluation\\Algorithm_Output\\Repeeling_Results\\" + dataset_name + "\\"
