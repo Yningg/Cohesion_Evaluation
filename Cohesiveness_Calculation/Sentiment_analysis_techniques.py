@@ -28,7 +28,7 @@ def process_ALS_CRC_I2ACSM_item(node, score, parameter_list, community_node_list
             cohesiveness = cs.cohesiveness_dim(edge_stream, tadj_list, edge_subtream, tadj_sublist, lastest_timestamp, value, decay_method)
             cohesiveness_dict[sorted_community] = cohesiveness
     
-    return f"{node}\t{score}\t{parameter_list}\t{community_node_list}\t{cohesiveness}\n"
+    return f"{node}\t{score}\t{parameter_list}\t{community_node_list}\t{cohesiveness}\n", cohesiveness_dict
 
 
 def process_CSD_STExa_Repeeling_item(node, parameter_list, community_node_list, edge_stream, tadj_list, lastest_timestamp, value, decay_method, cohesiveness_dict):
@@ -43,7 +43,7 @@ def process_CSD_STExa_Repeeling_item(node, parameter_list, community_node_list, 
             cohesiveness = cs.cohesiveness_dim(edge_stream, tadj_list, edge_subtream, tadj_sublist, lastest_timestamp, value, decay_method)
             cohesiveness_dict[sorted_community] = cohesiveness
     
-    return f"{node}\t{parameter_list}\t{community_node_list}\t{cohesiveness}\n"
+    return f"{node}\t{parameter_list}\t{community_node_list}\t{cohesiveness}\n", cohesiveness_dict
 
 
 def process_TransZero_item(node, community_node_list, node_mapping, edge_stream, tadj_list, lastest_timestamp, value, decay_method, cohesiveness_dict):
@@ -59,7 +59,14 @@ def process_TransZero_item(node, community_node_list, node_mapping, edge_stream,
             cohesiveness = cs.cohesiveness_dim(edge_stream, tadj_list, edge_subtream, tadj_sublist, lastest_timestamp, value, decay_method)
             cohesiveness_dict[sorted_community] = cohesiveness
     
-    return f"{node}\t{community_node_list}\t{cohesiveness}\n"
+    return f"{node}\t{community_node_list}\t{cohesiveness}\n", cohesiveness_dict
+
+
+def merge_dicts(dict_list):
+    merged_dict = {}
+    for d in dict_list:
+        merged_dict.update(d)
+    return merged_dict
 
 """
 For each dataset,
@@ -98,30 +105,32 @@ def process_results(algorithm, dataset, results_dir, output_dir, decay_method, v
 
     # Calculate the cohesiveness for each community
     if algorithm in ["ALS", "WCF-CRC", "I2ACSM"]:
-        cohesiveness_results = Parallel(n_jobs=n_jobs)(
+        results_with_dicts = Parallel(n_jobs=n_jobs)(
             delayed(process_ALS_CRC_I2ACSM_item)(node, score, parameter_list, community_node_list, edge_stream, tadj_list, lastest_timestamp, value, decay_method, cohesiveness_dict)
             for node, score, parameter_list, community_node_list in tqdm.tqdm(results)
         )
     elif algorithm in ["CSD", "ST-Exa", "Repeeling"]:
-        cohesiveness_results = Parallel(n_jobs=n_jobs)(
+        results_with_dicts = Parallel(n_jobs=n_jobs)(
             delayed(process_CSD_STExa_Repeeling_item)(node, parameter_list, community_node_list, edge_stream, tadj_list, lastest_timestamp, value, decay_method, cohesiveness_dict)
             for node, parameter_list, community_node_list in tqdm.tqdm(results)
         )
     elif algorithm == "TransZero_LS":
-        cohesiveness_results = Parallel(n_jobs=n_jobs)(
+        results_with_dicts = Parallel(n_jobs=n_jobs)(
             delayed(process_TransZero_item)(node, community_node_list, node_mapping, edge_stream, tadj_list, lastest_timestamp, value, decay_method, cohesiveness_dict)
         for node, community_node_list in tqdm.tqdm(results)
         )
+    
+    cohesiveness_results, updated_dicts = zip(*results_with_dicts)
+    cohesiveness_dict = merge_dicts(updated_dicts)
     
     with open(output_file, 'a') as f:
         f.writelines(cohesiveness_results)
 
 
-
 """
 Calculate the psychology-informed cohesiveness for each algorithm's results
 """
-def cohesiveness_calculation(algorithm, dataset_list):
+def cohesiveness_calculation(algorithm, dataset_list, njobs):
     global algo_results_dir, cohesiveness_dir, decay_method, value
 
     # Directory to access the algorithm results
@@ -129,9 +138,12 @@ def cohesiveness_calculation(algorithm, dataset_list):
     # Directory to store the psychology-informed cohesiveness results
     algo_cohesiveness_dir = cohesiveness_dir + algorithm + "_Results/"
 
-
+    tasks = []
     for dataset_name in dataset_list:
-        process_results(algorithm, dataset_name, algo_result_dir, algo_cohesiveness_dir, decay_method, value, n_jobs=-1)
+        tasks.append((algorithm, dataset_name, algo_result_dir, algo_cohesiveness_dir, decay_method, value, njobs))
+            
+    # Execute the tasks in parallel
+    Parallel(n_jobs=njobs)(delayed(process_results)(*task) for task in tasks)
 
 
 if __name__ == "__main__":
@@ -145,9 +157,10 @@ if __name__ == "__main__":
     # Parameters for the sensitivity analysis (sentiment analysis methods)
     decay_method = 'exp'
     value = 0.0001
+    njobs = -1
 
     for algorithm in algo_list:
         if algorithm == "Repeeling":
-            cohesiveness_calculation(algorithm, ["BTW17", "Chicago_COVID"])
+            cohesiveness_calculation(algorithm, ["BTW17", "Chicago_COVID"], njobs)
         else:
-            cohesiveness_calculation(algorithm, ["BTW17", "Chicago_COVID", "Crawled_Dataset26", "Crawled_Dataset144"])
+            cohesiveness_calculation(algorithm, ["BTW17", "Chicago_COVID", "Crawled_Dataset26", "Crawled_Dataset144"], njobs)
