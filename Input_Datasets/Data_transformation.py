@@ -286,8 +286,6 @@ def get_TransZero_dataset(G, dataset_name, query_node_path, node_mapping_path, t
     edge_list = sorted(edge_list, key=lambda x: (x[0], x[1]))
 
     with open(target_dir + dataset_name + ".edges", 'w') as f:
-        #first line: number of nodes and edges
-        f.write(f"{G_dir.number_of_nodes()} {len(edge_list)}\n")
         # from_id to_id
         for u, v in edge_list:
             f.write(f"{u} {v}\n")
