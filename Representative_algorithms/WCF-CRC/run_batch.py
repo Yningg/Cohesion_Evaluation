@@ -4,6 +4,11 @@ import itertools
 from joblib import Parallel, delayed
 import tqdm
 
+import sys
+target_path = "./"
+sys.path.append(target_path)
+import Cohesiveness_Calculation.General_function as gf
+
 
 def query(graph_path, theta, k, query_node, method, alpha, start_time, end_time):
     global n_jobs
@@ -30,19 +35,6 @@ def query(graph_path, theta, k, query_node, method, alpha, start_time, end_time)
     return maxS, C_opt, duration
 
 
-# Get query nodes from a file
-def get_query_nodes(query_node_path, dataset_name):
-    query_node_file = query_node_path + dataset_name + "_query_node.txt"
-    query_nodes = []
-    
-    with open(query_node_file, 'r') as f:
-        for line in f:
-            query_nodes.append(line.strip())
-        f.close()
-    
-    return query_nodes
-
-
 def process_combination(graph_path, theta, k, query_node, method, alpha, start_time, end_time):
     max_score, C_opt, duration = query(graph_path, theta, k, query_node, method, alpha, start_time, end_time)
     crc_nodes = list(C_opt)
@@ -60,7 +52,7 @@ if __name__ == '__main__':
     graph_path = CRC_dataset_dir + dataset_name + "/"
 
     # Read the query node list
-    query_nodes_list = get_query_nodes(query_node_dir, dataset_name)
+    query_nodes_list = gf.get_query_nodes(query_node_dir, dataset_name)
 
     # Set the parameters for WCF-CRC
     theta_list = [theta / 10 for theta in range(0, 5)] # theta: edge weight threshold
