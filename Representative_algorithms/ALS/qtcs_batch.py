@@ -599,10 +599,9 @@ def process_query_node(query_node, G_qtcs, alpha):
     query_end_time = time.time()
 
     # Save the results after trying all combinations of parameters for the query node
-    result = [query_node, beta, params, community, qtcs_cohesiveness]
+    result = [query_node, beta, params, community]
     print('---------------------------------------')
     print(f"Query node: {query_node}, time: {query_end_time - query_start_time}")
-    print(f"Cohesiveness score for QTCS: {qtcs_cohesiveness}")
     print(f"Beta: {beta}, Parameters: {params}")
     print('Number of nodes: ' + str(len(community)))
     print('Nodes: ' + str(community))
@@ -640,10 +639,10 @@ if __name__ == '__main__':
     for query_node in query_nodes_list:
         for alpha_val in alpha:
             result = process_query_node(query_node, G_qtcs, alpha_val)
-            query_node, beta, params, community, qtcs_cohesiveness = result
+            query_node, beta, params, community = result
        
             with open(result_file, 'a') as f:
-                f.write(f"{query_node}\t{beta}\t{params}\t{community}\t{qtcs_cohesiveness}\n")
+                f.write(f"{query_node}\t{beta}\t{params}\t{community}\n")
 
     print("All query nodes processed!")
     print("Results saved to: " + result_file)
