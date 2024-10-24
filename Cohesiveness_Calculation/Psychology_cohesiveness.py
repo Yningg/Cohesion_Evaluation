@@ -65,9 +65,10 @@ def process_TransZero_item(node, community_node_list, node_mapping, edge_stream,
 For each dataset,
 1. Read the results of the algorithm from its results directory
 2. Read the attribute file to get the graph
-3. Based on the community nodes, calculate the cohesiveness score of the community nodes and save the results
+3. For each file, read the line, split by "\t" and extract the data element of each line
+4. Based on the community nodes, calculate the cohesiveness score of the community nodes and save the results
 """
-def process_results(algorithm, dataset, results_dir, output_dir, decay_method, value, n_jobs=-1):
+def process_results(algorithm, dataset, results_dir, output_dir, decay_method, value, njobs):
     global attribute_dir, node_mapping_dir
 
     attribute_file = attribute_dir + dataset + "_attributed.txt"
@@ -98,17 +99,17 @@ def process_results(algorithm, dataset, results_dir, output_dir, decay_method, v
 
     # Calculate the cohesiveness for each community
     if algorithm in ["ALS", "WCF-CRC", "I2ACSM"]:
-        cohesiveness_results = Parallel(n_jobs=n_jobs)(
+        cohesiveness_results = Parallel(n_jobs=njobs)(
             delayed(process_ALS_CRC_I2ACSM_item)(node, score, parameter_list, community_node_list, edge_stream, tadj_list, lastest_timestamp, value, decay_method, cohesiveness_dict)
             for node, score, parameter_list, community_node_list in tqdm.tqdm(results)
         )
     elif algorithm in ["CSD", "ST-Exa", "Repeeling"]:
-        cohesiveness_results = Parallel(n_jobs=n_jobs)(
+        cohesiveness_results = Parallel(n_jobs=njobs)(
             delayed(process_CSD_STExa_Repeeling_item)(node, parameter_list, community_node_list, edge_stream, tadj_list, lastest_timestamp, value, decay_method, cohesiveness_dict)
             for node, parameter_list, community_node_list in tqdm.tqdm(results)
         )
     elif algorithm in ["TransZero_LS", "TransZero_GS"]:
-        cohesiveness_results = Parallel(n_jobs=n_jobs)(
+        cohesiveness_results = Parallel(n_jobs=njobs)(
             delayed(process_TransZero_item)(node, community_node_list, node_mapping, edge_stream, tadj_list, lastest_timestamp, value, decay_method, cohesiveness_dict)
         for node, community_node_list in tqdm.tqdm(results)
         )
@@ -121,7 +122,7 @@ def process_results(algorithm, dataset, results_dir, output_dir, decay_method, v
 """
 Calculate the psychology-informed cohesiveness for each algorithm's results
 """
-def cohesiveness_calculation(algorithm, dataset_list):
+def cohesiveness_calculation(algorithm, dataset_list, njobs):
     global algo_results_dir, cohesiveness_dir
 
     # Directory to access the algorithm results
@@ -136,11 +137,11 @@ def cohesiveness_calculation(algorithm, dataset_list):
             if decay_method == 'exp':
                 lambda_value_list = [0.0001, 0.0005, 0.001, 0.005, 0.01]
                 for lambda_value in lambda_value_list:
-                    tasks.append((algorithm, dataset_name, algo_result_dir, algo_cohesiveness_dir, decay_method, lambda_value))
+                    tasks.append((algorithm, dataset_name, algo_result_dir, algo_cohesiveness_dir, decay_method, lambda_value, njobs))
             elif decay_method == 'poly':
                 mu_value_list = [0.5, 1, 1.5, 2]
                 for mu_value in mu_value_list:
-                    tasks.append((algorithm, dataset_name, algo_result_dir, algo_cohesiveness_dir, decay_method, mu_value))
+                    tasks.append((algorithm, dataset_name, algo_result_dir, algo_cohesiveness_dir, decay_method, mu_value, njobs))
 
     # Execute the tasks in parallel
     Parallel(n_jobs=-1)(delayed(process_results)(*task) for task in tasks)
@@ -153,9 +154,10 @@ if __name__ == "__main__":
     cohesiveness_dir = "D:/Cohesion_Evaluation/Cohesiveness_Output/"
 
     algo_list =["ALS", "WCF-CRC", "CSD", "ST-Exa", "Repeeling", "I2ACSM", "TransZero_LS"]
+    njobs = -1
 
     for algorithm in algo_list:
         if algorithm == "Repeeling":
-            cohesiveness_calculation(algorithm, ["BTW17", "Chicago_COVID"])
+            cohesiveness_calculation(algorithm, ["BTW17", "Chicago_COVID"], njobs)
         else:
-            cohesiveness_calculation(algorithm, ["BTW17", "Chicago_COVID", "Crawled_Dataset26", "Crawled_Dataset144"])
+            cohesiveness_calculation(algorithm, ["BTW17", "Chicago_COVID", "Crawled_Dataset26", "Crawled_Dataset144"], njobs)
