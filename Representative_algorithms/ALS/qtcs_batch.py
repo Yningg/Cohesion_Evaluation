@@ -1,10 +1,12 @@
 import sys
-from random import choice
 from collections import defaultdict
 import time
 import tqdm
-from joblib import Parallel, delayed
 
+target_path = "./"
+sys.path.append(target_path)
+from Representative_Algorithms.ALS.binary_heap import *
+import Cohesiveness_Calculation.General_function as gf
 
 class Graph:
     def __init__(self, dataset):
@@ -565,19 +567,6 @@ class Graph:
         return interaction
 
 
-# Get query nodes from a file
-def get_query_nodes(query_node_path, dataset_name):
-    query_node_file = query_node_path + dataset_name + "_query_node.txt"
-    query_nodes = []
-    
-    with open(query_node_file, 'r') as f:
-        for line in f:
-            query_nodes.append(int(line.strip()))
-        f.close()
-    
-    return query_nodes
-
-
 def process_query_node(query_node, G_qtcs, alpha):
     query_start_time = time.time()
 
@@ -599,12 +588,13 @@ def process_query_node(query_node, G_qtcs, alpha):
     query_end_time = time.time()
 
     # Save the results after trying all combinations of parameters for the query node
-    result = [query_node, beta, params, community]
     print('---------------------------------------')
+    params = [alpha]
+    community = list([str(node) for node in C])
+    result = [query_node, beta, params, community]
     print(f"Query node: {query_node}, time: {query_end_time - query_start_time}")
     print(f"Beta: {beta}, Parameters: {params}")
     print('Number of nodes: ' + str(len(community)))
-    print('Nodes: ' + str(community))
     print('---------------------------------------')
 
     return result
@@ -619,12 +609,12 @@ if __name__ == '__main__':
 
 
     # Load query nodes from query_node_dir
-    query_nodes_list = get_query_nodes(query_node_dir, dataset_name)
+    query_nodes_list = gf.get_query_nodes(query_node_dir, dataset_name)
+    query_nodes_list = [int(node) for node in query_nodes_list]
 
     # Initialize the graph according to the dataset
     G_qtcs = Graph(dataset_dir + dataset_name + "_timestamp.txt") 
     alpha = [0.1, 0.15, 0.2, 0.25, 0.3] # The teleport probability 
-    n_jobs = -1 # Number of parallel jobs
   
     # Check whether the results file exists
     try:
@@ -635,8 +625,8 @@ if __name__ == '__main__':
             f.close()
         
      
-    # Process query node
-    for query_node in query_nodes_list:
+   # Process query node
+    for query_node in tqdm.tqdm(query_nodes_list):
         for alpha_val in alpha:
             result = process_query_node(query_node, G_qtcs, alpha_val)
             query_node, beta, params, community = result
