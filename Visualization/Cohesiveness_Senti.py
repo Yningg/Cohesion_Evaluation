@@ -167,14 +167,14 @@ if __name__ == "__main__":
     dataset_label_list = ["BTW", "CC", "C144", "C26"]
 
     # For BTW17 and Chicago_COVID datasets
-    algo_list = ["ALS", "CRC", "CSD", "STExa", "Repeeling", "IACSM", "TransZero_localsearch"]
+    algo_list = ["ALS", "WCF-CRC", "CSD", "ST-Exa", "Repeeling", "I2ACSM", "TransZero_LS"]
     algo_label_list = ["ALS", "WCF-CRC", "CSD", "ST-Exa", "Repeeling+", "I2ACSM", "TransZero_LS"]
     color_list = [(53, 78, 151), (112, 163, 196), (199, 229, 236), (245, 180, 111), (223, 91, 63), (251, 236, 171), (175, 175, 175)]
     color_list = [(r/255, g/255, b/255) for r, g, b in color_list]
     hatch_list = ['/', '\\', '|', '-', '+', 'x','.']
 
     # For Crawled_Dataset144 and Crawled_Dataset26
-    algo_sublist = ["ALS", "CRC", "CSD", "STExa", "IACSM", "TransZero_localsearch"]
+    algo_sublist = ["ALS", "WCF-CRC", "CSD", "ST-Exa", "I2ACSM", "TransZero_LS"]
     algo_label_sublist = ["ALS", "WCF-CRC", "CSD", "ST-Exa", "I2ACSM", "TransZero_LS"]
     color_sublist = [(53, 78, 151), (112, 163, 196), (199, 229, 236), (245, 180, 111), (251, 236, 171), (175, 175, 175)]
     color_sublist = [(r/255, g/255, b/255) for r, g, b in color_sublist]
