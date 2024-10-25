@@ -263,7 +263,7 @@ if algo == "ALS":
     structural_std = {0.1: [1.59197990e+00, 4.88140837e+02, 9.94987437e-02], 0.15: [3.11313347e+00, 1.02025099e+03, 9.94987437e-02], 0.2: [4.91466174e+00, 1.56960740e+03, 9.08625335e-01], 0.25: [6.26191664e+00, 2.06667222e+03, 1.40627167e+00], 0.3: [6.95125888e+00, 2.31354122e+03, 1.64572173e+00]}
     
     draw_graph_ALS(cohesiveness_mean, cohesiveness_std, structural_mean, structural_std, "ALS", "Chicago_COVID", 0, 400)
-    # {0.1: [18.84, 4.86794, 1.01], 0.15: [18.22, 4.66386, 1.01], 0.2: [16.81, 4.225239999999999, 1.12], 0.25: [14.78, 3.52806, 1.32], 0.3: [12.4, 2.7065300000000003, 1.46]}
+
 elif algo == "ST-Exa":
     structural_measures = [r'$d$', r'$Size$', r'$Deg_{min}$']
     # cohesiveness_mean, cohesiveness_std, structural_mean, structural_std = read_results(results_dir, "STExa", "Chicago_COVID", 1, 3)
