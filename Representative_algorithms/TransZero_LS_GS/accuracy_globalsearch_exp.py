@@ -89,7 +89,7 @@ if __name__ == "__main__":
 
     print("query_score.shape: ", query_score.shape)
 
-    with open("D:/Cohesion_Evaluation/Algorithm_Output/TransZero_GS_Results/TransZero_globalsearch_results" +  args.dataset + ".txt", "w") as f:
+    with open("D:/Cohesion_Evaluation/Algorithm_Output/TransZero_GS_Results/TransZero_GS_results" +  args.dataset + ".txt", "w") as f:
         for i in tqdm(range(query_score.shape[0])):
             query_index = (torch.nonzero(query[i]).squeeze()).reshape(-1)
             selected_candidates = GlobalSearch(query_index.tolist(), query_score[i].tolist()) 
