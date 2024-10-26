@@ -137,7 +137,7 @@ public class Test_batch {
 		try (BufferedWriter writer = new BufferedWriter(new FileWriter(results_path))) {
             // Write the first line
             // writer.write("Query node, Best score, Best parameters, Best community");
-            writer.newLine();
+            // writer.newLine();
             // Write the results
             for (String result : results) {
                 writer.write(result);
