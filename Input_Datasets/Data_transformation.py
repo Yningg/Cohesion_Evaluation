@@ -32,8 +32,15 @@ def get_ALS_dataset(G, dataset_name, target_path):
 
 
 def get_I2ACSM_dataset(G, dataset_name, target_path):
+    G_undir = nx.Graph(G)
+    print(f"Graph info after converting to undirected simple graph: nodes: {G_undir.number_of_nodes()}, edges: {G_undir.number_of_edges()}, density: {nx.density(G_undir)}")
+
+    # Remove self-loop edges
+    G_undir.remove_edges_from(nx.selfloop_edges(G_undir))
+    print(f"Graph info after removing self-loop edges: nodes: {G_undir.number_of_nodes()}, edges: {G_undir.number_of_edges()}, density: {nx.density(G_undir)}")
+
     with open(target_path + dataset_name + "_non_attributed.txt", "w") as f:
-        for u, v in G.edges():
+        for u, v in G_undir.edges():
             f.write(f"{u}\t{v}\n")
 
 """
@@ -200,12 +207,12 @@ Generate STExa dataset
 """
 # The graph is undirected simple graph
 def get_STExa_dataset(G, dataset_name, node_mapping_path, target_path):
-    G_dir = nx.Graph(G)
-    print(f"Graph info after converting to undirected simple graph: nodes: {G_dir.number_of_nodes()}, edges: {G_dir.number_of_edges()}, density: {nx.density(G_dir)}")
+    G_undir = nx.Graph(G)
+    print(f"Graph info after converting to undirected simple graph: nodes: {G_undir.number_of_nodes()}, edges: {G_undir.number_of_edges()}, density: {nx.density(G_undir)}")
 
     # Remove self-loop edges
-    G_dir.remove_edges_from(nx.selfloop_edges(G_dir))
-    print(f"Graph info after removing self-loop edges: nodes: {G_dir.number_of_nodes()}, edges: {G_dir.number_of_edges()}, density: {nx.density(G_dir)}")
+    G_undir.remove_edges_from(nx.selfloop_edges(G_undir))
+    print(f"Graph info after removing self-loop edges: nodes: {G_undir.number_of_nodes()}, edges: {G_undir.number_of_edges()}, density: {nx.density(G_undir)}")
 
     # Read the node mapping file
     node_mapping = read_node_mapping(node_mapping_path + dataset_name + "_node_mapping.txt")
@@ -214,7 +221,7 @@ def get_STExa_dataset(G, dataset_name, node_mapping_path, target_path):
     os.makedirs(target_dir, exist_ok=True)
 
     edge_list = []
-    for u, v in G_dir.edges():
+    for u, v in G_undir.edges():
         u = node_mapping[u]
         v = node_mapping[v]
         if u != v:
@@ -225,7 +232,7 @@ def get_STExa_dataset(G, dataset_name, node_mapping_path, target_path):
 
     with open(target_dir + dataset_name + ".txt", 'w') as f:
         #first line: number of nodes and edges
-        f.write(f"{G_dir.number_of_nodes()} {len(edge_list)}\n")
+        f.write(f"{G_undir.number_of_nodes()} {len(edge_list)}\n")
         # from_id to_id
         for u, v in edge_list:
             f.write(f"{u} {v}\n")
