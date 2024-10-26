@@ -108,6 +108,7 @@ def process_ALS_CRC_I2ACSM_results(file):
             score = float(parts[1])
             params = ast.literal_eval(parts[2])
             community_node_list = ast.literal_eval(parts[3])
+            community_node_list = [str(node) for node in community_node_list]
             results.append([node, score, params, community_node_list])
     return results
 
