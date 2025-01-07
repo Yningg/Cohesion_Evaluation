@@ -4,6 +4,9 @@ This script stores the functions that are commonly used in the experiments.
 
 import networkx as nx
 import ast
+from collections import defaultdict
+import time
+import csv
 
 # Get query nodes from the file
 def get_query_nodes(query_node_path, dataset_name):
@@ -24,63 +27,59 @@ Read the network and construct the edge stream and temporal adjacency list
 --> temporal adjacency list: {u: [(u, v, timestamp, sentiment)]}
 """
 
-def build_graph(G):
-    tadj_list, edge_stream = {}, {}
+def build_graph(attribute_file):
 
-    for u, v, d in G.edges(data=True):
-        timestamp, sentiment = int(d['timestamp']), int(d['sentiment'])
-        if timestamp in edge_stream:
+    edge_stream = defaultdict(list)
+    tadj_list = defaultdict(list)
+
+    print("Loading the graph...")
+    starttime = time.time()
+
+    # The loaded data is already sorted, since the data is sorted by the timestamp
+    with open(attribute_file, 'r') as f:
+        reader = csv.reader(f, delimiter='\t')
+        # Get the initial timestamp by read the first line of the file
+        flag_read = False
+
+        for parts in reader:
+            if not flag_read:
+                initial_timestamp = int(parts[2])
+                flag_read = True
+            
+            u, v, timestamp, sentiment = parts[0], parts[1], int(parts[2]), int(parts[3])
+            timestamp = int(parts[2]) - initial_timestamp
+            
             edge_stream[timestamp].append((u, v, timestamp, sentiment))
-        else:
-            edge_stream[timestamp] = [(u, v, timestamp, sentiment)]
-
-        if u in tadj_list:
             tadj_list[u].append((u, v, timestamp, sentiment))
-        else:
-            tadj_list[u] = []
-            tadj_list[u].append((u, v, timestamp, sentiment))
-        
-        if v in tadj_list:
-            tadj_list[v].append((u, v, timestamp, sentiment))
-        else:
-            tadj_list[v] = []
             tadj_list[v].append((u, v, timestamp, sentiment))
 
-    # Sort the edge stream and temporal adjacency list based on the timestamp
-    edge_stream = dict(dict(sorted(edge_stream.items())))
+
+    # Sort the temporal adjacency list based on the new timestamp
     for u in tadj_list:
-        tadj_list[u] = sorted(tadj_list[u], key=lambda x: x[2])
+        tadj_list[u] = sorted(tadj_list[u], key=lambda x: x[2]) 
 
+    endtime = time.time()
+    print(f"Loding graph time(s): {endtime - starttime}")
     return edge_stream, tadj_list
-
-
-# Build the graph with the original nodes and edges attributes
-def graph_construction(attribute_file):
-    # Read the attribute file and add the attributes to the graph
-    attributed_G = nx.read_edgelist(attribute_file, nodetype=str, data=(('timestamp', str), ('sentiment', str)), create_using=nx.MultiGraph()) # type: ignore
-    
-    print(f"Original graph info: {attributed_G.number_of_nodes()} nodes, {attributed_G.number_of_edges()} edges, density: {nx.density(attributed_G)}")
-
-    return attributed_G
 
 
 # Given the graph's edge stream and temporal adjacency list, extract the subgraph based on the subgraph node list
 def build_subgraph(edge_stream, tadj_list, subgraph_nodes):
-    edge_substream, tadj_sublist = {}, {}
+    edge_substream = defaultdict(list)
+    tadj_sublist = defaultdict(list)
+    subgraph_nodes_set = set(subgraph_nodes)
 
-    for timestamp in edge_stream.keys():
-        filtered_edges = [edge for edge in edge_stream[timestamp] if edge[0] in subgraph_nodes and edge[1] in subgraph_nodes]
-        if len(filtered_edges) > 0:
-            edge_substream[timestamp] = filtered_edges
+    for timestamp, edges in edge_stream.items():
+        for edge in edges:
+            u, v = edge[0], edge[1]
+            if u in subgraph_nodes_set and v in subgraph_nodes_set:
+                edge_substream[timestamp].append(edge)
+                if edge not in tadj_sublist[u]:
+                    tadj_sublist[u].append(edge)
+                if edge not in tadj_sublist[v]:
+                    tadj_sublist[v].append(edge)
 
-    for node in subgraph_nodes:
-        tadj_sublist[node] = []
-        for edge in tadj_list[node]:
-            if edge[0] in subgraph_nodes and edge[1] in subgraph_nodes:
-                tadj_sublist[node].append(edge)
-    
-    return edge_substream, tadj_sublist
-
+    return dict(edge_substream), dict(tadj_sublist)
 
 
 # Read the node mapping file
