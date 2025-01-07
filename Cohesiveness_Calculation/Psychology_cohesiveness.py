@@ -153,7 +153,7 @@ def cohesiveness_calculation(algorithm, dataset_list, njobs):
                     tasks.append((algorithm, dataset_name, algo_result_dir, algo_cohesiveness_dir, decay_method, mu_value, njobs))
 
     # Execute the tasks in parallel
-    Parallel(n_jobs=-1)(delayed(process_results)(*task) for task in tasks)
+    Parallel(n_jobs=njobs)(delayed(process_results)(*task) for task in tasks)
 
 
 if __name__ == "__main__":
