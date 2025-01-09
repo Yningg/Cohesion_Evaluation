@@ -50,7 +50,6 @@ def process_TransZero_item(node, community_node_list, node_mapping, edge_stream,
     if len(community_node_list) == 0:
         cohesiveness = ['Invalid', 'Invalid', 'Invalid', 'Invalid', 'Invalid']
     else:
-        community_node_list = [node_mapping[node] for node in community_node_list]
         sorted_community = tuple(sorted(community_node_list))
         if sorted_community in cohesiveness_dict:
             cohesiveness = cohesiveness_dict[sorted_community]
