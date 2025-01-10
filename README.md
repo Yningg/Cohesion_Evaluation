@@ -36,7 +36,7 @@ Code and dataset for the paper "How Cohesive Are Community Search Results on Onl
 + CSD: replace `Test.java` with revised `Test.java`, replace `DataReader.java` with updated `DataReader.java` under the "util" folder
 + ST-Exa and Repeeling: No code has been changed, the commands to run the code are written in corresponding `.bat` file for execution  
 + I2ACSM: replace `Test.java` with `Test_batch.java`
-+ TransZero_LS and TransZero_GS: all changed files and intermediate results are provided
++ TransZero_LS and TransZero_GS: all changed files and intermediate results are provided, the generation of .pt files is referred to link: https://pytorch-geometric.readthedocs.io/en/2.6.1/get_started/introduction.html.
 
 
 ### Cohesiveness_Output
