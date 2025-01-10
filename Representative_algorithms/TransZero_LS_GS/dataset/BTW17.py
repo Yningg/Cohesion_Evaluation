@@ -2,9 +2,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import torch_geometric.nn
-from torch_geometric.data import Data, DataLoader
-from torch_geometric.datasets import Planetoid
-from torch_geometric.nn import GCNConv
+from torch_geometric.data import Data
 
 # device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 # print(f"device : {device}")
@@ -21,6 +19,7 @@ def edge_index_to_sparse_coo(edge_index):
     edge_index_sparse = torch.sparse_coo_tensor(torch.stack([row, col]), values, size)
 
     return edge_index_sparse
+
 
 dataset_str = 'BTW17'
 
@@ -56,5 +55,4 @@ graph.y = torch.tensor([])
 # print(graph.x, graph.edge_index, graph.y)
 print(graph.edge_index)
 
-torch.save([edge_index_to_sparse_coo(graph.edge_index).type(torch.LongTensor), graph.x.type(torch.LongTensor), graph.y.type(torch.LongTensor)], "../dataset/"+dataset_str+".pt")
-
+torch.save([edge_index_to_sparse_coo(graph.edge_index).type(torch.LongTensor), graph.x.type(torch.LongTensor), graph.y.type(torch.LongTensor)], "D:/Cohesion_Evaluation/Input_Datasets/TransZero_LS_GS_Dataset/" + dataset_str + ".pt")
