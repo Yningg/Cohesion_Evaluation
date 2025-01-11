@@ -1,10 +1,11 @@
 import torch
-from utils import f1_score_calculation, load_query, cosin_similarity, get_gt_legnth, evaluation
+from utils_exp import load_query, cosin_similarity, evaluation
 import argparse
 import numpy as np
 from tqdm import tqdm
 from numpy import *
 import time
+import os
 
 def parse_args():
     """
@@ -65,14 +66,13 @@ if __name__ == "__main__":
     args = parse_args()
     print(args)
 
-
     if args.embedding_tensor_name is None:
         args.embedding_tensor_name = args.dataset
     
 
     embedding_tensor = torch.from_numpy(np.load(args.EmbeddingPath + args.embedding_tensor_name + '.npy'))
     
-    # load queries and labels
+    # load queries
     query = load_query("D:/Cohesion_Evaluation/Input_Datasets/TransZero_LS_GS_Dataset/", args.dataset, embedding_tensor.shape[0])
 
     start = time.time()
@@ -89,12 +89,18 @@ if __name__ == "__main__":
 
     print("query_score.shape: ", query_score.shape)
 
-    with open("D:/Cohesion_Evaluation/Algorithm_Output/TransZero_GS_Results/TransZero_GS_results" +  args.dataset + ".txt", "w") as f:
+    output_dir = "D:/Cohesion_Evaluation/Algorithm_Output/TransZero_GS_Results"
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir)
+        
+    with open(os.path.join(output_dir, "TransZero_GS_results_" + args.dataset + ".txt"), "w") as f:
         for i in tqdm(range(query_score.shape[0])):
             query_index = (torch.nonzero(query[i]).squeeze()).reshape(-1)
+            
             selected_candidates = GlobalSearch(query_index.tolist(), query_score[i].tolist()) 
+            # print(f"Identified community for query node: {query[i]}: {selected_candidates}") 
             f.write(f"{query_index.tolist()}\t{selected_candidates}\n")
-            print(f"Query node {query_index.tolist()}: {selected_candidates}")
+            print(f"Query node {query_index.tolist()}, Community size: {len(selected_candidates)}")
         
     end = time.time()
     print("The global search using time: {:.4f}".format(end-start)) 

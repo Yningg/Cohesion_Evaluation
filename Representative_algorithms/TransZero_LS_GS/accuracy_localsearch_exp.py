@@ -1,11 +1,12 @@
 import torch
-from utils import f1_score_calculation, load_query, cosin_similarity, get_gt_legnth, coo_matrix_to_nx_graph_efficient, evaluation
+from utils_exp import load_query, cosin_similarity, coo_matrix_to_nx_graph_efficient, evaluation
 import argparse
 import numpy as np
 from tqdm import tqdm
 from numpy import *
 import time
 from utils import find_all_neighbors_bynx
+import os
 
 def parse_args():
     """
@@ -130,12 +131,8 @@ if __name__ == "__main__":
     query = load_query("D:/Cohesion_Evaluation/Input_Datasets/TransZero_LS_GS_Dataset/", args.dataset, embedding_tensor.shape[0])
 
     # load adj
-    if args.dataset in {"photo", "cs"}:
-        file_path = './dataset/'+args.dataset+'_dgl.pt'
-    elif args.dataset in {"BTW17", "Chicago_COVID", "Crawled_Dataset144", "Crawled_Dataset26"}:
+    if args.dataset in {"BTW17", "Chicago_COVID", "Crawled_Dataset144", "Crawled_Dataset26"}:
         file_path = 'D:/Cohesion_Evaluation/Input_Datasets/TransZero_LS_GS_Dataset/'+args.dataset+'.pt'
-    else:
-        file_path = './dataset/'+args.dataset+'_pyg.pt'
     data_list = torch.load(file_path)
     adj = data_list[0]
 
@@ -154,13 +151,16 @@ if __name__ == "__main__":
     
     print("query_score.shape: ", query_score.shape)
 
+    output_dir = "D:/Cohesion_Evaluation/Algorithm_Output/TransZero_GS_Results"
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir)
 
-    with open("D:/Cohesion_Evaluation/Algorithm_Output/TransZero_LS_Results/TransZero_LS_results_" + args.dataset + ".txt", "w") as f:
+    with open(os.path.join(output_dir, "TransZero_GS_results_" + args.dataset + ".txt"), "w") as f:
         for i in tqdm(range(query_score.shape[0])):
             query_index = (torch.nonzero(query[i]).squeeze()).reshape(-1)
             selected_candidates = mwg_subgraph_heuristic_fast(query_index.tolist(), query_score[i].tolist(), graph)
             f.write(f"{query_index.tolist()}\t{selected_candidates}\n")
-            print(f"Query node {query_index.tolist()}: {selected_candidates}")
+            print(f"Query node {query_index.tolist()}, Community size: {len(selected_candidates)}")
 
     end = time.time()
     print("The local search using time: {:.4f}".format(end-start)) 
