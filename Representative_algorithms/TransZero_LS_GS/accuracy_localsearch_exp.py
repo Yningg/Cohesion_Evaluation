@@ -155,7 +155,7 @@ if __name__ == "__main__":
     print("query_score.shape: ", query_score.shape)
 
 
-    with open("D:/Cohesion_Evaluation/Algorithm_Output/TransZero_LS_Results/TransZero_LS_results" + args.dataset + ".txt", "w") as f:
+    with open("D:/Cohesion_Evaluation/Algorithm_Output/TransZero_LS_Results/TransZero_LS_results_" + args.dataset + ".txt", "w") as f:
         for i in tqdm(range(query_score.shape[0])):
             query_index = (torch.nonzero(query[i]).squeeze()).reshape(-1)
             selected_candidates = mwg_subgraph_heuristic_fast(query_index.tolist(), query_score[i].tolist(), graph)
