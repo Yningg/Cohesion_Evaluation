@@ -21,6 +21,17 @@ def get_query_nodes(query_node_path, dataset_name):
     return query_nodes
 
 
+
+# Build the graph with the original nodes and edges attributes
+def graph_construction(attribute_file):
+    # Read the attribute file and add the attributes to the graph
+    attributed_G = nx.read_edgelist(attribute_file, nodetype=str, data=(('timestamp', str), ('sentiment', str)), create_using=nx.MultiGraph()) # type: ignore
+    
+    print(f"Original graph info: {attributed_G.number_of_nodes()} nodes, {attributed_G.number_of_edges()} edges, density: {nx.density(attributed_G)}")
+
+    return attributed_G
+
+
 """
 Read the network and construct the edge stream and temporal adjacency list
 --> edge stream: {timestamp: [(u, v, timestamp, sentiment)]}
