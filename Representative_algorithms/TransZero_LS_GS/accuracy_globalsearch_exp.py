@@ -96,7 +96,7 @@ if __name__ == "__main__":
     with open(os.path.join(output_dir, "TransZero_GS_results_" + args.dataset + ".txt"), "w") as f:
         for i in tqdm(range(query_score.shape[0])):
             query_index = (torch.nonzero(query[i]).squeeze()).reshape(-1)
-            
+    
             selected_candidates = GlobalSearch(query_index.tolist(), query_score[i].tolist()) 
             # print(f"Identified community for query node: {query[i]}: {selected_candidates}") 
             f.write(f"{query_index.tolist()}\t{selected_candidates}\n")
@@ -105,4 +105,3 @@ if __name__ == "__main__":
     end = time.time()
     print("The global search using time: {:.4f}".format(end-start)) 
     print("The global search using time (one query): {:.4f}".format((end-start)/query_feature.shape[0])) 
-

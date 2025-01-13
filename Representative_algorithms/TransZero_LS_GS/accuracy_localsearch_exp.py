@@ -5,7 +5,7 @@ import numpy as np
 from tqdm import tqdm
 from numpy import *
 import time
-from utils import find_all_neighbors_bynx
+from utils_exp import find_all_neighbors_bynx
 import os
 
 def parse_args():
@@ -132,7 +132,7 @@ if __name__ == "__main__":
 
     # load adj
     if args.dataset in {"BTW17", "Chicago_COVID", "Crawled_Dataset144", "Crawled_Dataset26"}:
-        file_path = 'D:/Cohesion_Evaluation/Input_Datasets/TransZero_LS_GS_Dataset/'+args.dataset+'.pt'
+        file_path = 'D:/Cohesion_Evaluation/Input_Datasets/TransZero_LS_GS_Dataset/' + args.dataset +'.pt'
     data_list = torch.load(file_path)
     adj = data_list[0]
 
@@ -154,15 +154,15 @@ if __name__ == "__main__":
     output_dir = "D:/Cohesion_Evaluation/Algorithm_Output/TransZero_GS_Results"
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
-
+        
     with open(os.path.join(output_dir, "TransZero_GS_results_" + args.dataset + ".txt"), "w") as f:
         for i in tqdm(range(query_score.shape[0])):
             query_index = (torch.nonzero(query[i]).squeeze()).reshape(-1)
+            # selected_candidates = mwg_subgraph_heuristic(query_index.tolist(), query_score[i].tolist(), graph)
             selected_candidates = mwg_subgraph_heuristic_fast(query_index.tolist(), query_score[i].tolist(), graph)
             f.write(f"{query_index.tolist()}\t{selected_candidates}\n")
             print(f"Query node {query_index.tolist()}, Community size: {len(selected_candidates)}")
-
+            
     end = time.time()
     print("The local search using time: {:.4f}".format(end-start)) 
     print("The local search using time (one query): {:.4f}".format((end-start)/query_feature.shape[0])) 
-

@@ -1,0 +1,424 @@
+Namespace(dataset='BTW17', embedding_tensor_name=None, EmbeddingPath='./pretrain_result/', topk=400)
+torch.Size([100, 256]) torch.Size([7721, 256])
+query_score.shape:  torch.Size([100, 7721])
+  0%|                                                                                                                                          | 0/100 [00:00<?, ?it/s]  5%|██████▌                                                                                                                           | 5/100 [00:00<00:01, 47.59it/s] 11%|██████████████▏                                                                                                                  | 11/100 [00:00<00:01, 53.70it/s] 17%|█████████████████████▉                                                                                                           | 17/100 [00:00<00:01, 54.82it/s] 23%|█████████████████████████████▋                                                                                                   | 23/100 [00:00<00:01, 56.72it/s] 30%|██████████████████████████████████████▋                                                                                          | 30/100 [00:00<00:01, 59.93it/s] 36%|██████████████████████████████████████████████▍                                                                                  | 36/100 [00:00<00:01, 57.33it/s] 42%|██████████████████████████████████████████████████████▏                                                                          | 42/100 [00:00<00:01, 56.17it/s] 48%|█████████████████████████████████████████████████████████████▉                                                                   | 48/100 [00:00<00:00, 56.84it/s] 54%|█████████████████████████████████████████████████████████████████████▋                                                           | 54/100 [00:00<00:00, 53.73it/s] 60%|█████████████████████████████████████████████████████████████████████████████▍                                                   | 60/100 [00:01<00:00, 51.78it/s] 67%|██████████████████████████████████████████████████████████████████████████████████████▍                                          | 67/100 [00:01<00:00, 53.78it/s] 74%|███████████████████████████████████████████████████████████████████████████████████████████████▍                                 | 74/100 [00:01<00:00, 55.44it/s] 80%|███████████████████████████████████████████████████████████████████████████████████████████████████████▏                         | 80/100 [00:01<00:00, 56.35it/s] 86%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████▉                  | 86/100 [00:01<00:00, 56.84it/s] 93%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▉         | 93/100 [00:01<00:00, 57.53it/s] 99%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▋ | 99/100 [00:01<00:00, 54.34it/s]100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 100/100 [00:01<00:00, 55.21it/s]
+Query node [4295], Community size: 3860
+Query node [4360], Community size: 3860
+Query node [7312], Community size: 3860
+Query node [7506], Community size: 3860
+Query node [3397], Community size: 3860
+Query node [3244], Community size: 3860
+Query node [7269], Community size: 3860
+Query node [3107], Community size: 3860
+Query node [830], Community size: 1445
+Query node [5047], Community size: 3860
+Query node [1254], Community size: 1447
+Query node [5122], Community size: 3860
+Query node [7555], Community size: 3860
+Query node [1395], Community size: 2895
+Query node [7003], Community size: 3860
+Query node [4327], Community size: 3860
+Query node [33], Community size: 965
+Query node [949], Community size: 1447
+Query node [1966], Community size: 3860
+Query node [4408], Community size: 3860
+Query node [1199], Community size: 965
+Query node [3053], Community size: 3860
+Query node [4445], Community size: 3860
+Query node [1139], Community size: 965
+Query node [1774], Community size: 3860
+Query node [2926], Community size: 3860
+Query node [4784], Community size: 3860
+Query node [6097], Community size: 3860
+Query node [795], Community size: 1416
+Query node [215], Community size: 965
+Query node [3700], Community size: 3860
+Query node [1413], Community size: 3844
+Query node [5475], Community size: 3860
+Query node [877], Community size: 1447
+Query node [2464], Community size: 3860
+Query node [2444], Community size: 3860
+Query node [3272], Community size: 3860
+Query node [6449], Community size: 3860
+Query node [6633], Community size: 3860
+Query node [5513], Community size: 3860
+Query node [7044], Community size: 3860
+Query node [316], Community size: 965
+Query node [2035], Community size: 3860
+Query node [483], Community size: 965
+Query node [5036], Community size: 3860
+Query node [1386], Community size: 1930
+Query node [3304], Community size: 3860
+Query node [5746], Community size: 3860
+Query node [3686], Community size: 3860
+Query node [3457], Community size: 3860
+Query node [5632], Community size: 3860
+Query node [6122], Community size: 3860
+Query node [6827], Community size: 3860
+Query node [5927], Community size: 3860
+Query node [2480], Community size: 3860
+Query node [1622], Community size: 3860
+Query node [2362], Community size: 3860
+Query node [4350], Community size: 3860
+Query node [5373], Community size: 3860
+Query node [4381], Community size: 3860
+Query node [453], Community size: 965
+Query node [6716], Community size: 3860
+Query node [3999], Community size: 3860
+Query node [5641], Community size: 3860
+Query node [1276], Community size: 1447
+Query node [3503], Community size: 3860
+Query node [6997], Community size: 3860
+Query node [1094], Community size: 965
+Query node [7159], Community size: 3860
+Query node [5653], Community size: 3860
+Query node [666], Community size: 965
+Query node [2401], Community size: 3860
+Query node [4678], Community size: 3860
+Query node [3933], Community size: 3860
+Query node [204], Community size: 965
+Query node [2933], Community size: 3860
+Query node [1312], Community size: 1809
+Query node [1696], Community size: 3860
+Query node [1484], Community size: 3860
+Query node [6677], Community size: 3860
+Query node [2745], Community size: 3860
+Query node [4006], Community size: 3860
+Query node [818], Community size: 1431
+Query node [7259], Community size: 3860
+Query node [180], Community size: 965
+Query node [3785], Community size: 3860
+Query node [4], Community size: 965
+Query node [3359], Community size: 3860
+Query node [5892], Community size: 3860
+Query node [5187], Community size: 3860
+Query node [6507], Community size: 3860
+Query node [238], Community size: 965
+Query node [3074], Community size: 3860
+Query node [4389], Community size: 3860
+Query node [6475], Community size: 3860
+Query node [7196], Community size: 3860
+Query node [5872], Community size: 3860
+Query node [3332], Community size: 3860
+Query node [5644], Community size: 3860
+Query node [4608], Community size: 3860
+The global search using time: 1.8915
+The global search using time (one query): 0.0189
+Namespace(dataset='Chicago_COVID', embedding_tensor_name=None, EmbeddingPath='./pretrain_result/', topk=400)
+torch.Size([100, 256]) torch.Size([4917, 256])
+query_score.shape:  torch.Size([100, 4917])
+  0%|                                                                                                                                          | 0/100 [00:00<?, ?it/s] 10%|████████████▉                                                                                                                    | 10/100 [00:00<00:00, 99.17it/s] 22%|████████████████████████████▏                                                                                                   | 22/100 [00:00<00:00, 104.23it/s] 34%|███████████████████████████████████████████▌                                                                                    | 34/100 [00:00<00:00, 111.02it/s] 46%|██████████████████████████████████████████████████████████▉                                                                     | 46/100 [00:00<00:00, 112.73it/s] 60%|████████████████████████████████████████████████████████████████████████████▊                                                   | 60/100 [00:00<00:00, 120.20it/s] 73%|█████████████████████████████████████████████████████████████████████████████████████████████▍                                  | 73/100 [00:00<00:00, 117.75it/s] 85%|████████████████████████████████████████████████████████████████████████████████████████████████████████████▊                   | 85/100 [00:00<00:00, 107.12it/s] 98%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▍  | 98/100 [00:00<00:00, 109.52it/s]100%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 100/100 [00:00<00:00, 111.35it/s]
+Query node [642], Community size: 1075
+Query node [1421], Community size: 2458
+Query node [231], Community size: 921
+Query node [581], Community size: 1075
+Query node [1438], Community size: 2458
+Query node [344], Community size: 921
+Query node [1295], Community size: 2458
+Query node [137], Community size: 921
+Query node [1832], Community size: 2458
+Query node [1509], Community size: 2458
+Query node [907], Community size: 1229
+Query node [1336], Community size: 2458
+Query node [268], Community size: 921
+Query node [794], Community size: 1209
+Query node [562], Community size: 1075
+Query node [1380], Community size: 2458
+Query node [700], Community size: 1075
+Query node [817], Community size: 1229
+Query node [1156], Community size: 1224
+Query node [403], Community size: 921
+Query node [1414], Community size: 2458
+Query node [4828], Community size: 2458
+Query node [2955], Community size: 2458
+Query node [1143], Community size: 1075
+Query node [1059], Community size: 882
+Query node [672], Community size: 1075
+Query node [555], Community size: 1075
+Query node [478], Community size: 921
+Query node [1493], Community size: 2458
+Query node [1422], Community size: 2458
+Query node [713], Community size: 1152
+Query node [1112], Community size: 921
+Query node [1093], Community size: 921
+Query node [312], Community size: 921
+Query node [598], Community size: 1075
+Query node [2050], Community size: 2458
+Query node [380], Community size: 921
+Query node [1107], Community size: 921
+Query node [3851], Community size: 2458
+Query node [157], Community size: 921
+Query node [529], Community size: 1074
+Query node [3302], Community size: 2458
+Query node [961], Community size: 921
+Query node [158], Community size: 921
+Query node [1151], Community size: 1152
+Query node [509], Community size: 1065
+Query node [447], Community size: 921
+Query node [58], Community size: 921
+Query node [1179], Community size: 1229
+Query node [1051], Community size: 614
+Query node [729], Community size: 1152
+Query node [4645], Community size: 2458
+Query node [331], Community size: 921
+Query node [942], Community size: 921
+Query node [486], Community size: 921
+Query node [53], Community size: 921
+Query node [572], Community size: 1075
+Query node [793], Community size: 1209
+Query node [2556], Community size: 2458
+Query node [88], Community size: 921
+Query node [659], Community size: 1075
+Query node [549], Community size: 1075
+Query node [82], Community size: 921
+Query node [547], Community size: 1075
+Query node [1482], Community size: 2458
+Query node [393], Community size: 921
+Query node [841], Community size: 1229
+Query node [2954], Community size: 2458
+Query node [1502], Community size: 2458
+Query node [3635], Community size: 2458
+Query node [327], Community size: 921
+Query node [492], Community size: 921
+Query node [4], Community size: 921
+Query node [621], Community size: 1075
+Query node [789], Community size: 1209
+Query node [2490], Community size: 2458
+Query node [1527], Community size: 2458
+Query node [1387], Community size: 2458
+Query node [1219], Community size: 1843
+Query node [1524], Community size: 2458
+Query node [567], Community size: 1075
+Query node [1397], Community size: 2458
+Query node [1478], Community size: 2458
+Query node [71], Community size: 921
+Query node [3388], Community size: 2458
+Query node [754], Community size: 1152
+Query node [1415], Community size: 2458
+Query node [2080], Community size: 2458
+Query node [963], Community size: 921
+Query node [4167], Community size: 2458
+Query node [975], Community size: 911
+Query node [242], Community size: 921
+Query node [1052], Community size: 882
+Query node [493], Community size: 921
+Query node [661], Community size: 1075
+Query node [254], Community size: 921
+Query node [1147], Community size: 1152
+Query node [1566], Community size: 2458
+Query node [1082], Community size: 921
+Query node [682], Community size: 1075
+The global search using time: 0.9746
+The global search using time (one query): 0.0097
+Namespace(dataset='Crawled_Dataset144', embedding_tensor_name=None, EmbeddingPath='./pretrain_result/', topk=400)
+torch.Size([100, 256]) torch.Size([10388, 256])
+query_score.shape:  torch.Size([100, 10388])
+  0%|                                                                                                                                          | 0/100 [00:00<?, ?it/s]  4%|█████▏                                                                                                                            | 4/100 [00:00<00:02, 36.33it/s]  8%|██████████▍                                                                                                                       | 8/100 [00:00<00:02, 33.71it/s] 13%|████████████████▊                                                                                                                | 13/100 [00:00<00:02, 39.40it/s] 17%|█████████████████████▉                                                                                                           | 17/100 [00:00<00:02, 39.18it/s] 21%|███████████████████████████                                                                                                      | 21/100 [00:00<00:02, 36.47it/s] 25%|████████████████████████████████▎                                                                                                | 25/100 [00:00<00:02, 36.64it/s] 29%|█████████████████████████████████████▍                                                                                           | 29/100 [00:00<00:02, 35.09it/s] 33%|██████████████████████████████████████████▌                                                                                      | 33/100 [00:00<00:01, 34.14it/s] 37%|███████████████████████████████████████████████▋                                                                                 | 37/100 [00:01<00:01, 33.59it/s] 41%|████████████████████████████████████████████████████▉                                                                            | 41/100 [00:01<00:01, 33.14it/s] 45%|██████████████████████████████████████████████████████████                                                                       | 45/100 [00:01<00:01, 32.81it/s] 49%|███████████████████████████████████████████████████████████████▏                                                                 | 49/100 [00:01<00:01, 34.39it/s] 53%|████████████████████████████████████████████████████████████████████▎                                                            | 53/100 [00:01<00:01, 33.40it/s] 57%|█████████████████████████████████████████████████████████████████████████▌                                                       | 57/100 [00:01<00:01, 33.01it/s] 61%|██████████████████████████████████████████████████████████████████████████████▋                                                  | 61/100 [00:01<00:01, 34.50it/s] 65%|███████████████████████████████████████████████████████████████████████████████████▊                                             | 65/100 [00:01<00:01, 33.78it/s] 69%|█████████████████████████████████████████████████████████████████████████████████████████                                        | 69/100 [00:02<00:00, 33.24it/s] 73%|██████████████████████████████████████████████████████████████████████████████████████████████▏                                  | 73/100 [00:02<00:00, 32.68it/s] 77%|███████████████████████████████████████████████████████████████████████████████████████████████████▎                             | 77/100 [00:02<00:00, 34.14it/s] 81%|████████████████████████████████████████████████████████████████████████████████████████████████████████▍                        | 81/100 [00:02<00:00, 33.56it/s] 85%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████▋                   | 85/100 [00:02<00:00, 33.12it/s] 90%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████             | 90/100 [00:02<00:00, 36.34it/s] 94%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▎       | 94/100 [00:02<00:00, 35.01it/s] 98%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▍  | 98/100 [00:02<00:00, 35.75it/s]100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 100/100 [00:02<00:00, 34.58it/s]
+Query node [9949], Community size: 5194
+Query node [6413], Community size: 5194
+Query node [1571], Community size: 2597
+Query node [6589], Community size: 5194
+Query node [9343], Community size: 5194
+Query node [7185], Community size: 5194
+Query node [10302], Community size: 5194
+Query node [6144], Community size: 5194
+Query node [5113], Community size: 5194
+Query node [10014], Community size: 5194
+Query node [1664], Community size: 3895
+Query node [45], Community size: 1216
+Query node [1220], Community size: 1298
+Query node [967], Community size: 1298
+Query node [7365], Community size: 5194
+Query node [2772], Community size: 5194
+Query node [3770], Community size: 5194
+Query node [3511], Community size: 5194
+Query node [1707], Community size: 5194
+Query node [8106], Community size: 5194
+Query node [2064], Community size: 5194
+Query node [5106], Community size: 5194
+Query node [1526], Community size: 2272
+Query node [9304], Community size: 5194
+Query node [8754], Community size: 5194
+Query node [10225], Community size: 5194
+Query node [2152], Community size: 5194
+Query node [2299], Community size: 5194
+Query node [2712], Community size: 5194
+Query node [6987], Community size: 5194
+Query node [4646], Community size: 5194
+Query node [8249], Community size: 5194
+Query node [4013], Community size: 5194
+Query node [7632], Community size: 5194
+Query node [10226], Community size: 5194
+Query node [9810], Community size: 5194
+Query node [3577], Community size: 5194
+Query node [10189], Community size: 5194
+Query node [7148], Community size: 5194
+Query node [6425], Community size: 5194
+Query node [2044], Community size: 5194
+Query node [2595], Community size: 5194
+Query node [7399], Community size: 5194
+Query node [1949], Community size: 5194
+Query node [6065], Community size: 5194
+Query node [1265], Community size: 1298
+Query node [7385], Community size: 5194
+Query node [10299], Community size: 5194
+Query node [5127], Community size: 5194
+Query node [2974], Community size: 5194
+Query node [9042], Community size: 5194
+Query node [9050], Community size: 5194
+Query node [7338], Community size: 5194
+Query node [8072], Community size: 5194
+Query node [9421], Community size: 5194
+Query node [6726], Community size: 5194
+Query node [7807], Community size: 5194
+Query node [4903], Community size: 5194
+Query node [6677], Community size: 5194
+Query node [4239], Community size: 5194
+Query node [1169], Community size: 1298
+Query node [10196], Community size: 5194
+Query node [9215], Community size: 5194
+Query node [7495], Community size: 5194
+Query node [3786], Community size: 5194
+Query node [7620], Community size: 5194
+Query node [8221], Community size: 5194
+Query node [10185], Community size: 5194
+Query node [4121], Community size: 5194
+Query node [6165], Community size: 5194
+Query node [7874], Community size: 5194
+Query node [6898], Community size: 5194
+Query node [7811], Community size: 5194
+Query node [7947], Community size: 5194
+Query node [6452], Community size: 5194
+Query node [1236], Community size: 1298
+Query node [9460], Community size: 5194
+Query node [4105], Community size: 5194
+Query node [2805], Community size: 5194
+Query node [8654], Community size: 5194
+Query node [9280], Community size: 5194
+Query node [2174], Community size: 5194
+Query node [6720], Community size: 5194
+Query node [2204], Community size: 5194
+Query node [9769], Community size: 5194
+Query node [3369], Community size: 5194
+Query node [477], Community size: 1298
+Query node [6899], Community size: 5194
+Query node [1397], Community size: 1298
+Query node [1683], Community size: 5031
+Query node [7790], Community size: 5194
+Query node [5265], Community size: 5194
+Query node [8902], Community size: 5194
+Query node [7439], Community size: 5194
+Query node [8939], Community size: 5194
+Query node [906], Community size: 1298
+Query node [2214], Community size: 5194
+Query node [3020], Community size: 5194
+Query node [7376], Community size: 5194
+Query node [6273], Community size: 5194
+The global search using time: 3.0123
+The global search using time (one query): 0.0301
+Namespace(dataset='Crawled_Dataset26', embedding_tensor_name=None, EmbeddingPath='./pretrain_result/', topk=400)
+torch.Size([100, 256]) torch.Size([21263, 256])
+query_score.shape:  torch.Size([100, 21263])
+  0%|                                                                                                                                          | 0/100 [00:00<?, ?it/s]  3%|███▉                                                                                                                              | 3/100 [00:00<00:03, 29.38it/s]  7%|█████████                                                                                                                         | 7/100 [00:00<00:03, 26.50it/s] 10%|████████████▉                                                                                                                    | 10/100 [00:00<00:03, 22.72it/s] 13%|████████████████▊                                                                                                                | 13/100 [00:00<00:03, 24.94it/s] 16%|████████████████████▋                                                                                                            | 16/100 [00:00<00:03, 24.44it/s] 19%|████████████████████████▌                                                                                                        | 19/100 [00:00<00:03, 25.97it/s] 22%|████████████████████████████▍                                                                                                    | 22/100 [00:00<00:03, 25.44it/s] 26%|█████████████████████████████████▌                                                                                               | 26/100 [00:01<00:02, 27.00it/s] 30%|██████████████████████████████████████▋                                                                                          | 30/100 [00:01<00:02, 27.97it/s] 33%|██████████████████████████████████████████▌                                                                                      | 33/100 [00:01<00:02, 26.40it/s] 36%|██████████████████████████████████████████████▍                                                                                  | 36/100 [00:01<00:02, 25.56it/s] 39%|██████████████████████████████████████████████████▎                                                                              | 39/100 [00:01<00:02, 25.01it/s] 42%|██████████████████████████████████████████████████████▏                                                                          | 42/100 [00:01<00:02, 23.12it/s] 45%|██████████████████████████████████████████████████████████                                                                       | 45/100 [00:01<00:02, 24.78it/s] 48%|█████████████████████████████████████████████████████████████▉                                                                   | 48/100 [00:01<00:02, 24.19it/s] 51%|█████████████████████████████████████████████████████████████████▊                                                               | 51/100 [00:02<00:01, 24.61it/s] 54%|█████████████████████████████████████████████████████████████████████▋                                                           | 54/100 [00:02<00:01, 26.00it/s] 57%|█████████████████████████████████████████████████████████████████████████▌                                                       | 57/100 [00:02<00:01, 27.07it/s] 60%|█████████████████████████████████████████████████████████████████████████████▍                                                   | 60/100 [00:02<00:01, 27.86it/s] 63%|█████████████████████████████████████████████████████████████████████████████████▎                                               | 63/100 [00:02<00:01, 26.42it/s] 66%|█████████████████████████████████████████████████████████████████████████████████████▏                                           | 66/100 [00:02<00:01, 27.28it/s] 69%|█████████████████████████████████████████████████████████████████████████████████████████                                        | 69/100 [00:02<00:01, 26.98it/s] 72%|████████████████████████████████████████████████████████████████████████████████████████████▉                                    | 72/100 [00:02<00:01, 23.83it/s] 75%|████████████████████████████████████████████████████████████████████████████████████████████████▊                                | 75/100 [00:02<00:01, 23.52it/s] 78%|████████████████████████████████████████████████████████████████████████████████████████████████████▌                            | 78/100 [00:03<00:00, 25.06it/s] 81%|████████████████████████████████████████████████████████████████████████████████████████████████████████▍                        | 81/100 [00:03<00:00, 26.35it/s] 84%|████████████████████████████████████████████████████████████████████████████████████████████████████████████▎                    | 84/100 [00:03<00:00, 27.25it/s] 87%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████▏                | 87/100 [00:03<00:00, 27.75it/s] 91%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▍           | 91/100 [00:03<00:00, 26.86it/s] 94%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▎       | 94/100 [00:03<00:00, 25.64it/s] 97%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▏   | 97/100 [00:03<00:00, 23.54it/s]100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 100/100 [00:03<00:00, 23.42it/s]100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 100/100 [00:03<00:00, 25.40it/s]
+Query node [7618], Community size: 5000
+Query node [4968], Community size: 5000
+Query node [20970], Community size: 5000
+Query node [11316], Community size: 5000
+Query node [20163], Community size: 4843
+Query node [19362], Community size: 4843
+Query node [12003], Community size: 9375
+Query node [5936], Community size: 5000
+Query node [19644], Community size: 10000
+Query node [4698], Community size: 10000
+Query node [9767], Community size: 5000
+Query node [9174], Community size: 5000
+Query node [16378], Community size: 5000
+Query node [17883], Community size: 5000
+Query node [11453], Community size: 9375
+Query node [8081], Community size: 5000
+Query node [8580], Community size: 5000
+Query node [14951], Community size: 5000
+Query node [964], Community size: 4921
+Query node [17517], Community size: 8750
+Query node [6362], Community size: 5000
+Query node [19075], Community size: 4833
+Query node [14585], Community size: 4843
+Query node [19827], Community size: 4960
+Query node [1656], Community size: 5000
+Query node [19728], Community size: 5000
+Query node [19868], Community size: 4921
+Query node [6475], Community size: 5000
+Query node [8541], Community size: 5000
+Query node [10349], Community size: 5000
+Query node [926], Community size: 4921
+Query node [1358], Community size: 5000
+Query node [10337], Community size: 9375
+Query node [17444], Community size: 5000
+Query node [8260], Community size: 9375
+Query node [13763], Community size: 5000
+Query node [12569], Community size: 5000
+Query node [9166], Community size: 5000
+Query node [6304], Community size: 9375
+Query node [10558], Community size: 9375
+Query node [11523], Community size: 9375
+Query node [12832], Community size: 5000
+Query node [3073], Community size: 5000
+Query node [5974], Community size: 5000
+Query node [1595], Community size: 4960
+Query node [14180], Community size: 4843
+Query node [7624], Community size: 9375
+Query node [21251], Community size: 5000
+Query node [6643], Community size: 5000
+Query node [6279], Community size: 5000
+Query node [3304], Community size: 7500
+Query node [8533], Community size: 5000
+Query node [14566], Community size: 4843
+Query node [11972], Community size: 5000
+Query node [20356], Community size: 4921
+Query node [12557], Community size: 5000
+Query node [17184], Community size: 5000
+Query node [12678], Community size: 5000
+Query node [20308], Community size: 5000
+Query node [2920], Community size: 5000
+Query node [17751], Community size: 5000
+Query node [9021], Community size: 5000
+Query node [12699], Community size: 9375
+Query node [9839], Community size: 5000
+Query node [10432], Community size: 5000
+Query node [20366], Community size: 5000
+Query node [13866], Community size: 5000
+Query node [19324], Community size: 5000
+Query node [16174], Community size: 6250
+Query node [4977], Community size: 10000
+Query node [4253], Community size: 5000
+Query node [1093], Community size: 9921
+Query node [16194], Community size: 5000
+Query node [9937], Community size: 5000
+Query node [13568], Community size: 8750
+Query node [17767], Community size: 5000
+Query node [13148], Community size: 5000
+Query node [4863], Community size: 5000
+Query node [11954], Community size: 5000
+Query node [15660], Community size: 4921
+Query node [11714], Community size: 5000
+Query node [11436], Community size: 5000
+Query node [5152], Community size: 5000
+Query node [13950], Community size: 5000
+Query node [10549], Community size: 5000
+Query node [4303], Community size: 5000
+Query node [19782], Community size: 4687
+Query node [1613], Community size: 4980
+Query node [10996], Community size: 5000
+Query node [18926], Community size: 4822
+Query node [4115], Community size: 9684
+Query node [16853], Community size: 10000
+Query node [13829], Community size: 5000
+Query node [16447], Community size: 5000
+Query node [15895], Community size: 4921
+Query node [10694], Community size: 9375
+Query node [13989], Community size: 9375
+Query node [3610], Community size: 5000
+Query node [686], Community size: 9687
+Query node [1913], Community size: 5000
+The global search using time: 4.1768
+The global search using time (one query): 0.0418
