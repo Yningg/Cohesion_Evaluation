@@ -1,0 +1,155 @@
+/root/TransZero/utils.py:101: UserWarning: Casting complex values to real discards the imaginary part (Triggered internally at ../aten/src/ATen/native/Copy.cpp:299.)
+  lap_pos_enc = torch.from_numpy(EigVec[:,1:pos_enc_dim+1]).float()
+/root/TransZero/utils.py:271: UserWarning: torch.sparse.SparseTensor(indices, values, shape, *, device=) is deprecated.  Please use torch.sparse_coo_tensor(indices, values, shape, dtype=, device=). (Triggered internally at ../torch/csrc/utils/tensor_new.cpp:605.)
+  adj = torch.sparse.LongTensor(torch.LongTensor([adj.row.tolist(), adj.col.tolist()]),
+/root/TransZero/link_pretrain_exp.py:57: DeprecationWarning: Calling np.sum(generator) is deprecated, and in the future will give a different result. Use np.sum(np.fromiter(generator)) or the python sum builtin instead.
+  print('total params:', sum(p.numel() for p in model.parameters()))
+True
+Namespace(name=None, dataset='Crawled_Dataset144', device=0, seed=0, hops=5, pe_dim=5, hidden_dim=128, ffn_dim=64, n_layers=1, n_heads=8, dropout=0.1, attention_dropout=0.1, readout='mean', alpha=0.1, batch_size=10388, group_epoch_gap=20, epochs=100, tot_updates=1000, warmup_updates=400, peak_lr=0.001, end_lr=0.0001, weight_decay=1e-05, patience=50, save_path='./model/', model_name='Crawled_Dataset144', embedding_path='./pretrain_result/')
+/root/Cohesion_Evaluation/Input_Datasets/TransZero_LS_GS_Dataset/Crawled_Dataset144.pt
+Loading....
+<class 'torch.Tensor'> <class 'torch.Tensor'>
+feature process time: 0.4902s
+starting transformer to coo
+start mini batch processing
+start mini batch: adj of each chunks
+start mini batch: minus adj of each chunks
+start mini batch: back to torch coo adj
+start mini batch: back to torch coo minus adj
+10388 10388
+adj process time: 28.2719s
+PretrainModel(
+  (Linear1): Linear(in_features=6, out_features=128, bias=True)
+  (encoder): TransformerBlock(
+    (att_embeddings_nope): Linear(in_features=6, out_features=128, bias=True)
+    (layers): ModuleList(
+      (0): EncoderLayer(
+        (self_attention_norm): LayerNorm((128,), eps=1e-05, elementwise_affine=True)
+        (self_attention): MultiHeadAttention(
+          (linear_q): Linear(in_features=128, out_features=128, bias=True)
+          (linear_k): Linear(in_features=128, out_features=128, bias=True)
+          (linear_v): Linear(in_features=128, out_features=128, bias=True)
+          (att_dropout): Dropout(p=0.1, inplace=False)
+          (output_layer): Linear(in_features=128, out_features=128, bias=True)
+        )
+        (self_attention_dropout): Dropout(p=0.1, inplace=False)
+        (ffn_norm): LayerNorm((128,), eps=1e-05, elementwise_affine=True)
+        (ffn): FeedForwardNetwork(
+          (layer1): Linear(in_features=128, out_features=256, bias=True)
+          (gelu): GELU(approximate='none')
+          (layer2): Linear(in_features=256, out_features=128, bias=True)
+        )
+        (ffn_dropout): Dropout(p=0.1, inplace=False)
+      )
+    )
+    (final_ln): LayerNorm((128,), eps=1e-05, elementwise_affine=True)
+    (out_proj): Linear(in_features=128, out_features=64, bias=True)
+    (attn_layer): Linear(in_features=256, out_features=1, bias=True)
+  )
+  (marginloss): MarginRankingLoss()
+)
+total params: 143042
+starting training...
+Epoch: 0001 loss_train: 13.7806
+Epoch: 0002 loss_train: 13.7806
+Epoch: 0003 loss_train: 13.7799
+Epoch: 0004 loss_train: 13.7796
+Epoch: 0005 loss_train: 13.7790
+Epoch: 0006 loss_train: 13.7786
+Epoch: 0007 loss_train: 13.7774
+Epoch: 0008 loss_train: 13.7762
+Epoch: 0009 loss_train: 13.7751
+Epoch: 0010 loss_train: 13.7735
+Epoch: 0011 loss_train: 13.7724
+Epoch: 0012 loss_train: 13.7704
+Epoch: 0013 loss_train: 13.7684
+Epoch: 0014 loss_train: 13.7660
+Epoch: 0015 loss_train: 13.7638
+Epoch: 0016 loss_train: 13.7619
+Epoch: 0017 loss_train: 13.7595
+Epoch: 0018 loss_train: 13.7562
+Epoch: 0019 loss_train: 13.7538
+Epoch: 0020 loss_train: 13.7505
+Epoch: 0021 loss_train: 13.7471
+Epoch: 0022 loss_train: 13.7437
+Epoch: 0023 loss_train: 13.7400
+Epoch: 0024 loss_train: 13.7357
+Epoch: 0025 loss_train: 13.7318
+Epoch: 0026 loss_train: 13.7277
+Epoch: 0027 loss_train: 13.7235
+Epoch: 0028 loss_train: 13.7178
+Epoch: 0029 loss_train: 13.7135
+Epoch: 0030 loss_train: 13.7080
+Epoch: 0031 loss_train: 13.7015
+Epoch: 0032 loss_train: 13.6961
+Epoch: 0033 loss_train: 13.6904
+Epoch: 0034 loss_train: 13.6836
+Epoch: 0035 loss_train: 13.6766
+Epoch: 0036 loss_train: 13.6698
+Epoch: 0037 loss_train: 13.6623
+Epoch: 0038 loss_train: 13.6547
+Epoch: 0039 loss_train: 13.6465
+Epoch: 0040 loss_train: 13.6366
+Epoch: 0041 loss_train: 13.6284
+Epoch: 0042 loss_train: 13.6187
+Epoch: 0043 loss_train: 13.6085
+Epoch: 0044 loss_train: 13.5976
+Epoch: 0045 loss_train: 13.5863
+Epoch: 0046 loss_train: 13.5739
+Epoch: 0047 loss_train: 13.5622
+Epoch: 0048 loss_train: 13.5498
+Epoch: 0049 loss_train: 13.5345
+Epoch: 0050 loss_train: 13.5197
+Epoch: 0051 loss_train: 13.5038
+Epoch: 0052 loss_train: 13.4893
+Epoch: 0053 loss_train: 13.4704
+Epoch: 0054 loss_train: 13.4520
+Epoch: 0055 loss_train: 13.4332
+Epoch: 0056 loss_train: 13.4118
+Epoch: 0057 loss_train: 13.3916
+Epoch: 0058 loss_train: 13.3678
+Epoch: 0059 loss_train: 13.3437
+Epoch: 0060 loss_train: 13.3174
+Epoch: 0061 loss_train: 13.2903
+Epoch: 0062 loss_train: 13.2625
+Epoch: 0063 loss_train: 13.2324
+Epoch: 0064 loss_train: 13.1974
+Epoch: 0065 loss_train: 13.1637
+Epoch: 0066 loss_train: 13.1282
+Epoch: 0067 loss_train: 13.0908
+Epoch: 0068 loss_train: 13.0520
+Epoch: 0069 loss_train: 13.0090
+Epoch: 0070 loss_train: 12.9608
+Epoch: 0071 loss_train: 12.9128
+Epoch: 0072 loss_train: 12.8655
+Epoch: 0073 loss_train: 12.8117
+Epoch: 0074 loss_train: 12.7552
+Epoch: 0075 loss_train: 12.6976
+Epoch: 0076 loss_train: 12.6321
+Epoch: 0077 loss_train: 12.5657
+Epoch: 0078 loss_train: 12.4979
+Epoch: 0079 loss_train: 12.4278
+Epoch: 0080 loss_train: 12.3490
+Epoch: 0081 loss_train: 12.2599
+Epoch: 0082 loss_train: 12.1771
+Epoch: 0083 loss_train: 12.0811
+Epoch: 0084 loss_train: 11.9843
+Epoch: 0085 loss_train: 11.8827
+Epoch: 0086 loss_train: 11.7775
+Epoch: 0087 loss_train: 11.6602
+Epoch: 0088 loss_train: 11.5431
+Epoch: 0089 loss_train: 11.4098
+Epoch: 0090 loss_train: 11.2831
+Epoch: 0091 loss_train: 11.1442
+Epoch: 0092 loss_train: 10.9877
+Epoch: 0093 loss_train: 10.8365
+Epoch: 0094 loss_train: 10.6786
+Epoch: 0095 loss_train: 10.5070
+Epoch: 0096 loss_train: 10.3271
+Epoch: 0097 loss_train: 10.1361
+Epoch: 0098 loss_train: 9.9280
+Epoch: 0099 loss_train: 9.7309
+Epoch: 0100 loss_train: 9.5105
+Optimization Finished!
+Train time: 24.4667s
+Start Save Model...

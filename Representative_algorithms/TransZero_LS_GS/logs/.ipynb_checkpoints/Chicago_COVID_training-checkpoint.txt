@@ -1,0 +1,157 @@
+/root/TransZero/utils.py:101: UserWarning: Casting complex values to real discards the imaginary part (Triggered internally at ../aten/src/ATen/native/Copy.cpp:299.)
+  lap_pos_enc = torch.from_numpy(EigVec[:,1:pos_enc_dim+1]).float()
+/root/TransZero/utils.py:136: UserWarning: Sparse CSR tensor support is in beta state. If you miss a functionality in the sparse tensor support, please submit a feature request to https://github.com/pytorch/pytorch/issues. (Triggered internally at ../aten/src/ATen/SparseCsrTensorImpl.cpp:53.)
+  adj_current_hop = torch.matmul(adj_current_hop, adj)
+/root/TransZero/utils.py:271: UserWarning: torch.sparse.SparseTensor(indices, values, shape, *, device=) is deprecated.  Please use torch.sparse_coo_tensor(indices, values, shape, dtype=, device=). (Triggered internally at ../torch/csrc/utils/tensor_new.cpp:605.)
+  adj = torch.sparse.LongTensor(torch.LongTensor([adj.row.tolist(), adj.col.tolist()]),
+/root/TransZero/link_pretrain_exp.py:57: DeprecationWarning: Calling np.sum(generator) is deprecated, and in the future will give a different result. Use np.sum(np.fromiter(generator)) or the python sum builtin instead.
+  print('total params:', sum(p.numel() for p in model.parameters()))
+True
+Namespace(name=None, dataset='Chicago_COVID', device=0, seed=0, hops=5, pe_dim=5, hidden_dim=128, ffn_dim=64, n_layers=1, n_heads=8, dropout=0.1, attention_dropout=0.1, readout='mean', alpha=0.1, batch_size=4971, group_epoch_gap=20, epochs=100, tot_updates=1000, warmup_updates=400, peak_lr=0.001, end_lr=0.0001, weight_decay=1e-05, patience=50, save_path='./model/', model_name='Chicago_COVID', embedding_path='./pretrain_result/')
+/root/Cohesion_Evaluation/Input_Datasets/TransZero_LS_GS_Dataset/Chicago_COVID.pt
+Loading....
+<class 'torch.Tensor'> <class 'torch.Tensor'>
+feature process time: 8.5988s
+starting transformer to coo
+start mini batch processing
+start mini batch: adj of each chunks
+start mini batch: minus adj of each chunks
+start mini batch: back to torch coo adj
+start mini batch: back to torch coo minus adj
+4917 4917
+adj process time: 6.3437s
+PretrainModel(
+  (Linear1): Linear(in_features=6, out_features=128, bias=True)
+  (encoder): TransformerBlock(
+    (att_embeddings_nope): Linear(in_features=6, out_features=128, bias=True)
+    (layers): ModuleList(
+      (0): EncoderLayer(
+        (self_attention_norm): LayerNorm((128,), eps=1e-05, elementwise_affine=True)
+        (self_attention): MultiHeadAttention(
+          (linear_q): Linear(in_features=128, out_features=128, bias=True)
+          (linear_k): Linear(in_features=128, out_features=128, bias=True)
+          (linear_v): Linear(in_features=128, out_features=128, bias=True)
+          (att_dropout): Dropout(p=0.1, inplace=False)
+          (output_layer): Linear(in_features=128, out_features=128, bias=True)
+        )
+        (self_attention_dropout): Dropout(p=0.1, inplace=False)
+        (ffn_norm): LayerNorm((128,), eps=1e-05, elementwise_affine=True)
+        (ffn): FeedForwardNetwork(
+          (layer1): Linear(in_features=128, out_features=256, bias=True)
+          (gelu): GELU(approximate='none')
+          (layer2): Linear(in_features=256, out_features=128, bias=True)
+        )
+        (ffn_dropout): Dropout(p=0.1, inplace=False)
+      )
+    )
+    (final_ln): LayerNorm((128,), eps=1e-05, elementwise_affine=True)
+    (out_proj): Linear(in_features=128, out_features=64, bias=True)
+    (attn_layer): Linear(in_features=256, out_features=1, bias=True)
+  )
+  (marginloss): MarginRankingLoss()
+)
+total params: 143042
+starting training...
+Epoch: 0001 loss_train: 13.7620
+Epoch: 0002 loss_train: 13.7619
+Epoch: 0003 loss_train: 13.7624
+Epoch: 0004 loss_train: 13.7615
+Epoch: 0005 loss_train: 13.7604
+Epoch: 0006 loss_train: 13.7598
+Epoch: 0007 loss_train: 13.7589
+Epoch: 0008 loss_train: 13.7572
+Epoch: 0009 loss_train: 13.7556
+Epoch: 0010 loss_train: 13.7540
+Epoch: 0011 loss_train: 13.7515
+Epoch: 0012 loss_train: 13.7500
+Epoch: 0013 loss_train: 13.7467
+Epoch: 0014 loss_train: 13.7437
+Epoch: 0015 loss_train: 13.7411
+Epoch: 0016 loss_train: 13.7383
+Epoch: 0017 loss_train: 13.7347
+Epoch: 0018 loss_train: 13.7313
+Epoch: 0019 loss_train: 13.7273
+Epoch: 0020 loss_train: 13.7227
+Epoch: 0021 loss_train: 13.7192
+Epoch: 0022 loss_train: 13.7140
+Epoch: 0023 loss_train: 13.7093
+Epoch: 0024 loss_train: 13.7038
+Epoch: 0025 loss_train: 13.6987
+Epoch: 0026 loss_train: 13.6915
+Epoch: 0027 loss_train: 13.6853
+Epoch: 0028 loss_train: 13.6788
+Epoch: 0029 loss_train: 13.6713
+Epoch: 0030 loss_train: 13.6641
+Epoch: 0031 loss_train: 13.6558
+Epoch: 0032 loss_train: 13.6473
+Epoch: 0033 loss_train: 13.6396
+Epoch: 0034 loss_train: 13.6300
+Epoch: 0035 loss_train: 13.6206
+Epoch: 0036 loss_train: 13.6096
+Epoch: 0037 loss_train: 13.6000
+Epoch: 0038 loss_train: 13.5875
+Epoch: 0039 loss_train: 13.5755
+Epoch: 0040 loss_train: 13.5619
+Epoch: 0041 loss_train: 13.5476
+Epoch: 0042 loss_train: 13.5351
+Epoch: 0043 loss_train: 13.5191
+Epoch: 0044 loss_train: 13.5019
+Epoch: 0045 loss_train: 13.4840
+Epoch: 0046 loss_train: 13.4662
+Epoch: 0047 loss_train: 13.4452
+Epoch: 0048 loss_train: 13.4271
+Epoch: 0049 loss_train: 13.4024
+Epoch: 0050 loss_train: 13.3790
+Epoch: 0051 loss_train: 13.3528
+Epoch: 0052 loss_train: 13.3259
+Epoch: 0053 loss_train: 13.2988
+Epoch: 0054 loss_train: 13.2646
+Epoch: 0055 loss_train: 13.2349
+Epoch: 0056 loss_train: 13.2018
+Epoch: 0057 loss_train: 13.1635
+Epoch: 0058 loss_train: 13.1272
+Epoch: 0059 loss_train: 13.0845
+Epoch: 0060 loss_train: 13.0394
+Epoch: 0061 loss_train: 12.9949
+Epoch: 0062 loss_train: 12.9478
+Epoch: 0063 loss_train: 12.8932
+Epoch: 0064 loss_train: 12.8385
+Epoch: 0065 loss_train: 12.7796
+Epoch: 0066 loss_train: 12.7179
+Epoch: 0067 loss_train: 12.6476
+Epoch: 0068 loss_train: 12.5791
+Epoch: 0069 loss_train: 12.5044
+Epoch: 0070 loss_train: 12.4343
+Epoch: 0071 loss_train: 12.3420
+Epoch: 0072 loss_train: 12.2651
+Epoch: 0073 loss_train: 12.1623
+Epoch: 0074 loss_train: 12.0636
+Epoch: 0075 loss_train: 11.9659
+Epoch: 0076 loss_train: 11.8594
+Epoch: 0077 loss_train: 11.7452
+Epoch: 0078 loss_train: 11.6219
+Epoch: 0079 loss_train: 11.5088
+Epoch: 0080 loss_train: 11.3722
+Epoch: 0081 loss_train: 11.2339
+Epoch: 0082 loss_train: 11.0825
+Epoch: 0083 loss_train: 10.9279
+Epoch: 0084 loss_train: 10.7788
+Epoch: 0085 loss_train: 10.6108
+Epoch: 0086 loss_train: 10.4226
+Epoch: 0087 loss_train: 10.2479
+Epoch: 0088 loss_train: 10.0535
+Epoch: 0089 loss_train: 9.8456
+Epoch: 0090 loss_train: 9.6396
+Epoch: 0091 loss_train: 9.4261
+Epoch: 0092 loss_train: 9.2069
+Epoch: 0093 loss_train: 8.9585
+Epoch: 0094 loss_train: 8.7186
+Epoch: 0095 loss_train: 8.4674
+Epoch: 0096 loss_train: 8.2043
+Epoch: 0097 loss_train: 7.9370
+Epoch: 0098 loss_train: 7.6747
+Epoch: 0099 loss_train: 7.3759
+Epoch: 0100 loss_train: 7.0549
+Optimization Finished!
+Train time: 15.5240s
+Start Save Model...
