@@ -96,7 +96,7 @@ def process_results(algorithm, dataset, results_dir, output_dir, decay_method, v
         results = gf.process_ALS_CRC_I2ACSM_results(result_file)
     elif algorithm in ["CSD", "ST-Exa", "Repeeling"]:
         results = gf.process_CSD_STExa_Repeeling_results(result_file, node_mapping)
-    elif algorithm in ["TransZero_LS"]:
+    elif algorithm in ["TransZero_LS", "TransZero_GS"]:
         results = gf.process_TransZero_results(result_file, node_mapping)
 
     # Compose the output file name
@@ -161,7 +161,7 @@ if __name__ == "__main__":
     algo_results_dir = "D:/Cohesion_Evaluation/Algorithm_Output/"
     cohesiveness_dir = "D:/Cohesion_Evaluation/Cohesiveness_Output/"
 
-    algo_list =["ALS", "WCF-CRC", "CSD", "ST-Exa", "Repeeling", "I2ACSM", "TransZero_LS"]
+    algo_list =["ALS", "WCF-CRC", "CSD", "ST-Exa", "Repeeling", "I2ACSM", "TransZero_LS", "TransZero_GS"]
     njobs = -1
 
     for algorithm in algo_list:
