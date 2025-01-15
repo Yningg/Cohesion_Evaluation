@@ -178,4 +178,4 @@ def cohesiveness_dim(edge_stream, tadj_list, edge_substream, tadj_sublist, t_cur
     CED_avg = np.mean(CED_list)
     GIP, GID = GIS(tadj_sublist, N)
 
-    return [EI_avg, SIT_avg, CED_avg, GIP, GID]
+    return [float(EI_avg), float(SIT_avg), float(CED_avg), GIP, GID]
