@@ -1,5 +1,5 @@
 """
-This script is used to extract the coheisveness data in each dataset from each algo and plot the results
+This script is used to extract the cohesiveness data in each dataset from each algo and plot the results
 """
 
 import ast
@@ -12,7 +12,7 @@ import matplotlib.pyplot as plt
 """
 Organize dataset results in a dictionary
 1. Each dataset contains a dictionary
-2. For each daatset dict, the key is (algo name, lambda/mu, and lambda/mu value), and the value being a list of two lists
+2. For each dataset dict, the key is (algo name, lambda/mu, and lambda/mu value), and the value being a list of two lists
 """
 
 
