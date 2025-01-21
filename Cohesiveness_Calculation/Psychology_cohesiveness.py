@@ -98,7 +98,8 @@ def process_results(algorithm, dataset, results_dir, output_dir, decay_method, v
         results = gf.process_CSD_STExa_Repeeling_results(result_file, node_mapping)
     elif algorithm in ["TransZero_LS", "TransZero_GS"]:
         results = gf.process_TransZero_results(result_file, node_mapping)
-
+    print("Sucessfully load the algorithm results!")
+    
     # Compose the output file name
     output_file = output_dir + algorithm + "_results_" + dataset + "_" + decay_method + "_" + str(value) + ".txt"
 
@@ -124,6 +125,7 @@ def process_results(algorithm, dataset, results_dir, output_dir, decay_method, v
     
     with open(output_file, 'a') as f:
         f.writelines(cohesiveness_results)
+    print(f"Sucessfully write {output_file}!")
 
 
 
@@ -137,6 +139,8 @@ def cohesiveness_calculation(algorithm, dataset_list, njobs):
     algo_result_dir = algo_results_dir + algorithm + "_Results/"
     # Directory to store the psychology-informed cohesiveness results
     algo_cohesiveness_dir = cohesiveness_dir + algorithm + "_Results/"
+    if not os.path.exists(algo_cohesiveness_dir):
+        os.makedirs(algo_cohesiveness_dir)
 
     # Define the tasks to be executed in parallel
     tasks = []
@@ -153,7 +157,6 @@ def cohesiveness_calculation(algorithm, dataset_list, njobs):
 
     # Execute the tasks in parallel
     Parallel(n_jobs=njobs)(delayed(process_results)(*task) for task in tasks)
-
 
 if __name__ == "__main__":
     attribute_dir = "D:/Cohesion_Evaluation/Original_Datasets/Preprocessed_Datasets/"
