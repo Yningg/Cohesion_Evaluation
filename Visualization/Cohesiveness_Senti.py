@@ -73,7 +73,7 @@ def load_vader_results(dataset, condense_result_dir, algo_list):
 def draw_graphs(dataset_llama_results, dataset_vader_results, dataset_label, algo_list, algo_label_list, color_list, hatch_list, threshold, font_size, CED_y_min, CED_y_max, CED_y_num):
     for measure, measure_idx in measure_label.items():
 
-        fig, ax = plt.subplots(figsize=(9, 5))
+        fig, ax = plt.subplots(figsize=(10, 6))
 
         # Prepare data for each measure
         avg_data = []
@@ -135,17 +135,17 @@ def draw_graphs(dataset_llama_results, dataset_vader_results, dataset_label, alg
         ax.set_ylabel(measure, fontsize=font_size)
 
         # Add legend on the upper center, two rows
-        ax.legend(loc='upper center', bbox_to_anchor=(0.5, 1.27), ncol=4, fontsize=16, columnspacing=0.5)
+        ax.legend(loc='upper center', bbox_to_anchor=(0.5, 1.32), ncol=4, fontsize=21, handlelength=0.9, handletextpad=0.6, columnspacing=0.5)
 
         # Adjust layout
         plt.tight_layout(rect=[0, 0, 1, 1]) # type: ignore
 
         # Save the figure
         save_path = "D:/Cohesion_Evaluation/Figures/Cohesiveness_Senti/"
-        plt.savefig(f"{save_path}{dataset}_{measure}_senti.png")
+        plt.savefig(f"{save_path}{dataset}_{measure}_senti.png", dpi=300, bbox_inches='tight')
 
         # Show the figure
-        plt.show()
+        # plt.show()
 
 if __name__ == "__main__":
     condense_result_dir = "D:/Cohesion_Evaluation/Cohesiveness_Output/"
@@ -169,7 +169,7 @@ if __name__ == "__main__":
 
     dataset_list = ["BTW17", "Chicago_COVID", "Crawled_Dataset144", "Crawled_Dataset26"]
 
-    font_size = 19
+    font_size = 25
     llama_threshold = 1e-9
     # Set the font family to Times New Roman
     plt.rcParams['font.family'] = 'arial'
