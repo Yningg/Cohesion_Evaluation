@@ -3,10 +3,10 @@ This script is used to extract the cohesiveness data in each dataset from each a
 """
 
 import ast
-from audioop import avg
 import os
 import numpy as np
 import matplotlib.pyplot as plt
+from matplotlib import rcParams
 
 
 """
@@ -67,7 +67,7 @@ if __name__ == "__main__":
     hatch_sublist = ['/', '\\', '|', '-', 'x','.']
 
     
-    font_size = 19
+    font_size = 25
     lambda_value = 0.0001
     # Set the font family to Times New Roman
     plt.rcParams['font.family'] = 'arial'
@@ -143,14 +143,15 @@ if __name__ == "__main__":
         ax.set_ylabel(measure, fontsize=font_size)
 
         # Add legend on the upper center, two rows
-        ax.legend(loc='upper center', bbox_to_anchor=(0.5, 1.22), ncol=4, fontsize=16, columnspacing=0.5)
+        rcParams['legend.borderaxespad'] = 0.3
+        ax.legend(loc='upper center', bbox_to_anchor=(0.5, 1.31), ncol=4, fontsize=19, handlelength=0.9, handletextpad=0.6, columnspacing=0.5)
 
         # Adjust layout
         plt.tight_layout(rect=[0, 0, 1, 1]) # type: ignore
         
         # Save the figure
         save_path = "D:/Cohesion_Evaluation/Figures/Cohesiveness_GIS/"
-        plt.savefig(f"{save_path}All_datasets_{measure}_lambda.png")
+        # plt.savefig(f"{save_path}All_datasets_{measure}_lambda.png", dpi=300, bbox_inches='tight')
 
         # Show the figure
         plt.show()
