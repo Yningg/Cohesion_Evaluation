@@ -18,14 +18,22 @@ import Cohesiveness_Calculation.General_function as gf
 
 
 # Group the results refer to parameters
-def group_results(results, param_index, cohessiveness_index):
+def group_results(algorithm, results, param_index, cohesiveness_index):
     grouped_results = {}
-    for result in results:
-        params = result[param_index][0] # Convert list to tuple
-        if params in grouped_results:
-            grouped_results[params].append([result[cohessiveness_index], result[cohessiveness_index+1]])
-        else:
-            grouped_results[params] = [[result[cohessiveness_index], result[cohessiveness_index+1]]]
+    if algorithm == "ST-Exa":
+        for result in results:
+            params = result[param_index] # Convert list to tuple
+            if params in grouped_results:
+                grouped_results[params].append([result[cohesiveness_index], result[cohesiveness_index+1]])
+            else:
+                grouped_results[params] = [[result[cohesiveness_index], result[cohesiveness_index+1]]]
+    else:
+        for result in results:
+            params = result[param_index][0] # Convert list to tuple
+            if params in grouped_results:
+                grouped_results[params].append([result[cohesiveness_index], result[cohesiveness_index+1]])
+            else:
+                grouped_results[params] = [[result[cohesiveness_index], result[cohesiveness_index+1]]]
     return grouped_results
 
 
@@ -42,10 +50,10 @@ def process_ALS_line(Graph, line):
     params = ast.literal_eval(parts[2])
     community_node_list = list(ast.literal_eval(parts[3]))
     community_node_list = [str(node) for node in community_node_list]
-    coheisveness_dim = ast.literal_eval(parts[4])
+    cohesiveness_dim = ast.literal_eval(parts[4])
 
     structural_cohesiveness = get_network_stats(Graph, community_node_list)
-    return [node, beta_value, params, community_node_list, coheisveness_dim, structural_cohesiveness]
+    return [node, beta_value, params, community_node_list, cohesiveness_dim, structural_cohesiveness]
 
 
 def process_ALS_results(Graph, file):
@@ -67,10 +75,11 @@ def process_STExa_results(Graph, file):
             parts = line.strip().split("\t")
             node = int(parts[0])
             params = ast.literal_eval(parts[1])
+            params = tuple([str(para) for para in params])
             community_node_list = ast.literal_eval(parts[2])
-            coheisveness_dim = ast.literal_eval(parts[3])
+            cohesiveness_dim = ast.literal_eval(parts[3])
             structural_cohesiveness = get_network_stats(Graph, community_node_list)
-            results.append([node, params, community_node_list, coheisveness_dim, structural_cohesiveness])
+            results.append([node, params, community_node_list, cohesiveness_dim, structural_cohesiveness])
     return results
 
 
@@ -84,24 +93,24 @@ def get_mean_std(grouped_results):
         cohesiveness = [result[0] for result in results]
         structural_cohesiveness = [result[1] for result in results]
 
-        cohesiveness_mean[params] = np.mean(cohesiveness, axis=0)
-        cohesiveness_std[params] = np.std(cohesiveness, axis=0)
+        cohesiveness_mean[params] = list(np.mean(cohesiveness, axis=0))
+        cohesiveness_std[params] = list(np.std(cohesiveness, axis=0))
 
-        structural_cohesiveness_mean[params] = np.mean(structural_cohesiveness, axis=0)
-        structural_cohesiveness_std[params] = np.std(structural_cohesiveness, axis=0)
+        structural_cohesiveness_mean[params] = list(np.mean(structural_cohesiveness, axis=0))
+        structural_cohesiveness_std[params] = list(np.std(structural_cohesiveness, axis=0))
 
     return cohesiveness_mean, cohesiveness_std, structural_cohesiveness_mean, structural_cohesiveness_std
 
 
-def read_results(results_dir, algorithm, dataset_name, param_index, cohessiveness_index):
+def read_results(results_dir, algorithm, dataset_name, param_index, cohesiveness_index):
     results = []
     
     attribute_file = attribute_dir + dataset_name + "_attributed.txt"
 
     # Build the graph with original nodes and edges attributes
-    G = gf.graph_construction(attribute_file)
+    G = nx.read_edgelist(attribute_file, nodetype=str, data=(('timestamp', str), ('sentiment', str)), create_using=nx.MultiGraph()) # type: ignore
    
-    file = results_dir + algorithm + "_results/" + algorithm + "_results_" + dataset_name + "_exp_0.0001.txt"
+    file = results_dir + algorithm + "_Results/" + algorithm + "_results_" + dataset_name + "_exp_0.0001.txt"
     
     if algorithm == "ST-Exa":
         results = process_STExa_results(G, file)
@@ -111,19 +120,19 @@ def read_results(results_dir, algorithm, dataset_name, param_index, cohessivenes
     print(f"Number of results: {len(results)}") # type: ignore
 
     # Group the results refer to the parameters
-    grouped_results = group_results(results, param_index, cohessiveness_index)
+    grouped_results = group_results(algorithm, results, param_index, cohesiveness_index)
     
     print(f"Number of grouped results: {len(grouped_results)}")
 
     cohesiveness_mean, cohesiveness_std, structural_cohesiveness_mean, structural_cohesiveness_std = get_mean_std(grouped_results)
-    return list(cohesiveness_mean), list(cohesiveness_std), list(structural_cohesiveness_mean), list(structural_cohesiveness_std)
+    return cohesiveness_mean, cohesiveness_std, structural_cohesiveness_mean, structural_cohesiveness_std
 
 """
 Use params as x-axis, measures as y-axis
 1. Draw a bar chart, with each parameter as a group, each measure as a bar
 2. Draw a line chart, with each parameter as a line, each structure measure as a point
 """
-def draw_graph(cohesiveness_mean, cohesiveness_std, structural_mean, structural_std, algorithm, dataset_name, y_lb, y_ub):
+def draw_graph_STExa(cohesiveness_mean, cohesiveness_std, structural_mean, structural_std, algorithm, dataset_name, y_lb, y_ub):
     # Draw the bar chart
     params = list(cohesiveness_mean.keys())
     cohesiveness = list(cohesiveness_mean.values())
@@ -143,11 +152,11 @@ def draw_graph(cohesiveness_mean, cohesiveness_std, structural_mean, structural_
 
     ax.set_xlabel(r'$[l, h]$', fontsize=font_size)
     ax.set_ylabel('Cohesiveness', fontsize=font_size)
-    ax.legend(fontsize=15, ncol=5, columnspacing=0.5, loc="upper center")
+    ax.legend(loc='upper center', bbox_to_anchor=(0.5, 1.20), ncol=5, fontsize=15, handlelength=0.9, handletextpad=0.6, columnspacing=0.5)
     ax.set_xticks(x + bar_width * (len(measures) - 1) / 2)
     ax.set_xticklabels([f"[{lb}-{ub}]" for (lb, ub) in sorted_params], fontsize=font_size)
-    ax.set_ylim(0, 8)
-    ax.set_yticklabels([f"{y:.1f}" for y in np.arange(0, 9, 1)], fontsize=font_size)
+    ax.set_ylim(0, 7)
+    ax.set_yticklabels([f"{y:.1f}" for y in np.arange(0, 8, 1)], fontsize=font_size)
     plt.tight_layout()
     
     # save the figure
@@ -195,11 +204,11 @@ def draw_graph_ALS(cohesiveness_mean, cohesiveness_std, structural_mean, structu
 
     ax.set_xlabel(r'$\alpha$', fontsize=font_size)
     ax.set_ylabel('Cohesiveness', fontsize=font_size)
-    ax.legend(fontsize=16, ncol=5, columnspacing=0.5, loc="upper center")
+    ax.legend(loc='upper center', bbox_to_anchor=(0.5, 1.20), ncol=5, fontsize=16, handlelength=0.9, handletextpad=0.6, columnspacing=0.5)
     ax.set_xticks(x + bar_width * (len(measures) - 1) / 2)
     ax.set_xticklabels([f"{param}" for param in sorted_params], fontsize=font_size)
-    ax.set_ylim(0, 0.35)
-    ax.set_yticklabels([f"{y:.2f}" for y in np.arange(0, 0.40, 0.05)], fontsize=font_size)
+    ax.set_ylim(0, 0.30)
+    ax.set_yticklabels([f"{y:.2f}" for y in np.arange(0, 0.35, 0.05)], fontsize=font_size)
     plt.tight_layout()
     
     # save the figure
@@ -242,7 +251,7 @@ results_dir = "D:/Cohesion_Evaluation/Cohesiveness_Output/"
 STExa_params_list = [[1, 10], [11, 20], [21, 30], [31, 40], [41, 50], [51, 60], [61, 70], [71, 80]]
 ALS_params_list = [0.1, 0.15, 0.2, 0.25, 0.3]
 
-algo = "ST-Exa"
+algo = "ALS"
 measures = ['EL', 'SIT', 'CED', 'GIP', 'GID']
 
 color_list = [(112, 163, 196), (245, 180, 111), (223, 91, 63), (251, 236, 171), (175, 175, 175), (219, 219, 219)]
@@ -257,22 +266,22 @@ plt.rcParams['font.family'] = 'arial'
 if algo == "ALS":
     structural_measures = [r'$d$', r'Size ($10^3$)', r'$Deg_{min}$']
     # cohesiveness_mean, cohesiveness_std, structural_mean, structural_std = read_results(results_dir, "ALS", "Chicago_COVID", 2, 4)
-    cohesiveness_mean = {0.1: [0.0096272 , 0.00877609, 0.03635546, 0.2779106 , 0.01174341], 0.15: [0.01026318, 0.00938989, 0.03670313, 0.27530327, 0.01633922], 0.2: [0.01177796, 0.01083901, 0.04019605, 0.26604006, 0.04273258], 0.25: [0.0168045 , 0.01548076, 0.04287817, 0.25521285, 0.08060348], 0.3: [0.02562361, 0.02390711, 0.04659558, 0.25879281, 0.1410857 ]}
-    cohesiveness_std = {0.1: [0.00096757, 0.00088203, 0.00365386, 0.02705455, 0.08835948], 0.15: [0.00540395, 0.00516395, 0.00707459, 0.03315818, 0.09410886], 0.2: [0.01035706, 0.00991178, 0.03133792, 0.05633179, 0.19533132], 0.25: [0.02456482, 0.02278977, 0.0351652 , 0.0809418 , 0.25411966], 0.3: [0.05067353, 0.0483413 , 0.05547948, 0.11084486, 0.31110428]}
-    structural_mean = {0.1: [1.88400e+01, 4.86794e+03, 1.01000e+00], 0.15: [1.82200e+01, 4.66386e+03, 1.01000e+00], 0.2: [1.68100e+01, 4.22524e+03, 1.12000e+00], 0.25: [1.47800e+01, 3.52806e+03, 1.32000e+00], 0.3: [1.24000e+01, 2.70653e+03, 1.46000e+00]}
-    structural_std = {0.1: [1.59197990e+00, 4.88140837e+02, 9.94987437e-02], 0.15: [3.11313347e+00, 1.02025099e+03, 9.94987437e-02], 0.2: [4.91466174e+00, 1.56960740e+03, 9.08625335e-01], 0.25: [6.26191664e+00, 2.06667222e+03, 1.40627167e+00], 0.3: [6.95125888e+00, 2.31354122e+03, 1.64572173e+00]}
-    
+    cohesiveness_mean = {0.1: [0.0028348293805377928, -3.943318856516453e-08, 0.0028348293805377928, 0.2779106012785452, 0.01174340537875847], 0.15: [0.002981548952111736, -4.296945797411619e-08, 0.002938534263530323, 0.27530327435241964, 0.0163392223194381], 0.2: [0.0033255095639530712, -4.734898268193645e-08, 0.00327119141713949, 0.2660400585669525, 0.042732578063490054], 0.25: [0.004629854985771444, -6.96966132529493e-08, 0.00455942715338269, 0.2552128520431046, 0.08060348112767819], 0.3: [0.006493411959997443, -5.856853839345115e-08, 0.0062662391938188575, 0.2587928092148737, 0.14108569681556593]}
+    cohesiveness_std = {0.1: [0.00028491107272483375, 3.963184568423761e-09, 0.00028491107272483375, 0.02705455388782668, 0.0883594759836271], 0.15: [0.0013377613766788529, 2.8628117729097236e-08, 0.001507473350835971, 0.03315817661943525, 0.09410886033111145], 0.2: [0.002466283033673564, 4.5884646456404205e-08, 0.0023310920010255923, 0.05633178775762061, 0.19533132390479915], 0.25: [0.006193938557990232, 1.22050204353031e-07, 0.006246211781278841, 0.08094179635197817, 0.2541196617026462], 0.3: [0.01111683091606338, 1.6444947056850663e-07, 0.010720634952969007, 0.11084485955259595, 0.31110427795405865]}
+    structural_mean = {0.1: [18.84, 4867.94, 1.01], 0.15: [18.22, 4663.86, 1.01], 0.2: [16.81, 4225.24, 1.12], 0.25: [14.78, 3528.06, 1.32], 0.3: [12.4, 2706.53, 1.46]}
+    structural_std = {0.1: [1.5919798993705914, 488.1408366445079, 0.09949874371066196], 0.15: [3.113133469673277, 1020.2509889238053, 0.09949874371066196], 0.2: [4.914661738105687, 1569.6073975360835, 0.9086253353280426], 0.25: [6.2619166394962456, 2066.67221793878, 1.4062716664997548], 0.3: [6.951258878793109, 2313.5412183706594, 1.6457217261736576]}
+
     draw_graph_ALS(cohesiveness_mean, cohesiveness_std, structural_mean, structural_std, "ALS", "Chicago_COVID", 0, 400)
 
 elif algo == "ST-Exa":
     structural_measures = [r'$d$', r'$Size$', r'$Deg_{min}$']
-    # cohesiveness_mean, cohesiveness_std, structural_mean, structural_std = read_results(results_dir, "STExa", "Chicago_COVID", 1, 3)
+    # cohesiveness_mean, cohesiveness_std, structural_mean, structural_std = read_results(results_dir, "ST-Exa", "Chicago_COVID", 1, 3)
     
-    cohesiveness_mean = {('11', '20'): [0.78110709, 0.78262173, 0.14026461, 0.17582545, 4.16227299], ('1', '10'): [1.10609874, 1.11118601, 0.14514248, 0.12069323, 6.27286905], ('21', '30'): [0.56483016, 0.56253875, 0.14098072, 0.20071249, 2.74840105], ('31', '40'): [0.45709466, 0.44036697, 0.14082621, 0.22936697, 2.29770378], ('41', '50'): [0.38483921, 0.36921545, 0.13326832, 0.22618261, 1.77001443], ('51', '60'): [0.36875574, 0.35177879, 0.15101348, 0.22494084, 1.45429944], ('61', '70'): [0.34506246, 0.3298005 , 0.15997496, 0.22973856, 1.21157557], ('71', '80'): [0.31747808, 0.30377107, 0.16551793, 0.22964257, 1.03175337]}
-    cohesiveness_std = {('11', '20'): [0.73639279, 0.7375801 , 0.11194181, 0.08069734, 2.46829573], ('1', '10'): [1.38755145, 1.39392211, 0.14744716, 0.11229284, 5.1989379 ], ('21', '30'): [0.50695043, 0.50449741, 0.1061029 , 0.07409881, 1.47520877], ('31', '40'): [0.3937373 , 0.37858033, 0.09412551, 0.0787711 , 1.28843665], ('41', '50'): [0.31969057, 0.30645713, 0.08632907, 0.06932565, 0.89992178], ('51', '60'): [0.28343315, 0.26922284, 0.10051729, 0.06626986, 0.68818671], ('61', '70'): [0.23874338, 0.22686533, 0.10039387, 0.05992445, 0.52520308], ('71', '80'): [0.20641864, 0.19622938, 0.09801992, 0.06042764, 0.4213347 ]}
-    structural_mean = {('11', '20'): [ 4.96, 19.91, 15.4 ], ('1', '10'): [ 3.76,  9.11, 24.03], ('21', '30'): [ 5.34653465, 30.        , 14.43564356], ('31', '40'): [ 5.73, 39.99, 14.25], ('41', '50'): [ 5.8989899 , 50.        , 10.17171717], ('51', '60'): [ 6.19, 60.  , 10.56], ('61', '70'): [ 6.35, 70.  ,  9.8 ], ('71', '80'): [ 6.62, 79.99,  7.76]}
-    structural_std = {('11', '20'): [ 1.56792857,  0.80118662, 14.15697708], ('1', '10'): [ 1.43610585,  2.23112079, 32.74582569], ('21', '30'): [ 1.81542153,  0.        , 13.03264435], ('31', '40'): [ 1.85932784,  0.09949874, 13.14410514], ('41', '50'): [1.99238423, 0.        , 7.65419328], ('51', '60'): [2.15728997, 0.        , 8.35741587], ('61', '70'): [2.29510348, 0.        , 8.40119039], ('71', '80'): [2.34      , 0.09949874, 5.13053603]}
+    cohesiveness_mean = {("11", "20"): [0.1615997222393276, -5.875550990233185e-07, 0.14976179602684672, 0.17582545393569604, 4.162272993088784], ("1", "10"): [0.2027202162803341, -1.2403940979381168e-06, 0.19357930074615426, 0.1236931326522336, 6.090646825396826], ("21", "30"): [0.13135091005807917, -4.569872992403587e-07, 0.12750011914888024, 0.20210303646811956, 2.770965517241379], ("31", "40"): [0.11220962519487182, -6.365180239419283e-07, 0.10955471385763618, 0.22957158275599776, 2.3143832658569496], ("41", "50"): [0.09436393219727687, -8.617474785675342e-07, 0.09146696120996488, 0.2265146363352783, 1.7799224489795922], ("51", "60"): [0.0908633849410931, -1.5668135974757747e-06, 0.08835758948978689, 0.2249408422419007, 1.4542994350282488], ("61", "70"): [0.08550440912207939, -1.622771226011513e-06, 0.08311931393031291, 0.2304207471120586, 1.217372670807453], ("71", "80"): [0.07946012299054918, -1.4447161771644813e-06, 0.07833122050671937, 0.2296425709335233, 1.0317533674131776]}
+    cohesiveness_std = {("11", "20"): [0.15330733072461933, 2.325610080262108e-06, 0.14621209054570947, 0.0806973397970272, 2.468295734619508], ("1", "10"): [0.26257047716245574, 7.25180424527702e-06, 0.26245255619189367, 0.11386962066692155, 5.065839206415121], ("21", "30"): [0.1161840028060218, 1.6656992279104705e-06, 0.11692806480626608, 0.07368003403744672, 1.4749013292537516], ("31", "40"): [0.09109378016539477, 1.646639980918146e-06, 0.09174912912522293, 0.0786216205292985, 1.2799394773520727], ("41", "50"): [0.07405156642563536, 1.622616852659548e-06, 0.07421930925959817, 0.06905721700771027, 0.9008214728406855], ("51", "60"): [0.06796897687490527, 1.6307912966832677e-06, 0.06837294739578068, 0.06626985744796668, 0.6881867142839967], ("61", "70"): [0.05829365347341467, 1.380918178946333e-06, 0.0585449166871577, 0.05976675244185963, 0.5279725778562404], ("71", "80"): [0.05129305319550141, 1.2043421097836228e-06, 0.05271151234951, 0.06042764240581968, 0.4213346971750918]}
+    structural_mean = {("11", "20"): [4.96, 19.91, 15.4], ("1", "10"): [3.76, 9.11, 22.26], ("21", "30"): [5.34, 30.0, 14.19], ("31", "40"): [5.7, 39.99, 14.33], ("41", "50"): [5.89, 50.0, 10.24], ("51", "60"): [6.19, 60.0, 10.56], ("61", "70"): [6.35, 70.0, 9.97], ("71", "80"): [6.62, 79.99, 7.76]}
+    structural_std = {("11", "20"): [1.5679285698015715, 0.8011866199581715, 14.15697707845852], ("1", "10"): [1.4361058456812994, 2.2311207945783664, 30.85891119271709], ("21", "30"): [1.7900837969212497, 0.0, 12.887742238266561], ("31", "40"): [1.8466185312619385, 0.09949874371066207, 12.974632942784929], ("41", "50"): [1.984414271264949, 0.0, 7.646070886409567], ("51", "60"): [2.1572899666016156, 0.0, 8.357415868556501], ("61", "70"): [2.2951034835057, 0.0, 8.45393990988817], ("71", "80"): [2.34, 0.09949874371066199, 5.1305360343730175]}
     
-    draw_graph(cohesiveness_mean, cohesiveness_std, structural_mean, structural_std, "ST-Exa", "Chicago_COVID", 0, 90)
+    draw_graph_STExa(cohesiveness_mean, cohesiveness_std, structural_mean, structural_std, "ST-Exa", "Chicago_COVID", 0, 90)
 
 
