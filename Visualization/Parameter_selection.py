@@ -133,6 +133,7 @@ Use params as x-axis, measures as y-axis
 2. Draw a line chart, with each parameter as a line, each structure measure as a point
 """
 def draw_graph_STExa(cohesiveness_mean, cohesiveness_std, structural_mean, structural_std, algorithm, dataset_name, y_lb, y_ub):
+    global save_path
     # Draw the bar chart
     params = list(cohesiveness_mean.keys())
     cohesiveness = list(cohesiveness_mean.values())
@@ -160,7 +161,6 @@ def draw_graph_STExa(cohesiveness_mean, cohesiveness_std, structural_mean, struc
     plt.tight_layout()
     
     # save the figure
-    save_path = "D:/Cohesion_Evaluation/Figures/Param_Selection/"
     plt.savefig(f"{save_path}{algorithm}_{dataset_name}_params_cohesiveness.png")
     plt.show()
 
@@ -185,6 +185,7 @@ def draw_graph_STExa(cohesiveness_mean, cohesiveness_std, structural_mean, struc
 
 
 def draw_graph_ALS(cohesiveness_mean, cohesiveness_std, structural_mean, structural_std, algorithm, dataset_name, y_lb, y_ub):
+    global save_path
     # Draw the bar chart
     params = list(cohesiveness_mean.keys())
     cohesiveness = list(cohesiveness_mean.values())
@@ -212,7 +213,6 @@ def draw_graph_ALS(cohesiveness_mean, cohesiveness_std, structural_mean, structu
     plt.tight_layout()
     
     # save the figure
-    save_path = "D:/Cohesion_Evaluation/Figures/Param_Selection/"
     plt.savefig(f"{save_path}{algorithm}_{dataset_name}_params_cohesiveness.png")
     plt.show()
 
@@ -236,7 +236,7 @@ def draw_graph_ALS(cohesiveness_mean, cohesiveness_std, structural_mean, structu
     y_lb, y_ub = 0, 20 # Example bounds
     y_ticks = np.linspace(y_lb, y_ub, num=5)
     ax.set_yticks(y_ticks)
-    ax.set_yticklabels([f"{y}" for y in y_ticks], fontsize=font_size)
+    ax.set_yticklabels([f"{int(y)}" for y in y_ticks], fontsize=font_size)
 
     plt.tight_layout()
     plt.savefig(f"{save_path}{algorithm}_{dataset_name}_params_structural_cohesiveness.png")
@@ -246,7 +246,8 @@ def draw_graph_ALS(cohesiveness_mean, cohesiveness_std, structural_mean, structu
 # Attribute directory
 attribute_dir = "D:/Cohesion_Evaluation/Original_Datasets/Preprocessed_Datasets/"
 results_dir = "D:/Cohesion_Evaluation/Cohesiveness_Output/"
-
+save_path = "D:/Cohesion_Evaluation/Figures/Param_Selection/"
+    
 # Parameters for the ST-Exa results
 STExa_params_list = [[1, 10], [11, 20], [21, 30], [31, 40], [41, 50], [51, 60], [61, 70], [71, 80]]
 ALS_params_list = [0.1, 0.15, 0.2, 0.25, 0.3]
