@@ -16,7 +16,7 @@ import Cohesiveness_score as cs
 import General_function as gf
 
 
-def process_ALS_CRC_I2ACSM_item(node, score, parameter_list, community_node_list, edge_stream, tadj_list, lastest_timestamp, value, decay_method, cohesiveness_dict):
+def process_ALS_CRC_I2ACSM_item(node, score, parameter_list, community_node_list, edge_stream, tadj_list, latest_timestamp, value, decay_method, cohesiveness_dict):
     if len(community_node_list) == 0:
         cohesiveness = ['Invalid', 'Invalid', 'Invalid', 'Invalid', 'Invalid']
     else:
@@ -24,8 +24,8 @@ def process_ALS_CRC_I2ACSM_item(node, score, parameter_list, community_node_list
         if sorted_community in cohesiveness_dict:
             cohesiveness = cohesiveness_dict[sorted_community]
         else:
-            edge_subtream, tadj_sublist = gf.build_subgraph(edge_stream, tadj_list, community_node_list)
-            cohesiveness = cs.cohesiveness_dim(edge_stream, tadj_list, edge_subtream, tadj_sublist, lastest_timestamp, value, decay_method)
+            edge_substream, tadj_sublist = gf.build_subgraph(edge_stream, tadj_list, community_node_list)
+            cohesiveness = cs.cohesiveness_dim(edge_stream, tadj_list, edge_substream, tadj_sublist, latest_timestamp, value, decay_method)
             cohesiveness_dict[sorted_community] = cohesiveness
     
     return f"{node}\t{score}\t{parameter_list}\t{community_node_list}\t{cohesiveness}\n", cohesiveness_dict
@@ -39,24 +39,23 @@ def process_CSD_STExa_Repeeling_item(node, parameter_list, community_node_list, 
         if sorted_community in cohesiveness_dict:
             cohesiveness = cohesiveness_dict[sorted_community]
         else:
-            edge_subtream, tadj_sublist = gf.build_subgraph(edge_stream, tadj_list, community_node_list)
-            cohesiveness = cs.cohesiveness_dim(edge_stream, tadj_list, edge_subtream, tadj_sublist, latest_timestamp, value, decay_method)
+            edge_substream, tadj_sublist = gf.build_subgraph(edge_stream, tadj_list, community_node_list)
+            cohesiveness = cs.cohesiveness_dim(edge_stream, tadj_list, edge_substream, tadj_sublist, latest_timestamp, value, decay_method)
             cohesiveness_dict[sorted_community] = cohesiveness
     
     return f"{node}\t{parameter_list}\t{community_node_list}\t{cohesiveness}\n", cohesiveness_dict
 
 
-def process_TransZero_item(node, community_node_list, node_mapping, edge_stream, tadj_list, latest_timestamp, value, decay_method, cohesiveness_dict):
+def process_TransZero_item(node, community_node_list, edge_stream, tadj_list, latest_timestamp, value, decay_method, cohesiveness_dict):
     if len(community_node_list) == 0:
         cohesiveness = ['Invalid', 'Invalid', 'Invalid', 'Invalid', 'Invalid']
     else:
-        community_node_list = [node_mapping[node] for node in community_node_list]
         sorted_community = tuple(sorted(community_node_list))
         if sorted_community in cohesiveness_dict:
             cohesiveness = cohesiveness_dict[sorted_community]
         else:
-            edge_subtream, tadj_sublist = gf.build_subgraph(edge_stream, tadj_list, community_node_list)
-            cohesiveness = cs.cohesiveness_dim(edge_stream, tadj_list, edge_subtream, tadj_sublist, latest_timestamp, value, decay_method)
+            edge_substream, tadj_sublist = gf.build_subgraph(edge_stream, tadj_list, community_node_list)
+            cohesiveness = cs.cohesiveness_dim(edge_stream, tadj_list, edge_substream, tadj_sublist, latest_timestamp, value, decay_method)
             cohesiveness_dict[sorted_community] = cohesiveness
     
     return f"{node}\t{community_node_list}\t{cohesiveness}\n", cohesiveness_dict
@@ -115,7 +114,7 @@ def process_results(algorithm, dataset, results_dir, output_dir, decay_method, v
         )
     elif algorithm == "TransZero_LS":
         results_with_dicts = Parallel(n_jobs=n_jobs)(
-            delayed(process_TransZero_item)(node, community_node_list, node_mapping, edge_stream, tadj_list, latest_timestamp, value, decay_method, cohesiveness_dict)
+            delayed(process_TransZero_item)(node, community_node_list, edge_stream, tadj_list, latest_timestamp, value, decay_method, cohesiveness_dict)
         for node, community_node_list in tqdm.tqdm(results)
         )
     

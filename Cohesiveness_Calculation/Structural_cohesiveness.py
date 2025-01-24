@@ -41,7 +41,7 @@ def process_node(G, node, result_list, dim_index):
         network_stats = np.mean(network_stats, axis=0)
         return node, list(network_stats)
 
-def get_network_results(G, grouped_results, dim_index, n_jobs=1):
+def get_network_results(G, grouped_results, dim_index, n_jobs=-1):
     results = Parallel(n_jobs=n_jobs)(
         delayed(process_node)(G, node, result_list, dim_index) for node, result_list in tqdm.tqdm(grouped_results.items())
     )
@@ -74,7 +74,7 @@ def output_network_stats(algorithm, results_dir, dataset_list, dim_index):
         node_mapping_file = node_mapping_dir + dataset + "_node_mapping.txt"
 
         # Build the graph with original nodes and edges attributes
-        G = gf.graph_construction(attribute_file)
+        G = nx.read_edgelist(attribute_file, nodetype=str, data=(('timestamp', str), ('sentiment', str)), create_using=nx.MultiGraph()) # type: ignore
 
         # Read the node mapping file
         node_mapping = gf.read_node_mapping(node_mapping_file)
