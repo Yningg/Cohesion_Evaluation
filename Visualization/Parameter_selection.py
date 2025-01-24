@@ -253,7 +253,7 @@ STExa_params_list = [[1, 10], [11, 20], [21, 30], [31, 40], [41, 50], [51, 60], 
 ALS_params_list = [0.1, 0.15, 0.2, 0.25, 0.3]
 
 algo = "ALS"
-measures = ['EL', 'SIT', 'CED', 'GIP', 'GID']
+measures = ['EI', 'SIT', 'CED', 'GIP', 'GID']
 
 color_list = [(112, 163, 196), (245, 180, 111), (223, 91, 63), (251, 236, 171), (175, 175, 175), (219, 219, 219)]
 color_list = [(r/255, g/255, b/255) for r, g, b in color_list]
