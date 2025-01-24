@@ -45,7 +45,8 @@ def load_lambda_results(dataset, condense_result_dir, lambda_list, algo_list):
 if __name__ == "__main__":
 
     condense_result_dir = "D:/Cohesion_Evaluation/Cohesiveness_Output/"
-
+    save_path = "D:/Cohesion_Evaluation/Figures/Cohesiveness_GIS/"
+    
     measure_label = {"GIP": 3, "GID": 4}
     lambda_list = [0.0001, 0.0005, 0.001, 0.005, 0.01]
     mu_list = [0.5, 1, 1.5, 2]
@@ -150,8 +151,7 @@ if __name__ == "__main__":
         plt.tight_layout(rect=[0, 0, 1, 1]) # type: ignore
         
         # Save the figure
-        save_path = "D:/Cohesion_Evaluation/Figures/Cohesiveness_GIS/"
-        # plt.savefig(f"{save_path}All_datasets_{measure}_lambda.png", dpi=300, bbox_inches='tight')
+        plt.savefig(f"{save_path}All_datasets_{measure}_lambda.png", dpi=300, bbox_inches='tight')
 
         # Show the figure
-        plt.show()
+        # plt.show()

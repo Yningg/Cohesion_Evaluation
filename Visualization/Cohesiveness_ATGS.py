@@ -73,6 +73,7 @@ def load_mu_results(dataset, condense_result_dir, mu_list, algo_list):
 
 
 def draw_graphs(dataset_results, dataset_label, params_list, algo_list, algo_label_list, color_list, hatch_list, font_size, x_label, threshold, CED_y_min, CED_y_max, CED_y_num, save_label, ncols):
+    global save_path
     for measure, measure_idx in measure_label.items():
         fig, ax = plt.subplots(figsize=(10, 6))
 
@@ -136,7 +137,6 @@ def draw_graphs(dataset_results, dataset_label, params_list, algo_list, algo_lab
         plt.tight_layout(rect=[0, 0, 1, 1]) # type: ignore
 
         # Save the figure
-        save_path = "D:/Cohesion_Evaluation/Figures/Cohesiveness_ATGS/"
         plt.savefig(f"{save_path}{dataset}_{measure}_{save_label}.png", dpi=300, bbox_inches='tight')           
 
         # Show the figure
@@ -146,7 +146,7 @@ def draw_graphs(dataset_results, dataset_label, params_list, algo_list, algo_lab
 if __name__ == "__main__":
 
     condense_result_dir = "D:/Cohesion_Evaluation/Cohesiveness_Output/"
-
+    save_path = "D:/Cohesion_Evaluation/Figures/Cohesiveness_ATGS/"
     measure_label = {"EI": 0, "SIT": 1, "CED": 2}
     lambda_list = [0.0001, 0.0005, 0.001, 0.005, 0.01]
     mu_list = [0.5, 1, 1.5, 2]
