@@ -132,6 +132,8 @@ def process_dataset(algorithm, cohesiveness_index, dataset_list):
 
 # Output directory for the condensed results
 output_dir = "D:/Cohesion_Evaluation/Cohesiveness_Output/"
+result_dir = "D:/Cohesion_Evaluation/Cohesiveness_Output/"
+
 dataset_list = ["BTW17", "Chicago_COVID", "Crawled_Dataset26", "Crawled_Dataset144"]
 dataset_sublist = ["BTW17", "Chicago_COVID"]
 
@@ -147,7 +149,5 @@ algorithm_dict = {
 }
 
 # Deal with results
-result_dir = "D:/Cohesion_Evaluation/Cohesiveness_Output/"
-
 for algorithm, content in algorithm_dict.items():
     process_dataset(algorithm, content["index"], content["dataset_list"])
