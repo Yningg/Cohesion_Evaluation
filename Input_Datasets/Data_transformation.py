@@ -152,12 +152,12 @@ def get_CRC_dataset(G, dataset_name, target_path, num_instances = 10):
 
 """
 Generate CSD dataset
-1. Read the original attributed datase from the source path, read the node mapping file
-2. Tranfer the network to a directed graph, since the paper requires the directed graph
+1. Read the original attributed dataset from the source path, read the node mapping file
+2. Transfer the network to a directed graph, since the paper requires the directed graph
 3. Generate two file for each dataset use node mapping:
-    (1) File recording every node's in degree and out degree: DatasteName_Degree.dat
+    (1) File recording every node's in degree and out degree: DatasetName_Degree.dat
         Format: node_id, in_degree, out_degree
-    (2) File recording the graph in a adjacent format: DatasteName_Graph.dat
+    (2) File recording the graph in a adjacent format: DatasetName_Graph.dat
         Format: node1 node2 node3 ...
 """
 def get_CSD_dataset(G, dataset_name, node_mapping_path, target_path):
@@ -199,8 +199,8 @@ def get_CSD_dataset(G, dataset_name, node_mapping_path, target_path):
 
 """
 Generate STExa dataset
-1. Read the original attributed datase from the source path, read the node mapping file
-2. Tranfer the network to an undirected simple graph, since the paper requires the undirected simple graph
+1. Read the original attributed dataset from the source path, read the node mapping file
+2. Transfer the network to an undirected simple graph, since the paper requires the undirected simple graph
 3. For each edge, if (u, v) is an edge, then (v, u) is also an edge
 4. Remove the self-loop edges
 5. The output file format: from_id to_id, the first line is the number of nodes and edges
@@ -328,7 +328,7 @@ if __name__ == "__main__":
 
     
     for dataset_name in dataset_list:
-        # Read the original attributed datase
+        # Read the original attributed dataset
         attribute_file = source_path + dataset_name + "_attributed.txt"
         G = gf.graph_construction(attribute_file)
 
