@@ -1,5 +1,5 @@
 """
-This scipt is written to generate the bat file for executing the TD.exe file
+This script is written to generate the bat file for executing the TD.exe file
 format: .\TD.exe "D:\Cohesion_Evaluation\Input_Datasets\STExa_dataset\Crawled_Dataset26\Crawled_Dataset26.txt" "D:\Cohesion_Evaluation\Input_Datasets\STExa_dataset\Crawled_Dataset26\tru-Crawled_Dataset26.txt"
 """
 

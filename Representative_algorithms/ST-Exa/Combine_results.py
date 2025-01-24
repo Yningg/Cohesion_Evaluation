@@ -1,5 +1,5 @@
 """
-Combine the results of STExa on different datasets into seperate single files
+Combine the results of STExa on different datasets into separate single files
 """
 
 import os

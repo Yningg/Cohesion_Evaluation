@@ -5,7 +5,7 @@ Code and dataset for the paper "How Cohesive Are Community Search Results on Onl
     ├── Original_Datasets           # Preprocessed datasets, scripts to generate queries and node mapping, and print network statistics
     ├── Input_Datasets              # Scripts to generate transformed graphs for each algorithms, and corresponding transformed graphs
     ├── Representative_Algorithms   # Code to running representative algorithms
-    ├── Algorithm_Output            # The inital CS output from representative algorithms
+    ├── Algorithm_Output            # The initial CS output from representative algorithms
     ├── Cohesiveness_Calculation    # The scripts for calculating structural and psychology-informed cohesiveness, and conducting sensitivity analysis
     ├── Cohesiveness_Output         # Cohesiveness calculation results, the script to condense the results, and the corresponding condensed results
     ├── Visualization               # Scripts for data visualization
@@ -14,7 +14,7 @@ Code and dataset for the paper "How Cohesive Are Community Search Results on Onl
 
 ### Original_Datasets
 1. Original_Dataset (Preprocessed_ver.): The preprocessed four datasets are provided, including llama version and vader version
-2. Node_Mapping: The mapping file for tranferring node id between original_id and mapped_id started from index 0 
+2. Node_Mapping: The mapping file for transferring node id between original_id and mapped_id started from index 0 
 3. Query_Nodes: Code, query nodes, and mapped query nodes are all provided
 
 
