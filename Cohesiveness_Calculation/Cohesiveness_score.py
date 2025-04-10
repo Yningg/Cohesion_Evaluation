@@ -1,20 +1,9 @@
 """
 This script is used to implement the calculation of cohesiveness score of a subgraph H in a directed multidigraph G
 """
-import random
 import numpy as np
 from collections import defaultdict
 
-seed = 2024 # Seed
-random.seed(seed)
-np.random.seed(seed)
-epsilon = np.finfo(float).eps
-decay_threshold = np.exp(-10)
-
-
-# Calculate the earliest timestamp that can consider according to the decay threshold and t_cur
-def calculate_decay_threshold(t_cur, rate):
-    return t_cur - np.log(decay_threshold) / rate
 
 # Time decay function:
 def time_decay(t_cur, t_i, rate, method):
@@ -38,7 +27,7 @@ def time_decay(t_cur, t_i, rate, method):
 def excitation_degree(t, sentiment, activities, rate, method):
     degree = 1
 
-    # Unvectorized version
+    # Non-vectorized version
     # for u_i, u_j, data in activities:
     #     degree += sgn(data['sentiment'], sentiment) * time_decay(t, data['timestamp'], rate, method) # type: ignore
 
@@ -58,7 +47,7 @@ def excitation_degree(t, sentiment, activities, rate, method):
     return max(0, degree)
 
 
-# Calculate the elicited seniment Esenti(a_ij^t)
+# Calculate the elicited sentiment Esenti(a_ij^t)
 def ESenti(t, sentiment, activity_list, rate, method):
     
     if sentiment == 0:
@@ -151,21 +140,14 @@ def GIS(tadj_sublist, nodes_num):
     return GIP_value, GID_value
 
 
-def cohesiveness_dim(edge_stream, tadj_list, edge_substream, tadj_sublist, t_cur, rate, method):
-    # Calculate the earliest timestamp that can consider according to the decay threshold and t_cur
-    earliest_timestamp = calculate_decay_threshold(t_cur, rate)
+def cohesiveness_dim(tadj_list, tadj_sublist, t_cur, rate, method):
+    EI_list, SIT_list, CED_list = [], [], []
+    mutual_enjoyment = {} # A dict to store the mutual enjoyment between node i and node j, avoid repeated calculation
 
     # Cut the edge stream and tadj_list to the current time
-    edge_stream = {timestamp: edges for timestamp, edges in edge_stream.items() if earliest_timestamp <= timestamp <= t_cur}
-    tadj_list = tadj_list = {u: list(filter(lambda edge: edge[2] <= t_cur, edges)) for u, edges in tadj_list.items()}
-    edge_substream = {timestamp: edges for timestamp, edges in edge_substream.items() if earliest_timestamp <= timestamp <= t_cur}
-    tadj_sublist = {u: list(filter(lambda edge: edge[2] <= t_cur, edges)) for u, edges in tadj_sublist.items()}
-    
     N = len(tadj_sublist)
-    EI_list, SIT_list, CED_list = [], [], []
-
-    mutual_enjoyment = {} # A dict to store the mutual enjoyment between node i and node j, avoid repeated calculation
-       
+    
+    # Only filter activities hat has sufficient effect for ATGS calculation
     for u_i in tadj_sublist.keys():
         EI_value, SIT_value, CED_value, mutual_enjoyment = ATGS(tadj_list, tadj_sublist, u_i, t_cur, rate, method, mutual_enjoyment)
 
@@ -173,9 +155,9 @@ def cohesiveness_dim(edge_stream, tadj_list, edge_substream, tadj_sublist, t_cur
         SIT_list.append(SIT_value)
         CED_list.append(CED_value)
         
-    EI_avg = np.mean(EI_list)
-    SIT_avg = np.mean(SIT_list)
-    CED_avg = np.mean(CED_list)
+    EI_avg = np.sum(EI_list) / N
+    SIT_avg = np.sum(SIT_list) / N
+    CED_avg = np.sum(CED_list) / N
     GIP, GID = GIS(tadj_sublist, N)
 
     return [float(EI_avg), float(SIT_avg), float(CED_avg), GIP, GID]
