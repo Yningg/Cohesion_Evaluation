@@ -6,82 +6,24 @@ This script is used to calculate the psychology-informed cohesiveness for each c
 
 import os
 from joblib import Parallel, delayed
-import tqdm
 import General_function as gf
-
-
-"""
-For each dataset,
-1. Read the results of the algorithm from its results directory
-2. Read the attribute file to get the graph
-3. Based on the community nodes, calculate the cohesiveness score of the community nodes and save the results
-"""
-def process_results(algorithm, dataset, results_dir, output_dir, decay_method, value, n_jobs=-1):
-    global attribute_dir, node_mapping_dir
-
-    attribute_file = attribute_dir + dataset + "_vader_attributed.txt"  # Use the vader attributed file
-    node_mapping_file = node_mapping_dir + dataset + "_node_mapping.txt"
-    result_file = results_dir + algorithm + "_results_" + dataset + ".txt"
-    
-    # Dictionary to store the cohesiveness results for each community, in case of duplicate calculation
-    cohesiveness_dict = {}
-
-    # Build the graph with original nodes and edges attributes
-    tadj_list, latest_timestamp = gf.build_graph(attribute_file)
-
-    # Read the node mapping file
-    node_mapping = gf.read_node_mapping(node_mapping_file)
-
-    # Read the results of the algorithm
-    if algorithm in ["ALS", "WCF-CRC", "I2ACSM"]:
-        results = gf.process_ALS_CRC_I2ACSM_results(result_file)
-    elif algorithm in ["CSD", "ST-Exa", "Repeeling"]:
-        results = gf.process_CSD_STExa_Repeeling_results(result_file, node_mapping)
-    elif algorithm in ["TransZero_LS", "TransZero_GS"]:
-        results = gf.process_TransZero_results(result_file, node_mapping)
-
-    # Compose the output file name
-    output_file = output_dir + algorithm + "_results_" + dataset + "_vader.txt"
-
-    # Calculate the cohesiveness for each community
-    if algorithm in ["ALS", "WCF-CRC", "I2ACSM"]:
-        results_with_dicts = Parallel(n_jobs=n_jobs)(
-            delayed(gf.process_ALS_CRC_I2ACSM_item)(node, score, parameter_list, community_node_list, tadj_list, latest_timestamp, value, decay_method, cohesiveness_dict)
-            for node, score, parameter_list, community_node_list in tqdm.tqdm(results)
-        )
-    elif algorithm in ["CSD", "ST-Exa", "Repeeling"]:
-        results_with_dicts = Parallel(n_jobs=n_jobs)(
-            delayed(gf.process_CSD_STExa_Repeeling_item)(node, parameter_list, community_node_list, tadj_list, latest_timestamp, value, decay_method, cohesiveness_dict)
-            for node, parameter_list, community_node_list in tqdm.tqdm(results)
-        )
-    elif algorithm == "TransZero_LS":
-        results_with_dicts = Parallel(n_jobs=n_jobs)(
-            delayed(gf.process_TransZero_item)(node, community_node_list, tadj_list, latest_timestamp, value, decay_method, cohesiveness_dict)
-        for node, community_node_list in tqdm.tqdm(results)
-        )
-    
-    cohesiveness_results, updated_dicts = zip(*results_with_dicts)
-    cohesiveness_dict = gf.merge_dicts(updated_dicts)
-    
-    with open(output_file, 'a') as f:
-        f.writelines(cohesiveness_results)
 
 
 """
 Calculate the psychology-informed cohesiveness for each algorithm's results
 """
 def cohesiveness_calculation(algo_list, njobs):
-    global algo_results_dir, cohesiveness_dir, decay_method, value
+    global algo_results_dir, algo_cohesiveness_dir, decay_method, value
     tasks = []
 
     # Prepare tasks for all algorithms and datasets
     for algorithm in algo_list:
-        # Directory to access the algorithm results
-        algo_result_dir = algo_results_dir + algorithm + "_Results/"
-        # Directory to store the psychology-informed cohesiveness results
-        algo_cohesiveness_dir = cohesiveness_dir + algorithm + "_Results/"
-        if not os.path.exists(algo_cohesiveness_dir):
-            os.makedirs(algo_cohesiveness_dir)
+
+        result_dir = algo_results_dir + algorithm + "_Results/"  
+        cohesiveness_dir = algo_cohesiveness_dir + algorithm + "_Results/"
+        
+        if not os.path.exists(cohesiveness_dir):
+            os.makedirs(cohesiveness_dir)
 
         if algorithm == "Repeeling":
             dataset_list = ["BTW17", "Chicago_COVID"]
@@ -89,17 +31,22 @@ def cohesiveness_calculation(algo_list, njobs):
             dataset_list = ["BTW17", "Chicago_COVID", "Crawled_Dataset26", "Crawled_Dataset144"]
 
         for dataset_name in dataset_list:
-            tasks.append((algorithm, dataset_name, algo_result_dir, algo_cohesiveness_dir, decay_method, value, njobs))
+            attribute_file = attribute_dir + dataset_name + "_vader_attributed.txt"  # Use the vader attributed file
+            node_mapping_file = node_mapping_dir + dataset_name + "_node_mapping.txt"
+            result_file = result_dir + algorithm + "_results_" + dataset_name + ".txt"
+            output_file = cohesiveness_dir + algorithm + "_results_" + dataset_name + "_vader.txt"
+
+            tasks.append((algorithm, decay_method, value, attribute_file, node_mapping_file, result_file, output_file, njobs))
             
     # Execute the tasks in parallel
-    Parallel(n_jobs=njobs)(delayed(process_results)(*task) for task in tasks)
+    Parallel(n_jobs=njobs)(delayed(gf.cal_results)(*task) for task in tasks)
 
 
 if __name__ == "__main__":
     attribute_dir = "D:/Cohesion_Evaluation/Original_Datasets/Preprocessed_Datasets/"
     node_mapping_dir = "D:/Cohesion_Evaluation/Original_Datasets/Node_Mapping/"
     algo_results_dir = "D:/Cohesion_Evaluation/Algorithm_Output/"
-    cohesiveness_dir = "D:/Cohesion_Evaluation/Cohesiveness_Output/"
+    algo_cohesiveness_dir = "D:/Cohesion_Evaluation/Cohesiveness_Output/"
 
     algo_list =["ALS", "WCF-CRC", "CSD", "ST-Exa", "Repeeling", "I2ACSM", "TransZero_LS"]
 
