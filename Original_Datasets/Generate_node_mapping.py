@@ -12,12 +12,12 @@ from datetime import datetime
 import sys
 target_path = "./"
 sys.path.append(target_path)
-import Cohesiveness_Calculation.General_function as gf
+import Cohesiveness_Calculation.Utils.Graph_utils as gu
 
 
 def generate_node_mapping(dataset_name, source_path, target_path):
     attribute_file = source_path + dataset_name + "_attributed.txt"
-    G = gf.graph_construction(attribute_file)
+    G = gu.graph_construction(attribute_file)
 
     # Get the unique nodes and order them
     nodes = list(G.nodes())

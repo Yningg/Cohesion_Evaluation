@@ -7,7 +7,7 @@ import tqdm
 import sys
 target_path = "./"
 sys.path.append(target_path)
-import Cohesiveness_Calculation.General_function as gf
+import Cohesiveness_Calculation.Utils.Graph_utils as gu
 
 
 def query(graph_path, theta, k, query_node, method, alpha, start_time, end_time):
@@ -52,7 +52,7 @@ if __name__ == '__main__':
     graph_path = CRC_dataset_dir + dataset_name + "/"
 
     # Read the query node list
-    query_nodes_list = gf.get_query_nodes(query_node_dir, dataset_name)
+    query_nodes_list = gu.get_query_nodes(query_node_dir, dataset_name)
 
     # Set the parameters for WCF-CRC
     theta_list = [theta / 10 for theta in range(0, 5)] # theta: edge weight threshold

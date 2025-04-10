@@ -11,12 +11,6 @@ import networkx as nx
 import tqdm
 
 
-import sys
-target_path = "./"
-sys.path.append(target_path)
-import Cohesiveness_Calculation.General_function as gf
-
-
 # Group the results refer to parameters
 def group_results(algorithm, results, param_index, cohesiveness_index):
     grouped_results = {}

@@ -6,7 +6,7 @@ This script is used to calculate the psychology-informed cohesiveness for each c
 
 import os
 from joblib import Parallel, delayed
-import General_function as gf
+import Cohesiveness_Calculation.Utils.Process_algo as pa
 
 
 """
@@ -39,7 +39,7 @@ def cohesiveness_calculation(algo_list, njobs):
             tasks.append((algorithm, decay_method, value, attribute_file, node_mapping_file, result_file, output_file, njobs))
             
     # Execute the tasks in parallel
-    Parallel(n_jobs=njobs)(delayed(gf.cal_results)(*task) for task in tasks)
+    Parallel(n_jobs=njobs)(delayed(pa.cal_results)(*task) for task in tasks)
 
 
 if __name__ == "__main__":

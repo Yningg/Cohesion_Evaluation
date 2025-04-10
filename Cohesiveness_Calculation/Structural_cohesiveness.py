@@ -7,7 +7,8 @@ import networkx as nx
 import numpy as np
 import tqdm
 from joblib import Parallel, delayed
-import General_function as gf
+import Cohesiveness_Calculation.Utils.Graph_utils as gu
+import Cohesiveness_Calculation.Utils.Process_algo as pa
 
 
 # Group the results according to the query node: 100 query node --> 100 groups
@@ -77,15 +78,15 @@ def output_network_stats(algorithm, results_dir, dataset_list, dim_index):
         G = nx.read_edgelist(attribute_file, nodetype=str, data=(('timestamp', str), ('sentiment', str)), create_using=nx.MultiGraph()) # type: ignore
 
         # Read the node mapping file
-        node_mapping = gf.read_node_mapping(node_mapping_file)
+        node_mapping = pa.read_node_mapping(node_mapping_file)
 
         # Read the results
         if algorithm in ["ALS", "WCF-CRC", "I2ACSM"]:
-            results = gf.process_ALS_CRC_I2ACSM_results(results_dir + file)
+            results = pa.process_ALS_CRC_I2ACSM_results(results_dir + file)
         elif algorithm in ["CSD", "ST-Exa", "Repeeling"]:
-            results = gf.process_CSD_STExa_Repeeling_results(results_dir + file, node_mapping)
+            results = pa.process_CSD_STExa_Repeeling_results(results_dir + file, node_mapping)
         elif algorithm in ["TransZero_LS", "TransZero_GS"]:
-            results = gf.process_TransZero_results(results_dir + file, node_mapping)
+            results = pa.process_TransZero_results(results_dir + file, node_mapping)
         
         
         print(f"Number of results: {len(results)}")

@@ -1,95 +1,8 @@
-"""
-This script stores the functions that are commonly used in the experiments.
-"""
-
-import networkx as nx
 import ast
-from collections import defaultdict
-import time
-import csv
 from joblib import Parallel, delayed
 import tqdm
-import Cohesiveness_score as cs
-
-# Get query nodes from the file
-def get_query_nodes(query_node_path, dataset_name):
-    query_node_file = query_node_path + dataset_name + "_query_node.txt"
-    query_nodes = []
-    
-    with open(query_node_file, 'r') as f:
-        for line in f:
-            query_nodes.append(line.strip())
-        f.close()
-    
-    return query_nodes
-
-
-
-# Build the graph with the original nodes and edges attributes
-def graph_construction(attribute_file):
-    # Read the attribute file and add the attributes to the graph
-    attributed_G = nx.read_edgelist(attribute_file, nodetype=str, data=(('timestamp', str), ('sentiment', str)), create_using=nx.MultiDiGraph()) # type: ignore
-    
-    print(f"Original graph info: {attributed_G.number_of_nodes()} nodes, {attributed_G.number_of_edges()} edges, density: {nx.density(attributed_G)}")
-
-    return attributed_G
-
-
-"""
-Read the network and construct the temporal adjacency list
---> temporal adjacency list: {u: [(u, v, timestamp, sentiment)]}
-"""
-
-def build_graph(attribute_file):
-
-    tadj_list = defaultdict(list)
-
-    print("Loading the graph...")
-    starttime = time.time()
-
-    # The loaded data is already sorted by the timestamp
-    with open(attribute_file, 'r') as f:
-        reader = csv.reader(f, delimiter='\t')
-        # Get the initial timestamp by read the first line of the file
-        flag_read = False
-
-        for parts in reader:
-            if not flag_read:
-                initial_timestamp = int(parts[2])
-                flag_read = True
-            
-            u, v, timestamp, sentiment = parts[0], parts[1], int(parts[2]), int(parts[3])
-            timestamp = int(parts[2]) - initial_timestamp
-            
-            if u != v:
-                tadj_list[v].append((u, v, timestamp, sentiment))
-                
-            tadj_list[u].append((u, v, timestamp, sentiment))
-            
-
-    latest_timestamp = timestamp # The latest timestamp is the last timestamp in the file
-
-    # Sort the temporal adjacency list based on the new timestamp
-    for u in tadj_list:
-        tadj_list[u] = sorted(tadj_list[u], key=lambda x: x[2]) 
-
-    endtime = time.time()
-    print(f"Loding graph time(s): {endtime - starttime}")
-    return tadj_list, latest_timestamp
-
-
-# Given the graph's temporal adjacency list, extract the subgraph based on the subgraph node list
-def build_subgraph(tadj_list, subgraph_nodes, t_cur):
-    tadj_sublist = defaultdict(list)
-    subgraph_nodes_set = set(subgraph_nodes)
-
-    for u, edges in tadj_list.items():
-        if u in subgraph_nodes_set:
-            for edge in edges:
-                if edge[0] in subgraph_nodes_set and edge[1] in subgraph_nodes_set and edge[2] <= t_cur:
-                    tadj_sublist[u].append(edge)
-
-    return dict(tadj_sublist)
+import Cohesiveness_Calculation.Utils.Cohesiveness_score as cs
+import Cohesiveness_Calculation.Utils.Graph_utils as gu
 
 
 # Read the node mapping file
@@ -103,10 +16,17 @@ def read_node_mapping(node_mapping_file):
     return node_mapping
 
 
+# Merge the dictionaries in the list into a single dictionary
+def merge_dicts(dict_list):
+    merged_dict = {}
+    for d in dict_list:
+        merged_dict.update(d)
+    return merged_dict
+
+
 """
 Functions to read the results produced by the various algorithms
 """
-
 def process_ALS_CRC_I2ACSM_results(file):
     results = []
     with open(file, 'r') as f:
@@ -169,7 +89,7 @@ def cal_ALS_CRC_I2ACSM_item(node, score, parameter_list, community_node_list, ta
         if sorted_community in cohesiveness_dict:
             cohesiveness = cohesiveness_dict[sorted_community]
         else:
-            tadj_sublist = build_subgraph(tadj_list, community_node_list, latest_timestamp)
+            tadj_sublist = gu.build_subtadj(tadj_list, community_node_list, latest_timestamp)
             cohesiveness = cs.cohesiveness_dim(tadj_list, tadj_sublist, latest_timestamp, value, decay_method)
             cohesiveness_dict[sorted_community] = cohesiveness
     
@@ -184,7 +104,7 @@ def cal_CSD_STExa_Repeeling_item(node, parameter_list, community_node_list, tadj
         if sorted_community in cohesiveness_dict:
             cohesiveness = cohesiveness_dict[sorted_community]
         else:
-            tadj_sublist = build_subgraph(tadj_list, community_node_list, latest_timestamp)
+            tadj_sublist = gu.build_subtadj(tadj_list, community_node_list, latest_timestamp)
             cohesiveness = cs.cohesiveness_dim(tadj_list, tadj_sublist, latest_timestamp, value, decay_method)
             cohesiveness_dict[sorted_community] = cohesiveness
     
@@ -199,23 +119,16 @@ def cal_TransZero_item(node, community_node_list, tadj_list, latest_timestamp, v
         if sorted_community in cohesiveness_dict:
             cohesiveness = cohesiveness_dict[sorted_community]
         else:
-            tadj_sublist = build_subgraph(tadj_list, community_node_list, latest_timestamp)
+            tadj_sublist = gu.build_subtadj(tadj_list, community_node_list, latest_timestamp)
             cohesiveness = cs.cohesiveness_dim(tadj_list, tadj_sublist, latest_timestamp, value, decay_method)
             cohesiveness_dict[sorted_community] = cohesiveness
     
     return f"{node}\t{community_node_list}\t{cohesiveness}\n", cohesiveness_dict
 
 
-# Merge the dictionaries in the list into a single dictionary
-def merge_dicts(dict_list):
-    merged_dict = {}
-    for d in dict_list:
-        merged_dict.update(d)
-    return merged_dict
-
 
 """
-For each dataset,
+Calculate the psychology-informed cohesiveness for each algorithm's results
 1. Read datasets, node mapping and algorithm results from the corresponding directories
 2. Calculate the cohesiveness scores for algorithm results and save them to the output directory
 """
@@ -225,7 +138,7 @@ def cal_results(algorithm, decay_method, value, attribute_file, node_mapping_fil
     cohesiveness_dict = {}
 
     # Build the graph with original nodes and edges attributes
-    tadj_list, latest_timestamp = build_graph(attribute_file)
+    tadj_list, latest_timestamp = gu.build_tadj(attribute_file)
 
     # Read the node mapping file
     node_mapping = read_node_mapping(node_mapping_file)

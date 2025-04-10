@@ -3,16 +3,12 @@ This script is used to transform the original preprocessed datasets into the for
 """
 
 import os
-import pandas as pd
-import numpy as np
 import networkx as nx
-from datetime import datetime
-
 import sys
+
 target_path = "./"
 sys.path.append(target_path)
-import Cohesiveness_Calculation.General_function as gf
-
+import Cohesiveness_Calculation.Utils.Graph_utils as gu
 
 
 def read_node_mapping(node_mapping_file):
@@ -330,7 +326,7 @@ if __name__ == "__main__":
     for dataset_name in dataset_list:
         # Read the original attributed dataset
         attribute_file = source_path + dataset_name + "_attributed.txt"
-        G = gf.graph_construction(attribute_file)
+        G = gu.graph_construction(attribute_file)
 
         for algorithm in algo_list:
             target_path = target_path + algorithm + "_Dataset/"

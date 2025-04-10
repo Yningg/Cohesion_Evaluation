@@ -6,7 +6,7 @@ import tqdm
 target_path = "./"
 sys.path.append(target_path)
 from Representative_Algorithms.ALS.binary_heap import *
-import Cohesiveness_Calculation.General_function as gf
+import Cohesiveness_Calculation.Utils.Graph_Utils as gu
 
 class Graph:
     def __init__(self, dataset):
@@ -609,7 +609,7 @@ if __name__ == '__main__':
 
 
     # Load query nodes from query_node_dir
-    query_nodes_list = gf.get_query_nodes(query_node_dir, dataset_name)
+    query_nodes_list = gu.get_query_nodes(query_node_dir, dataset_name)
     query_nodes_list = [int(node) for node in query_nodes_list]
 
     # Initialize the graph according to the dataset

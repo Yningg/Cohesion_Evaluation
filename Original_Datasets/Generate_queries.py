@@ -13,7 +13,7 @@ import random
 import sys
 target_path = "./"
 sys.path.append(target_path)
-import Cohesiveness_Calculation.General_function as gf
+import Cohesiveness_Calculation.Utils.Graph_utils as gu
 
 
 seed = 2024
@@ -78,7 +78,7 @@ if __name__ == "__main__":
         network_file_name = dataset_name + "_attributed.txt"
 
         # Load the network
-        G = gf.graph_construction(network_file_path + network_file_name)
+        G = gu.graph_construction(network_file_path + network_file_name)
 
         # Choose query node based on the degree of the nodes
         query_nodes = generate_query_nodes(G, query_num, degree_percentage)

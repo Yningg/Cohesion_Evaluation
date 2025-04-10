@@ -14,7 +14,8 @@ import numpy as np
 import sys
 target_path = "./"
 sys.path.append(target_path)
-import Cohesiveness_Calculation.General_function as gf
+import Cohesiveness_Calculation.Utils.Graph_utils as gu
+import Cohesiveness_Calculation.Utils.Process_algo as pa
 
 def parse_cohesiveness_dim(cohesiveness_str):
     # Remove the brackets and split the string by commas
@@ -206,16 +207,16 @@ if __name__ == "__main__":
 
     # Read the node mapping file
     node_mapping_file = "D:/Cohesion_Evaluation/Original_Datasets/Node_Mapping/Chicago_COVID_node_mapping.txt"
-    node_mapping = gf.read_node_mapping(node_mapping_file)
+    node_mapping = pa.read_node_mapping(node_mapping_file)
     # Reverse the mapping
     node_mapping = {v: k for k, v in node_mapping.items()}
 
     # Read attribute file
     attribute_file = "D:/Cohesion_Evaluation/Original_Datasets/Preprocessed_Datasets/Chicago_COVID_attributed.txt"
-    reply_G = gf.graph_construction(attribute_file)
+    reply_G = gu.graph_construction(attribute_file)
 
     # Read query node file
-    # query_nodes = gf.get_query_nodes(query_dir, dataset)
+    # query_nodes = gu.get_query_nodes(query_dir, dataset)
 
     # Read the results of all algorithms
     # total_results = load_results(dataset, result_dir, algo_list)
