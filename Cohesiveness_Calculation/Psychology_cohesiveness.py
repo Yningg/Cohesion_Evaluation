@@ -16,7 +16,7 @@ import Cohesiveness_score as cs
 import General_function as gf
 
 
-def process_ALS_CRC_I2ACSM_item(node, score, parameter_list, community_node_list, edge_stream, tadj_list, latest_timestamp, value, decay_method, cohesiveness_dict):
+def process_ALS_CRC_I2ACSM_item(node, score, parameter_list, community_node_list, tadj_list, latest_timestamp, value, decay_method, cohesiveness_dict):
     if len(community_node_list) == 0:
         cohesiveness = ['Invalid', 'Invalid', 'Invalid', 'Invalid', 'Invalid']
     else:
@@ -24,14 +24,14 @@ def process_ALS_CRC_I2ACSM_item(node, score, parameter_list, community_node_list
         if sorted_community in cohesiveness_dict:
             cohesiveness = cohesiveness_dict[sorted_community]
         else:
-            edge_subtream, tadj_sublist = gf.build_subgraph(edge_stream, tadj_list, community_node_list)
-            cohesiveness = cs.cohesiveness_dim(edge_stream, tadj_list, edge_subtream, tadj_sublist, latest_timestamp, value, decay_method)
+            tadj_sublist = gf.build_subgraph(tadj_list, community_node_list, latest_timestamp)
+            cohesiveness = cs.cohesiveness_dim(tadj_list, tadj_sublist, latest_timestamp, value, decay_method)
             cohesiveness_dict[sorted_community] = cohesiveness
     
     return f"{node}\t{score}\t{parameter_list}\t{community_node_list}\t{cohesiveness}\n", cohesiveness_dict
 
 
-def process_CSD_STExa_Repeeling_item(node, parameter_list, community_node_list, edge_stream, tadj_list, latest_timestamp, value, decay_method, cohesiveness_dict):
+def process_CSD_STExa_Repeeling_item(node, parameter_list, community_node_list, tadj_list, latest_timestamp, value, decay_method, cohesiveness_dict):
     if len(community_node_list) == 0:
         cohesiveness = ['Invalid', 'Invalid', 'Invalid', 'Invalid', 'Invalid']
     else:
@@ -39,14 +39,14 @@ def process_CSD_STExa_Repeeling_item(node, parameter_list, community_node_list, 
         if sorted_community in cohesiveness_dict:
             cohesiveness = cohesiveness_dict[sorted_community]
         else:
-            edge_subtream, tadj_sublist = gf.build_subgraph(edge_stream, tadj_list, community_node_list)
-            cohesiveness = cs.cohesiveness_dim(edge_stream, tadj_list, edge_subtream, tadj_sublist, latest_timestamp, value, decay_method)
+            tadj_sublist = gf.build_subgraph(tadj_list, community_node_list, latest_timestamp)
+            cohesiveness = cs.cohesiveness_dim(tadj_list, tadj_sublist, latest_timestamp, value, decay_method)
             cohesiveness_dict[sorted_community] = cohesiveness
     
     return f"{node}\t{parameter_list}\t{community_node_list}\t{cohesiveness}\n", cohesiveness_dict
 
 
-def process_TransZero_item(node, community_node_list, node_mapping, edge_stream, tadj_list, latest_timestamp, value, decay_method, cohesiveness_dict):
+def process_TransZero_item(node, community_node_list, tadj_list, latest_timestamp, value, decay_method, cohesiveness_dict):
     if len(community_node_list) == 0:
         cohesiveness = ['Invalid', 'Invalid', 'Invalid', 'Invalid', 'Invalid']
     else:
@@ -54,8 +54,8 @@ def process_TransZero_item(node, community_node_list, node_mapping, edge_stream,
         if sorted_community in cohesiveness_dict:
             cohesiveness = cohesiveness_dict[sorted_community]
         else:
-            edge_subtream, tadj_sublist = gf.build_subgraph(edge_stream, tadj_list, community_node_list)
-            cohesiveness = cs.cohesiveness_dim(edge_stream, tadj_list, edge_subtream, tadj_sublist, latest_timestamp, value, decay_method)
+            tadj_sublist = gf.build_subgraph(tadj_list, community_node_list, latest_timestamp)
+            cohesiveness = cs.cohesiveness_dim(tadj_list, tadj_sublist, latest_timestamp, value, decay_method)
             cohesiveness_dict[sorted_community] = cohesiveness
     
     return f"{node}\t{community_node_list}\t{cohesiveness}\n", cohesiveness_dict
@@ -85,8 +85,7 @@ def process_results(algorithm, dataset, results_dir, output_dir, decay_method, v
     cohesiveness_dict = {}
 
     # Build the graph with original nodes and edges attributes
-    edge_stream, tadj_list = gf.build_graph(attribute_file)
-    latest_timestamp = list(edge_stream.keys())[-1] # type: ignore
+    tadj_list, latest_timestamp = gf.build_graph(attribute_file)
 
     # Read the node mapping file
     node_mapping = gf.read_node_mapping(node_mapping_file)
@@ -106,17 +105,17 @@ def process_results(algorithm, dataset, results_dir, output_dir, decay_method, v
     # Calculate the cohesiveness for each community
     if algorithm in ["ALS", "WCF-CRC", "I2ACSM"]:
         results_with_dicts = Parallel(n_jobs=njobs)(
-            delayed(process_ALS_CRC_I2ACSM_item)(node, score, parameter_list, community_node_list, edge_stream, tadj_list, latest_timestamp, value, decay_method, cohesiveness_dict)
+            delayed(process_ALS_CRC_I2ACSM_item)(node, score, parameter_list, community_node_list, tadj_list, latest_timestamp, value, decay_method, cohesiveness_dict)
             for node, score, parameter_list, community_node_list in tqdm.tqdm(results)
         )
     elif algorithm in ["CSD", "ST-Exa", "Repeeling"]:
         results_with_dicts = Parallel(n_jobs=njobs)(
-            delayed(process_CSD_STExa_Repeeling_item)(node, parameter_list, community_node_list, edge_stream, tadj_list, latest_timestamp, value, decay_method, cohesiveness_dict)
+            delayed(process_CSD_STExa_Repeeling_item)(node, parameter_list, community_node_list, tadj_list, latest_timestamp, value, decay_method, cohesiveness_dict)
             for node, parameter_list, community_node_list in tqdm.tqdm(results)
         )
     elif algorithm in ["TransZero_LS", "TransZero_GS"]:
         results_with_dicts = Parallel(n_jobs=njobs)(
-            delayed(process_TransZero_item)(node, community_node_list, node_mapping, edge_stream, tadj_list, latest_timestamp, value, decay_method, cohesiveness_dict)
+            delayed(process_TransZero_item)(node, community_node_list, tadj_list, latest_timestamp, value, decay_method, cohesiveness_dict)
         for node, community_node_list in tqdm.tqdm(results)
         )
     
@@ -165,7 +164,7 @@ if __name__ == "__main__":
     cohesiveness_dir = "D:/Cohesion_Evaluation/Cohesiveness_Output/"
 
     algo_list =["ALS", "WCF-CRC", "CSD", "ST-Exa", "Repeeling", "I2ACSM", "TransZero_LS", "TransZero_GS"]
-    njobs = -1
+    njobs = 1
 
     for algorithm in algo_list:
         if algorithm == "Repeeling":
