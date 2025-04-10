@@ -4,68 +4,11 @@ This script is used to calculate the psychology-informed cohesiveness for each c
 2. Consider different time decay functions
 """
 
-import numpy as np
 import os
-import pandas as pd
 from joblib import Parallel, delayed
 import tqdm
-import ast
-import networkx as nx
-
-import Cohesiveness_score as cs
 import General_function as gf
 
-
-def process_ALS_CRC_I2ACSM_item(node, score, parameter_list, community_node_list, tadj_list, latest_timestamp, value, decay_method, cohesiveness_dict):
-    if len(community_node_list) == 0:
-        cohesiveness = ['Invalid', 'Invalid', 'Invalid', 'Invalid', 'Invalid']
-    else:
-        sorted_community = tuple(sorted(community_node_list))
-        if sorted_community in cohesiveness_dict:
-            cohesiveness = cohesiveness_dict[sorted_community]
-        else:
-            tadj_sublist = gf.build_subgraph(tadj_list, community_node_list, latest_timestamp)
-            cohesiveness = cs.cohesiveness_dim(tadj_list, tadj_sublist, latest_timestamp, value, decay_method)
-            cohesiveness_dict[sorted_community] = cohesiveness
-    
-    return f"{node}\t{score}\t{parameter_list}\t{community_node_list}\t{cohesiveness}\n", cohesiveness_dict
-
-
-def process_CSD_STExa_Repeeling_item(node, parameter_list, community_node_list, tadj_list, latest_timestamp, value, decay_method, cohesiveness_dict):
-    if len(community_node_list) == 0:
-        cohesiveness = ['Invalid', 'Invalid', 'Invalid', 'Invalid', 'Invalid']
-    else:
-        sorted_community = tuple(sorted(community_node_list))
-        if sorted_community in cohesiveness_dict:
-            cohesiveness = cohesiveness_dict[sorted_community]
-        else:
-            tadj_sublist = gf.build_subgraph(tadj_list, community_node_list, latest_timestamp)
-            cohesiveness = cs.cohesiveness_dim(tadj_list, tadj_sublist, latest_timestamp, value, decay_method)
-            cohesiveness_dict[sorted_community] = cohesiveness
-    
-    return f"{node}\t{parameter_list}\t{community_node_list}\t{cohesiveness}\n", cohesiveness_dict
-
-
-def process_TransZero_item(node, community_node_list, tadj_list, latest_timestamp, value, decay_method, cohesiveness_dict):
-    if len(community_node_list) == 0:
-        cohesiveness = ['Invalid', 'Invalid', 'Invalid', 'Invalid', 'Invalid']
-    else:
-        sorted_community = tuple(sorted(community_node_list))
-        if sorted_community in cohesiveness_dict:
-            cohesiveness = cohesiveness_dict[sorted_community]
-        else:
-            tadj_sublist = gf.build_subgraph(tadj_list, community_node_list, latest_timestamp)
-            cohesiveness = cs.cohesiveness_dim(tadj_list, tadj_sublist, latest_timestamp, value, decay_method)
-            cohesiveness_dict[sorted_community] = cohesiveness
-    
-    return f"{node}\t{community_node_list}\t{cohesiveness}\n", cohesiveness_dict
-
-
-def merge_dicts(dict_list):
-    merged_dict = {}
-    for d in dict_list:
-        merged_dict.update(d)
-    return merged_dict
 
 """
 For each dataset,
@@ -105,22 +48,22 @@ def process_results(algorithm, dataset, results_dir, output_dir, decay_method, v
     # Calculate the cohesiveness for each community
     if algorithm in ["ALS", "WCF-CRC", "I2ACSM"]:
         results_with_dicts = Parallel(n_jobs=njobs)(
-            delayed(process_ALS_CRC_I2ACSM_item)(node, score, parameter_list, community_node_list, tadj_list, latest_timestamp, value, decay_method, cohesiveness_dict)
+            delayed(gf.process_ALS_CRC_I2ACSM_item)(node, score, parameter_list, community_node_list, tadj_list, latest_timestamp, value, decay_method, cohesiveness_dict)
             for node, score, parameter_list, community_node_list in tqdm.tqdm(results)
         )
     elif algorithm in ["CSD", "ST-Exa", "Repeeling"]:
         results_with_dicts = Parallel(n_jobs=njobs)(
-            delayed(process_CSD_STExa_Repeeling_item)(node, parameter_list, community_node_list, tadj_list, latest_timestamp, value, decay_method, cohesiveness_dict)
+            delayed(gf.process_CSD_STExa_Repeeling_item)(node, parameter_list, community_node_list, tadj_list, latest_timestamp, value, decay_method, cohesiveness_dict)
             for node, parameter_list, community_node_list in tqdm.tqdm(results)
         )
     elif algorithm in ["TransZero_LS", "TransZero_GS"]:
         results_with_dicts = Parallel(n_jobs=njobs)(
-            delayed(process_TransZero_item)(node, community_node_list, tadj_list, latest_timestamp, value, decay_method, cohesiveness_dict)
+            delayed(gf.process_TransZero_item)(node, community_node_list, tadj_list, latest_timestamp, value, decay_method, cohesiveness_dict)
         for node, community_node_list in tqdm.tqdm(results)
         )
     
     cohesiveness_results, updated_dicts = zip(*results_with_dicts)
-    cohesiveness_dict = merge_dicts(updated_dicts)
+    cohesiveness_dict = gf.merge_dicts(updated_dicts)
     
     with open(output_file, 'a') as f:
         f.writelines(cohesiveness_results)

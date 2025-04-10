@@ -7,6 +7,7 @@ import ast
 from collections import defaultdict
 import time
 import csv
+import Cohesiveness_score as cs
 
 # Get query nodes from the file
 def get_query_nodes(query_node_path, dataset_name):
@@ -153,3 +154,56 @@ def process_TransZero_results(file, node_mapping):
             results.append([node, community_node_list])
 
     return results
+
+
+
+def process_ALS_CRC_I2ACSM_item(node, score, parameter_list, community_node_list, tadj_list, latest_timestamp, value, decay_method, cohesiveness_dict):
+    if len(community_node_list) == 0:
+        cohesiveness = ['Invalid', 'Invalid', 'Invalid', 'Invalid', 'Invalid']
+    else:
+        sorted_community = tuple(sorted(community_node_list))
+        if sorted_community in cohesiveness_dict:
+            cohesiveness = cohesiveness_dict[sorted_community]
+        else:
+            tadj_sublist = build_subgraph(tadj_list, community_node_list, latest_timestamp)
+            cohesiveness = cs.cohesiveness_dim(tadj_list, tadj_sublist, latest_timestamp, value, decay_method)
+            cohesiveness_dict[sorted_community] = cohesiveness
+    
+    return f"{node}\t{score}\t{parameter_list}\t{community_node_list}\t{cohesiveness}\n", cohesiveness_dict
+
+
+def process_CSD_STExa_Repeeling_item(node, parameter_list, community_node_list, tadj_list, latest_timestamp, value, decay_method, cohesiveness_dict):
+    if len(community_node_list) == 0:
+        cohesiveness = ['Invalid', 'Invalid', 'Invalid', 'Invalid', 'Invalid']
+    else:
+        sorted_community = tuple(sorted(community_node_list))
+        if sorted_community in cohesiveness_dict:
+            cohesiveness = cohesiveness_dict[sorted_community]
+        else:
+            tadj_sublist = build_subgraph(tadj_list, community_node_list, latest_timestamp)
+            cohesiveness = cs.cohesiveness_dim(tadj_list, tadj_sublist, latest_timestamp, value, decay_method)
+            cohesiveness_dict[sorted_community] = cohesiveness
+    
+    return f"{node}\t{parameter_list}\t{community_node_list}\t{cohesiveness}\n", cohesiveness_dict
+
+
+def process_TransZero_item(node, community_node_list, tadj_list, latest_timestamp, value, decay_method, cohesiveness_dict):
+    if len(community_node_list) == 0:
+        cohesiveness = ['Invalid', 'Invalid', 'Invalid', 'Invalid', 'Invalid']
+    else:
+        sorted_community = tuple(sorted(community_node_list))
+        if sorted_community in cohesiveness_dict:
+            cohesiveness = cohesiveness_dict[sorted_community]
+        else:
+            tadj_sublist = build_subgraph(tadj_list, community_node_list, latest_timestamp)
+            cohesiveness = cs.cohesiveness_dim(tadj_list, tadj_sublist, latest_timestamp, value, decay_method)
+            cohesiveness_dict[sorted_community] = cohesiveness
+    
+    return f"{node}\t{community_node_list}\t{cohesiveness}\n", cohesiveness_dict
+
+
+def merge_dicts(dict_list):
+    merged_dict = {}
+    for d in dict_list:
+        merged_dict.update(d)
+    return merged_dict
