@@ -1,16 +1,18 @@
 """
-This script is used to transform the original preprocessed datasets into the format that required by each algorithms, where the node mapping is also included.
+Transform the original preprocessed datasets into the format required by each algorithm
 """
 
 import os
 import networkx as nx
 import sys
+import tqdm
 
 target_path = "./"
 sys.path.append(target_path)
 import Cohesiveness_Calculation.Utils.Graph_utils as gu
 
 
+# Notice: this function is different from the one in Process_algo.py
 def read_node_mapping(node_mapping_file):
     node_mapping = {}
     with open(node_mapping_file, "r") as f:
@@ -20,27 +22,72 @@ def read_node_mapping(node_mapping_file):
     return node_mapping
 
 
-# from_id \t to_id \t timestamp
+# ALS Dataset Format (Undirected Temporal): from_id \t to_id \t timestamp
+# Note the the transformation from directed graph to undirected graph is handled within the algorithm, 
+# so we do not need to convert the graph to undirected graph here
 def get_ALS_dataset(G, dataset_name, target_path):
     with open(target_path + dataset_name + "_timestamp.txt", "w") as f:
         for u, v, d in G.edges(data=True):
             f.write(str(u) + "\t" + str(v) + "\t" + str(d["timestamp"]) + "\n")
 
 
+# I2ACSM Dataset Format (Undirected): from_id \t to_id
 def get_I2ACSM_dataset(G, dataset_name, target_path):
     G_undir = nx.Graph(G)
-    print(f"Graph info after converting to undirected simple graph: nodes: {G_undir.number_of_nodes()}, edges: {G_undir.number_of_edges()}, density: {nx.density(G_undir)}")
+    # print(f"Graph info after converting to undirected simple graph: nodes: {G_undir.number_of_nodes()}, edges: {G_undir.number_of_edges()}, density: {nx.density(G_undir)}")
 
     # Remove self-loop edges
     G_undir.remove_edges_from(nx.selfloop_edges(G_undir))
-    print(f"Graph info after removing self-loop edges: nodes: {G_undir.number_of_nodes()}, edges: {G_undir.number_of_edges()}, density: {nx.density(G_undir)}")
+    # print(f"Graph info after removing self-loop edges: nodes: {G_undir.number_of_nodes()}, edges: {G_undir.number_of_edges()}, density: {nx.density(G_undir)}")
 
     with open(target_path + dataset_name + "_non_attributed.txt", "w") as f:
         for u, v in G_undir.edges():
             f.write(f"{u}\t{v}\n")
 
+
 """
-This function is to generate the data needed for the CRC algorithm, following are the rules for generating the data:
+CSD Dataset Format (Directed Multigraph with no self-loop):
+1. Read the original attributed dataset and node mapping file
+3. Generate two file for each dataset use node mapping:
+    (1) File recording every node's in degree and out degree: DatasetName_Degree.dat
+        Format: node_id in_degree out_degree
+    (2) File recording the graph in a adjacent format: DatasetName_Graph.dat
+        Format: node_id neighbor1 neighbor2 ...
+"""
+def get_CSD_dataset(G, dataset_name, node_mapping, target_path):
+
+    target_dir = target_path + f"{dataset_name}/" 
+    os.makedirs(target_dir, exist_ok=True)
+
+    # Generate the degree file, order by the node id
+    degree_list = []
+    adj_list = {}
+
+    for original_id, mapped_id in node_mapping.items():
+        degree_list.append((mapped_id, G.in_degree(str(original_id)), G.out_degree(str(original_id))))
+        adj_list[mapped_id] = []
+
+        # Find all edges that contain original_id as the source node
+        edges = G.out_edges(str(original_id), data=True)
+        edges = sorted(edges, key=lambda x: x[2]['timestamp'])
+        for u, v, d in edges:          
+            adj_list[mapped_id].append(node_mapping[int(v)])
+
+    with open(target_dir + 'Degree.dat', 'w') as f:
+        for node, in_degree, out_degree in degree_list:
+            f.write(f"{node} {in_degree} {out_degree}\n")
+
+    with open(target_dir +  'Graph.dat', 'w') as f:
+        #  Write the overall number of nodes first
+        f.write(f"{len(G.nodes())}\n")
+
+        for node, neighbors in adj_list.items():
+            f.write(f"{node} {' '.join([str(neighbor) for neighbor in neighbors])}\n")
+
+
+
+"""
+Generate the data needed for the WCF-CRC algorithm, following are the rules for generating the data:
 1. Read the attributed graph dataset
 2. Generate graph instances: 
     (1) First sort the edges by chronological order
@@ -145,54 +192,6 @@ def get_CRC_dataset(G, dataset_name, target_path, num_instances = 10):
 
 
 
-
-"""
-Generate CSD dataset
-1. Read the original attributed dataset from the source path, read the node mapping file
-2. Transfer the network to a directed graph, since the paper requires the directed graph
-3. Generate two file for each dataset use node mapping:
-    (1) File recording every node's in degree and out degree: DatasetName_Degree.dat
-        Format: node_id, in_degree, out_degree
-    (2) File recording the graph in a adjacent format: DatasetName_Graph.dat
-        Format: node1 node2 node3 ...
-"""
-def get_CSD_dataset(G, dataset_name, node_mapping_path, target_path):
-    G_dir = nx.DiGraph(G)
-    print(f"Graph info after converting to directed graph: nodes: {G_dir.number_of_nodes()}, edges: {G_dir.number_of_edges()}, density: {nx.density(G_dir)}")
-
-    # Read the node mapping file
-    node_mapping = read_node_mapping(node_mapping_path + dataset_name + "_node_mapping.txt")
-
-    target_dir = target_path + f"{dataset_name}/" 
-    os.makedirs(target_dir, exist_ok=True)
-
-    # Generate the degree file, order by the node id
-    degree_list = []
-    for node in G_dir.nodes():
-        mapped_node = node_mapping[node]
-        degree_list.append((mapped_node, G_dir.in_degree(node), G_dir.out_degree(node)))
-    
-    degree_list = sorted(degree_list, key=lambda x: x[0])
-    with open(target_dir + 'Degree.dat', 'w') as f:
-        for node, in_degree, out_degree in degree_list:
-            f.write(f"{node} {in_degree} {out_degree}\n")
-    
-    # Generate the graph file, each line only stores the node id followed by its neighbors
-    adj_list = {}
-    for (node, _, _) in degree_list:
-        neighbors = list(G_dir.neighbors(node))
-        neighbors = [node_mapping[neighbor] for neighbor in neighbors]
-        adj_list[node] = neighbors
-    
-    with open(target_dir +  'Graph.dat', 'w') as f:
-        #  Write the overall number of nodes first
-        f.write(f"{len(G_dir.nodes())}\n")
-
-        for node, neighbors in adj_list.items():
-            f.write(f"{node} {' '.join([str(neighbor) for neighbor in neighbors])}\n")
-
-
-
 """
 Generate STExa dataset
 1. Read the original attributed dataset from the source path, read the node mapping file
@@ -202,7 +201,7 @@ Generate STExa dataset
 5. The output file format: from_id to_id, the first line is the number of nodes and edges
 """
 # The graph is undirected simple graph
-def get_STExa_dataset(G, dataset_name, node_mapping_path, target_path):
+def get_STExa_dataset(G, dataset_name, node_mapping, target_path):
     G_undir = nx.Graph(G)
     print(f"Graph info after converting to undirected simple graph: nodes: {G_undir.number_of_nodes()}, edges: {G_undir.number_of_edges()}, density: {nx.density(G_undir)}")
 
@@ -210,9 +209,6 @@ def get_STExa_dataset(G, dataset_name, node_mapping_path, target_path):
     G_undir.remove_edges_from(nx.selfloop_edges(G_undir))
     print(f"Graph info after removing self-loop edges: nodes: {G_undir.number_of_nodes()}, edges: {G_undir.number_of_edges()}, density: {nx.density(G_undir)}")
 
-    # Read the node mapping file
-    node_mapping = read_node_mapping(node_mapping_path + dataset_name + "_node_mapping.txt")
-    
     target_dir = target_path + f"{dataset_name}/"
     os.makedirs(target_dir, exist_ok=True)
 
@@ -240,9 +236,7 @@ Generate the Repeeling dataset
 1. Read the attributed version of the dataset from the source path, and read the node mapping file from the node mapping directory
 2. The output file format: from_id to_id timestamp
 """
-def get_Repeeling_dataset(G, dataset_name, node_mapping_path, target_path):
-    # Read the node mapping file
-    node_mapping = read_node_mapping(node_mapping_path + dataset_name + "_node_mapping.txt")
+def get_Repeeling_dataset(G, dataset_name, node_mapping, target_path):
 
     target_dir = target_path + f"{dataset_name}/"
     os.makedirs(target_dir, exist_ok=True)
@@ -264,7 +258,7 @@ Get the dataset for the TransZero_LS_GS algorithm
 2. Save query file as ".query" file
 """
 
-def get_TransZero_dataset(G, dataset_name, query_node_path, node_mapping_path, target_path):
+def get_TransZero_dataset(G, dataset_name, query_node_path, node_mapping, target_path):
     G_dir = nx.Graph(G)
     print(f"Graph info after converting to undirected simple graph: nodes: {G_dir.number_of_nodes()}, edges: {G_dir.number_of_edges()}, density: {nx.density(G_dir)}")
 
@@ -272,9 +266,6 @@ def get_TransZero_dataset(G, dataset_name, query_node_path, node_mapping_path, t
     G_dir.remove_edges_from(nx.selfloop_edges(G_dir))
     print(f"Graph info after removing self-loop edges: nodes: {G_dir.number_of_nodes()}, edges: {G_dir.number_of_edges()}, density: {nx.density(G_dir)}")
 
-    # Read the node mapping file
-    node_mapping = read_node_mapping(node_mapping_path + dataset_name + "_node_mapping.txt")
-    
     target_dir = target_path + f"{dataset_name}/"
     os.makedirs(target_dir, exist_ok=True)
 
@@ -307,50 +298,44 @@ def get_TransZero_dataset(G, dataset_name, query_node_path, node_mapping_path, t
 
 
 if __name__ == "__main__":
-    algo_list =["ALS", "WCF-CRC", "CSD", "ST-Exa", "Repeeling", "I2ACSM", "TransZero_LS_GS"]
+    # algo_list =["ALS", "WCF-CRC", "CSD", "ST-Exa", "Repeeling", "I2ACSM", "TransZero_LS_GS"]
+    algo_list =["CSD"]
     dataset_list = ["BTW17", "Chicago_COVID", "Crawled_Dataset144", "Crawled_Dataset26"]
 
-    # Set for the source path
-    source_path = "D:/Cohesion_Evaluation/Original_Datasets/Preprocessed_Datasets/"
-
-    # Set for the query node path
-    query_node_path = "D:/Cohesion_Evaluation/Original_Datasets/Query_Nodes/"
-
-    # Set for saving the transformed datasets
-    target_path = "D:/Cohesion_Evaluation/Input_Datasets/"
-
-    # Path to access the node mapping file
-    node_mapping_path = "D:/Cohesion_Evaluation/Original_Datasets/Node_Mapping/"
+    source_path = "D:/NTU/Academic/5. Part 2 Experimental Analysis/Code and Datasets/Cohesion_Evaluation/Original_Datasets/Preprocessed_Datasets/"
+    query_node_path = "D:/NTU/Academic/5. Part 2 Experimental Analysis/Code and Datasets/Cohesion_Evaluation/Original_Datasets/Query_Nodes/"
+    target_path = "D:/NTU/Academic/5. Part 2 Experimental Analysis/Code and Datasets/Cohesion_Evaluation/Input_Datasets/"  # Path to save the transformed datasets
+    node_mapping_path = "D:/NTU/Academic/5. Part 2 Experimental Analysis/Code and Datasets/Cohesion_Evaluation/Original_Datasets/Node_Mapping/"
 
     
-    for dataset_name in dataset_list:
-        # Read the original attributed dataset
+    for dataset_name in tqdm.tqdm(dataset_list):
         attribute_file = source_path + dataset_name + "_attributed.txt"
         G = gu.graph_construction(attribute_file)
 
-        for algorithm in algo_list:
-            target_path = target_path + algorithm + "_Dataset/"
+        for algorithm in tqdm.tqdm(algo_list):
+            algo_target_path = target_path + algorithm + "_Dataset/"
+            node_mapping = read_node_mapping(node_mapping_path + dataset_name + "_node_mapping.txt")
             
-            if algorithm == "I2ACSM":
-                get_I2ACSM_dataset(G, dataset_name, target_path)
-            
-            elif algorithm == "ALS":
-                get_ALS_dataset(G, dataset_name, target_path)
+            if algorithm == "ALS":
+                get_ALS_dataset(G, dataset_name, algo_target_path)
 
             elif algorithm == "WCF-CRC":
                 if dataset_name == "BTW17":
-                    get_CRC_dataset(G, dataset_name, target_path, num_instances = 3)
+                    get_CRC_dataset(G, dataset_name, algo_target_path, num_instances = 3)
                 else:
-                    get_CRC_dataset(G, dataset_name, target_path, num_instances = 10)
-            
+                    get_CRC_dataset(G, dataset_name, algo_target_path, num_instances = 10)
+
             elif algorithm == "CSD":
-                get_CSD_dataset(G, dataset_name, node_mapping_path, target_path)
+                get_CSD_dataset(G, dataset_name, node_mapping, algo_target_path)
 
             elif algorithm == "ST-Exa":
-                get_STExa_dataset(G, dataset_name, node_mapping_path, target_path)
-            
+                get_STExa_dataset(G, dataset_name, node_mapping, algo_target_path)
+
             elif algorithm == "Repeeling":
-                 get_Repeeling_dataset(G, dataset_name, node_mapping_path, target_path)
+                 get_Repeeling_dataset(G, dataset_name, node_mapping, algo_target_path)
+
+            elif algorithm == "I2ACSM":
+                get_I2ACSM_dataset(G, dataset_name, algo_target_path)
 
             elif algorithm == "TransZero_LS_GS":
-                get_TransZero_dataset(G, dataset_name, query_node_path, node_mapping_path, target_path)
+                get_TransZero_dataset(G, dataset_name, query_node_path, node_mapping, algo_target_path)
