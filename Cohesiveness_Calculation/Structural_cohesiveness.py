@@ -7,7 +7,8 @@ import networkx as nx
 import numpy as np
 import tqdm
 from joblib import Parallel, delayed
-import Cohesiveness_Calculation.Utils.Process_algo as pa
+import Utils.Process_algo as pa
+import Utils.Graph_utils as gu
 
 
 # Group the results according to the query node: 100 query node --> 100 groups
@@ -31,8 +32,8 @@ def process_node(G, node, result_list, dim_index):
         # Only calculate for the community that has more than 1 node
         if len(result[dim_index]) > 0:
             subgraph = G.subgraph(result[dim_index])
-            if nx.is_connected(subgraph):
-                network_stats.append([nx.diameter(subgraph), nx.number_of_nodes(subgraph), min(dict(subgraph.degree()).values())])
+            if nx.is_weakly_connected(subgraph):
+                network_stats.append([nx.diameter(subgraph.to_undirected()), nx.number_of_nodes(subgraph), min(dict(subgraph.degree()).values())])
                 valid_count += 1
 
     if valid_count == 0:
@@ -42,8 +43,8 @@ def process_node(G, node, result_list, dim_index):
         return node, list(network_stats)
 
 
-def get_network_results(G, grouped_results, dim_index, n_jobs=-1):
-    results = Parallel(n_jobs=n_jobs)(
+def get_network_results(G, grouped_results, dim_index, njobs):
+    results = Parallel(n_jobs=njobs)(
         delayed(process_node)(G, node, result_list, dim_index) for node, result_list in tqdm.tqdm(grouped_results.items())
     )
 
@@ -59,7 +60,7 @@ def get_network_results(G, grouped_results, dim_index, n_jobs=-1):
     return condensed_results, empty_result_num
 
 
-def output_network_stats(algorithm, results_dir, dataset_list, dim_index):
+def output_network_stats(algorithm, results_dir, dataset_list, dim_index, njobs):
     global attribute_dir, node_mapping_dir
 
     # Extract files according to the dataset name
@@ -76,7 +77,7 @@ def output_network_stats(algorithm, results_dir, dataset_list, dim_index):
         node_mapping = pa.read_node_mapping(node_mapping_file)
 
         # Build the graph with original nodes and edges attributes
-        G = nx.read_edgelist(attribute_file, nodetype=str, data=(('timestamp', str), ('sentiment', str)), create_using=nx.MultiGraph()) # type: ignore
+        G = gu.graph_construction(attribute_file)
 
         # Read the results
         if algorithm in ["ALS", "WCF-CRC", "I2ACSM"]:
@@ -93,7 +94,7 @@ def output_network_stats(algorithm, results_dir, dataset_list, dim_index):
         print(f"Number of grouped results: {len(grouped_results)}")
     
         # Calculate the structural cohesiveness
-        condensed_results, empty_num = get_network_results(G, grouped_results, dim_index)
+        condensed_results, empty_num = get_network_results(G, grouped_results, dim_index, njobs)
         print(f"Number of condensed results: {len(condensed_results)}, Number of empty results: {empty_num}")
 
         # Average the results for communities searched by the same query node
@@ -105,21 +106,22 @@ def output_network_stats(algorithm, results_dir, dataset_list, dim_index):
             print(f"{dataset}, {algorithm}: {average_results[0]:.2f} & {average_results[1]:.2f} & {average_results[2]:.2f} & {len(condensed_results)}")
     
         
-def process(algorithm, dataset_list, dim_index):
+def process(algorithm, dataset_list, dim_index, njobs):
     global algo_results_dir
     algo_result_dir = algo_results_dir + algorithm + "_Results/"
-    output_network_stats(algorithm, algo_result_dir, dataset_list, dim_index)
+    output_network_stats(algorithm, algo_result_dir, dataset_list, dim_index, njobs)
 
 
 if __name__ == "__main__":
     attribute_dir = "D:/Cohesion_Evaluation/Original_Datasets/Preprocessed_Datasets/"
     algo_results_dir = "D:/Cohesion_Evaluation/Algorithm_Output/"
     node_mapping_dir = "D:/Cohesion_Evaluation/Original_Datasets/Node_Mapping/"
+    njobs = -1
 
     algo_index ={"ALS": 3, "WCF-CRC": 3, "CSD": 2, "ST-Exa": 2, "Repeeling": 2, "I2ACSM": 3, "TransZero_LS": 1, "TransZero_GS": 1}
 
     for algorithm, dim_index in algo_index.items():
         if algorithm == "Repeeling":
-            process(algorithm, ["BTW17", "Chicago_COVID"], dim_index)
+            process(algorithm, ["BTW17", "Chicago_COVID"], dim_index, njobs)
         else:
-            process(algorithm, ["BTW17", "Chicago_COVID", "Crawled_Dataset26", "Crawled_Dataset144"], dim_index)
+            process(algorithm, ["BTW17", "Chicago_COVID", "Crawled_Dataset26", "Crawled_Dataset144"], dim_index, njobs)
