@@ -1,8 +1,8 @@
 import ast
 from joblib import Parallel, delayed
 import tqdm
-import Cohesiveness_Calculation.Utils.Cohesiveness_score as cs
-import Cohesiveness_Calculation.Utils.Graph_utils as gu
+import Utils.Cohesiveness_score as cs
+import Utils.Graph_utils as gu
 
 
 # Read the node mapping file
@@ -134,13 +134,10 @@ Calculate the psychology-informed cohesiveness for each algorithm's results
 """
 def cal_results(algorithm, decay_method, value, attribute_file, node_mapping_file, result_file, output_file, n_jobs):
   
-    # Dictionary to store the cohesiveness results for each community, in case of duplicate calculation
     cohesiveness_dict = {}
 
     # Build the graph with original nodes and edges attributes
     tadj_list, latest_timestamp = gu.build_tadj(attribute_file)
-
-    # Read the node mapping file
     node_mapping = read_node_mapping(node_mapping_file)
 
     # Read the results of the algorithm

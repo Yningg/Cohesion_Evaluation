@@ -4,7 +4,7 @@ Calculate the psychology-informed cohesiveness of CS results (using varying deca
 
 import os
 from joblib import Parallel, delayed
-import Cohesiveness_Calculation.Utils.Process_algo as pa
+import Utils.Process_algo as pa
 
 
 def cohesiveness_calculation(algorithm, dataset_list, njobs):
