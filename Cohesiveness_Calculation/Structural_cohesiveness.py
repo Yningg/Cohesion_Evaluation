@@ -1,13 +1,12 @@
 """
-This script is used to evaluate the diameter, size, and minimum degree of CS results.
+Calculate the structural cohesiveness of CS results, including the diameter, size, and minimum degree.
 """
-import ast
+
 import os
 import networkx as nx
 import numpy as np
 import tqdm
 from joblib import Parallel, delayed
-import Cohesiveness_Calculation.Utils.Graph_utils as gu
 import Cohesiveness_Calculation.Utils.Process_algo as pa
 
 
@@ -29,7 +28,7 @@ def process_node(G, node, result_list, dim_index):
     valid_count = 0
 
     for result in result_list:
-        # Only calculate the stats for the community that has more than 1 node
+        # Only calculate for the community that has more than 1 node
         if len(result[dim_index]) > 0:
             subgraph = G.subgraph(result[dim_index])
             if nx.is_connected(subgraph):
@@ -41,6 +40,7 @@ def process_node(G, node, result_list, dim_index):
     else:
         network_stats = np.mean(network_stats, axis=0)
         return node, list(network_stats)
+
 
 def get_network_results(G, grouped_results, dim_index, n_jobs=-1):
     results = Parallel(n_jobs=n_jobs)(
@@ -69,16 +69,14 @@ def output_network_stats(algorithm, results_dir, dataset_list, dim_index):
             if dataset_name in file:
                 file_list[dataset_name] = file
   
-    # Read the results
+  
     for dataset, file in file_list.items():
         attribute_file = attribute_dir + dataset + "_attributed.txt"
         node_mapping_file = node_mapping_dir + dataset + "_node_mapping.txt"
+        node_mapping = pa.read_node_mapping(node_mapping_file)
 
         # Build the graph with original nodes and edges attributes
         G = nx.read_edgelist(attribute_file, nodetype=str, data=(('timestamp', str), ('sentiment', str)), create_using=nx.MultiGraph()) # type: ignore
-
-        # Read the node mapping file
-        node_mapping = pa.read_node_mapping(node_mapping_file)
 
         # Read the results
         if algorithm in ["ALS", "WCF-CRC", "I2ACSM"]:
@@ -88,24 +86,22 @@ def output_network_stats(algorithm, results_dir, dataset_list, dim_index):
         elif algorithm in ["TransZero_LS", "TransZero_GS"]:
             results = pa.process_TransZero_results(results_dir + file, node_mapping)
         
-        
         print(f"Number of results: {len(results)}")
         
-        # Group the results refer to the query node
+        # Group the results according to the query node
         grouped_results = group_results(results)
         print(f"Number of grouped results: {len(grouped_results)}")
     
-        # Calculate the community stats for each query node
+        # Calculate the structural cohesiveness
         condensed_results, empty_num = get_network_results(G, grouped_results, dim_index)
         print(f"Number of condensed results: {len(condensed_results)}, Number of empty results: {empty_num}")
 
-        # Calculate the average query node stats
+        # Average the results for communities searched by the same query node
         if empty_num == 100:
             print("No valid results")
             continue
         else:
             average_results = np.mean(list(condensed_results.values()), axis=0)
-
             print(f"{dataset}, {algorithm}: {average_results[0]:.2f} & {average_results[1]:.2f} & {average_results[2]:.2f} & {len(condensed_results)}")
     
         

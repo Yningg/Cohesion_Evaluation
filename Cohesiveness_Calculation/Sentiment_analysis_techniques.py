@@ -1,7 +1,5 @@
 """
-This script is used to calculate the psychology-informed cohesiveness for each community
-1. Consider the varying time decay speed
-2. Consider different time decay functions
+Calculate the psychology-informed cohesiveness for CS results (using varying sentiment analysis methods).
 """
 
 import os
@@ -9,9 +7,6 @@ from joblib import Parallel, delayed
 import Cohesiveness_Calculation.Utils.Process_algo as pa
 
 
-"""
-Calculate the psychology-informed cohesiveness for each algorithm's results
-"""
 def cohesiveness_calculation(algo_list, njobs):
     global algo_results_dir, algo_cohesiveness_dir, decay_method, value
     tasks = []
@@ -38,7 +33,6 @@ def cohesiveness_calculation(algo_list, njobs):
 
             tasks.append((algorithm, decay_method, value, attribute_file, node_mapping_file, result_file, output_file, njobs))
             
-    # Execute the tasks in parallel
     Parallel(n_jobs=njobs)(delayed(pa.cal_results)(*task) for task in tasks)
 
 
@@ -50,7 +44,7 @@ if __name__ == "__main__":
 
     algo_list =["ALS", "WCF-CRC", "CSD", "ST-Exa", "Repeeling", "I2ACSM", "TransZero_LS"]
 
-    # Parameters for the sensitivity analysis (sentiment analysis methods)
+    # Use default values for decay method and decay rate
     decay_method = 'exp'
     value = 0.0001
     njobs = -1
