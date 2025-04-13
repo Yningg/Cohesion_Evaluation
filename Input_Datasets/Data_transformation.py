@@ -31,61 +31,6 @@ def get_ALS_dataset(G, dataset_name, target_path):
             f.write(str(u) + "\t" + str(v) + "\t" + str(d["timestamp"]) + "\n")
 
 
-# I2ACSM Dataset Format (Undirected): from_id \t to_id
-def get_I2ACSM_dataset(G, dataset_name, target_path):
-    G_undir = nx.Graph(G)
-    # print(f"Graph info after converting to undirected simple graph: nodes: {G_undir.number_of_nodes()}, edges: {G_undir.number_of_edges()}, density: {nx.density(G_undir)}")
-
-    # Remove self-loop edges
-    G_undir.remove_edges_from(nx.selfloop_edges(G_undir))
-    # print(f"Graph info after removing self-loop edges: nodes: {G_undir.number_of_nodes()}, edges: {G_undir.number_of_edges()}, density: {nx.density(G_undir)}")
-
-    with open(target_path + dataset_name + "_non_attributed.txt", "w") as f:
-        for u, v in G_undir.edges():
-            f.write(f"{u}\t{v}\n")
-
-
-"""
-CSD Dataset (Directed Multigraph with no self-loop):
-1. Read the original attributed dataset and node mapping file
-3. Generate two file for each dataset use node mapping:
-    (1) File recording every node's in degree and out degree: DatasetName_Degree.dat
-        Format: node_id in_degree out_degree
-    (2) File recording the graph in a adjacent format: DatasetName_Graph.dat
-        Format: node_id neighbor1 neighbor2 ...
-"""
-def get_CSD_dataset(G, dataset_name, node_mapping, target_path):
-
-    target_dir = target_path + f"{dataset_name}/" 
-    os.makedirs(target_dir, exist_ok=True)
-
-    # Generate the degree file, order by the node id
-    degree_list = []
-    adj_list = {}
-
-    for original_id, mapped_id in node_mapping.items():
-        degree_list.append((mapped_id, G.in_degree(str(original_id)), G.out_degree(str(original_id))))
-        adj_list[mapped_id] = []
-
-        # Find all edges that contain original_id as the source node
-        edges = G.out_edges(str(original_id), data=True)
-        edges = sorted(edges, key=lambda x: x[2]['timestamp'])
-        for u, v, d in edges:          
-            adj_list[mapped_id].append(node_mapping[int(v)])
-
-    with open(target_dir + 'Degree.dat', 'w') as f:
-        for node, in_degree, out_degree in degree_list:
-            f.write(f"{node} {in_degree} {out_degree}\n")
-
-    with open(target_dir +  'Graph.dat', 'w') as f:
-        #  Write the overall number of nodes first
-        f.write(f"{len(G.nodes())}\n")
-
-        for node, neighbors in adj_list.items():
-            f.write(f"{node} {' '.join([str(neighbor) for neighbor in neighbors])}\n")
-
-
-
 """
 WCF-CRC Dataset Format (Dynamic):
 1. Read the attributed graph dataset
@@ -176,21 +121,55 @@ def get_CRC_dataset(G, dataset_name, target_path, num_instances):
         print(f"Graph instance {i} saved as graph_instance_{i}.gml")
 
 
+"""
+CSD Dataset (Directed Multigraph with no self-loop):
+1. Read the original attributed dataset and node mapping file
+3. Generate two file for each dataset use node mapping:
+    (1) File recording every node's in degree and out degree: DatasetName_Degree.dat
+        Format: node_id in_degree out_degree
+    (2) File recording the graph in a adjacent format: DatasetName_Graph.dat
+        Format: node_id neighbor1 neighbor2 ...
+"""
+def get_CSD_dataset(G, dataset_name, node_mapping, target_path):
+
+    target_dir = target_path + f"{dataset_name}/" 
+    os.makedirs(target_dir, exist_ok=True)
+
+    # Generate the degree file, order by the node id
+    degree_list = []
+    adj_list = {}
+
+    for original_id, mapped_id in node_mapping.items():
+        degree_list.append((mapped_id, G.in_degree(str(original_id)), G.out_degree(str(original_id))))
+        adj_list[mapped_id] = []
+
+        # Find all edges that contain original_id as the source node
+        edges = G.out_edges(str(original_id), data=True)
+        edges = sorted(edges, key=lambda x: x[2]['timestamp'])
+        for u, v, d in edges:          
+            adj_list[mapped_id].append(node_mapping[int(v)])
+
+    with open(target_dir + 'Degree.dat', 'w') as f:
+        for node, in_degree, out_degree in degree_list:
+            f.write(f"{node} {in_degree} {out_degree}\n")
+
+    with open(target_dir +  'Graph.dat', 'w') as f:
+        #  Write the overall number of nodes first
+        f.write(f"{len(G.nodes())}\n")
+
+        for node, neighbors in adj_list.items():
+            f.write(f"{node} {' '.join([str(neighbor) for neighbor in neighbors])}\n")
+
 
 """
-Generate STExa dataset
-1. Read the original attributed dataset from the source path, read the node mapping file
-2. Transfer the network to an undirected simple graph, since the paper requires the undirected simple graph
-3. For each edge, if (u, v) is an edge, then (v, u) is also an edge
-4. Remove the self-loop edges
-5. The output file format: from_id to_id, the first line is the number of nodes and edges
+STExa Dataset Format (Undirected): from_id to_id, the first line is the number of nodes and edges
+1. Read the original attributed dataset and the node mapping file
+2. Convert the network to an undirected graph and remove all self-loop edges.
+3. For every edge (u, v), ensure the corresponding edge (v, u) is also included.
 """
-# The graph is undirected simple graph
 def get_STExa_dataset(G, dataset_name, node_mapping, target_path):
     G_undir = nx.Graph(G)
     print(f"Graph info after converting to undirected simple graph: nodes: {G_undir.number_of_nodes()}, edges: {G_undir.number_of_edges()}, density: {nx.density(G_undir)}")
-
-    # Remove self-loop edges
     G_undir.remove_edges_from(nx.selfloop_edges(G_undir))
     print(f"Graph info after removing self-loop edges: nodes: {G_undir.number_of_nodes()}, edges: {G_undir.number_of_edges()}, density: {nx.density(G_undir)}")
 
@@ -199,21 +178,30 @@ def get_STExa_dataset(G, dataset_name, node_mapping, target_path):
 
     edge_list = []
     for u, v in G_undir.edges():
-        u = node_mapping[u]
-        v = node_mapping[v]
-        if u != v:
-            edge_list.append((u, v))
-            edge_list.append((v, u))
+        mapped_u, mapped_v = node_mapping[int(u)], node_mapping[int(v)]
+        if mapped_u != mapped_v:
+            edge_list.extend([(mapped_u, mapped_v), (mapped_v, mapped_u)])
     
-    edge_list = sorted(edge_list, key=lambda x: (x[0], x[1]))
+    edge_list.sort()
 
     with open(target_dir + dataset_name + ".txt", 'w') as f:
-        #first line: number of nodes and edges
         f.write(f"{G_undir.number_of_nodes()} {len(edge_list)}\n")
-        # from_id to_id
         for u, v in edge_list:
             f.write(f"{u} {v}\n")
 
+
+# I2ACSM Dataset Format (Undirected): from_id \t to_id
+def get_I2ACSM_dataset(G, dataset_name, target_path):
+    G_undir = nx.Graph(G)
+    # print(f"Graph info after converting to undirected simple graph: nodes: {G_undir.number_of_nodes()}, edges: {G_undir.number_of_edges()}, density: {nx.density(G_undir)}")
+
+    # Remove self-loop edges
+    G_undir.remove_edges_from(nx.selfloop_edges(G_undir))
+    # print(f"Graph info after removing self-loop edges: nodes: {G_undir.number_of_nodes()}, edges: {G_undir.number_of_edges()}, density: {nx.density(G_undir)}")
+
+    with open(target_path + dataset_name + "_non_attributed.txt", "w") as f:
+        for u, v in G_undir.edges():
+            f.write(f"{u}\t{v}\n")
 
 
 """
@@ -284,7 +272,7 @@ def get_TransZero_dataset(G, dataset_name, query_node_path, node_mapping, target
 
 if __name__ == "__main__":
     # algo_list =["ALS", "WCF-CRC", "CSD", "ST-Exa", "Repeeling", "I2ACSM", "TransZero_LS_GS"]
-    algo_list =["WCF-CRC"]
+    algo_list =["ST-Exa"]
     dataset_list = ["BTW17", "Chicago_COVID", "Crawled_Dataset144", "Crawled_Dataset26"]
 
     source_path = "D:/NTU/Academic/5. Part 2 Experimental Analysis/Code and Datasets/Cohesion_Evaluation/Original_Datasets/Preprocessed_Datasets/"
