@@ -57,7 +57,7 @@ public class DataReader {
 
     // Constructor without sampling
     public DataReader(String dataName) {
-        this.rootName = "./Input_Datasets/CSD_Dataset/" + dataName + "/";
+        this.rootName = "D:/Cohesion_Evaluation/Input_Datasets/CSD_Dataset/" + dataName + "/";
         numOfNodes = 0;
         reflect = new HashMap<>();
         numOfEdges = 0;

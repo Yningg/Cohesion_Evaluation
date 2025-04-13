@@ -7,7 +7,7 @@ public class Config {
     //File Path
     public static String root = "D:/Cohesion_Evaluation/Input_Datasets/CSD_Dataset/";
 
-    public static String DataName = "Crawled_Dataset144";
+    public static String DataName = "BTW17";
     public static String rootFold = root + DataName + "/";
     //File recording every node's in degree and out degree.
     public static String edgeFileName = "Degree.dat";

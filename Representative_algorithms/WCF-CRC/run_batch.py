@@ -77,7 +77,7 @@ if __name__ == '__main__':
 
     # For each query node, try all combinations of theta, k, end_time, and alpha
     for query_node in tqdm.tqdm(query_nodes_list):
-        query_start_time = time.time()
+        query_start_time = time()
 
        # Use Parallel and delayed to process combinations in parallel
         processed_results = Parallel(n_jobs=n_jobs, backend='loky')(
@@ -90,7 +90,7 @@ if __name__ == '__main__':
                 f.write(f"{query_node}\t{max_score}\t{params}\t{crc_nodes}\n")
                 f.close()
         
-        query_end_time = time.time()
+        query_end_time = time()
     
     print("All query nodes processed!")
     print("Results saved to: " + result_file)
