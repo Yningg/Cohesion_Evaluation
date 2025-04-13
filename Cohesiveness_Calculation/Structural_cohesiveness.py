@@ -124,4 +124,4 @@ if __name__ == "__main__":
         if algorithm == "Repeeling":
             process(algorithm, ["BTW17", "Chicago_COVID"], dim_index, njobs)
         else:
-            process(algorithm, ["BTW17", "Chicago_COVID", "Crawled_Dataset26", "Crawled_Dataset144"], dim_index, njobs)
+            process(algorithm, ["BTW17", "Chicago_COVID", "Crawled_Dataset144", "Crawled_Dataset26"], dim_index, njobs)

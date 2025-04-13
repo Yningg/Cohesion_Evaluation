@@ -1,13 +1,10 @@
 """
-This script is written to generate the queries for community search algos
+Generate the queries for community search algos
 1. Decide the scope of the nodes sampled from the network (e.g., the nodes with the higher degree)
 2. Decide the number of nodes sampled from the network: 100
 """
 
-import networkx as nx
-import numpy as np
 import pandas as pd
-import os
 import random
 
 import sys
@@ -20,7 +17,6 @@ seed = 2024
 random.seed(seed)
 query_num = 100
 degree_percentage = 0.1
-
 
 
 def generate_query_nodes(G, query_num, degree_percentage):
@@ -39,7 +35,7 @@ def generate_query_nodes(G, query_num, degree_percentage):
 
 
 def node2txt(target_path, dataset_name, query_nodes):
-    with open(network_target_path + dataset_name + "_query_node.txt", 'w') as f:
+    with open(target_path + dataset_name + "_query_node.txt", 'w') as f:
         for node in query_nodes:
             f.write(f"{node}\n")
         f.close()
@@ -72,19 +68,19 @@ if __name__ == "__main__":
     dataset_list = ["BTW17", "Chicago_COVID", "Crawled_Dataset144", "Crawled_Dataset26"]
 
     for dataset_name in dataset_list:
-        network_file_path = 'D:/Cohesion_Evaluation/Original_Datasets/Preprocessed_Datasets/'
-        network_target_path = 'D:/Cohesion_Evaluation/Original_Datasets/Query_nodes/'
+        dataset_path = 'D:/Cohesion_Evaluation/Original_Datasets/Preprocessed_Datasets/'
+        query_path = 'D:/Cohesion_Evaluation/Original_Datasets/Query_nodes/'
         node_mapping_path = 'D:/Cohesion_Evaluation/Original_Datasets/Node_Mapping/'
-        network_file_name = dataset_name + "_attributed.txt"
+        dataset = dataset_name + "_attributed.txt"
 
         # Load the network
-        G = gu.graph_construction(network_file_path + network_file_name)
+        G = gu.graph_construction(dataset_path + dataset)
 
         # Choose query node based on the degree of the nodes
         query_nodes = generate_query_nodes(G, query_num, degree_percentage)
 
         # Output the query nodes into a .txt file, each line is a query node
-        node2txt(network_target_path, dataset_name, query_nodes)
+        node2txt(query_path, dataset_name, query_nodes)
 
-        # Read generated query nodes, according to the node mapping, and generate the corresponding mapped query nodes, and save them into a .txt file
-        mapped_query_nodes(network_target_path, node_mapping_path, dataset_name)
+        # According to the node mapping, and generate the corresponding mapped query nodes, and save them into a .txt file
+        mapped_query_nodes(query_path, node_mapping_path, dataset_name)

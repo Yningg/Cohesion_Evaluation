@@ -23,7 +23,7 @@ def cohesiveness_calculation(algo_list, njobs):
         if algorithm == "Repeeling":
             dataset_list = ["BTW17", "Chicago_COVID"]
         else:
-            dataset_list = ["BTW17", "Chicago_COVID", "Crawled_Dataset26", "Crawled_Dataset144"]
+            dataset_list = ["BTW17", "Chicago_COVID", "Crawled_Dataset144", "Crawled_Dataset26"]
 
         for dataset_name in dataset_list:
             attribute_file = attribute_dir + dataset_name + "_vader_attributed.txt"  # Use the vader attributed file
