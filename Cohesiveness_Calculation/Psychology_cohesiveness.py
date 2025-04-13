@@ -50,4 +50,4 @@ if __name__ == "__main__":
         if algorithm == "Repeeling":
             cohesiveness_calculation(algorithm, ["BTW17", "Chicago_COVID"], njobs)
         else:
-            cohesiveness_calculation(algorithm, ["BTW17", "Chicago_COVID", "Crawled_Dataset26", "Crawled_Dataset144"], njobs)
+            cohesiveness_calculation(algorithm, ["BTW17", "Chicago_COVID", "Crawled_Dataset144", "Crawled_Dataset26"], njobs)

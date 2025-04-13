@@ -35,7 +35,7 @@ def generate_query_nodes(G, query_num, degree_percentage):
 
 
 def node2txt(target_path, dataset_name, query_nodes):
-    with open(network_target_path + dataset_name + "_query_node.txt", 'w') as f:
+    with open(target_path + dataset_name + "_query_node.txt", 'w') as f:
         for node in query_nodes:
             f.write(f"{node}\n")
         f.close()
