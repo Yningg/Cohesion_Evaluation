@@ -269,10 +269,10 @@ if __name__ == "__main__":
     algo_list =["ALS", "WCF-CRC", "CSD", "ST-Exa", "Repeeling", "I2ACSM", "TransZero_LS_GS"]
     dataset_list = ["BTW17", "Chicago_COVID", "Crawled_Dataset144", "Crawled_Dataset26"]
 
-    source_path = "D:/NTU/Academic/5. Part 2 Experimental Analysis/Code and Datasets/Cohesion_Evaluation/Original_Datasets/Preprocessed_Datasets/"
-    query_node_path = "D:/NTU/Academic/5. Part 2 Experimental Analysis/Code and Datasets/Cohesion_Evaluation/Original_Datasets/Query_Nodes/"
-    target_path = "D:/NTU/Academic/5. Part 2 Experimental Analysis/Code and Datasets/Cohesion_Evaluation/Input_Datasets/"  # Path to save the transformed datasets
-    node_mapping_path = "D:/NTU/Academic/5. Part 2 Experimental Analysis/Code and Datasets/Cohesion_Evaluation/Original_Datasets/Node_Mapping/"
+    source_path = "D:/Cohesion_Evaluation/Original_Datasets/Preprocessed_Datasets/"
+    query_node_path = "D:/Cohesion_Evaluation/Original_Datasets/Query_Nodes/"
+    target_path = "D:/Cohesion_Evaluation/Input_Datasets/"  # Path to save the transformed datasets
+    node_mapping_path = "D:/Cohesion_Evaluation/Original_Datasets/Node_Mapping/"
 
     
     for dataset_name in tqdm.tqdm(dataset_list):
