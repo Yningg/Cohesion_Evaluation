@@ -1,8 +1,8 @@
 import ast
 from joblib import Parallel, delayed
 import tqdm
-import Utils.Cohesiveness_score as cs
-import Utils.Graph_utils as gu
+import Utils.Cohesiveness_Score as cs
+import Utils.Graph_Utils as gu
 
 
 # Read the node mapping file
