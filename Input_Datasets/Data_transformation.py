@@ -190,6 +190,28 @@ def get_STExa_dataset(G, dataset_name, node_mapping, target_path):
             f.write(f"{u} {v}\n")
 
 
+"""
+Repeeling Dataset Format (Streaming Directed Multigraph with no self-loop):
+1. Read the original attributed dataset and the node mapping file
+2. The output file format: from_id to_id timestamp
+Note that Repeeling algorithm deals with self-loop edges, so we do not need to remove them here.
+"""
+def get_Repeeling_dataset(G, dataset_name, node_mapping, target_path):
+
+    target_dir = target_path + f"{dataset_name}/"
+    os.makedirs(target_dir, exist_ok=True)
+    
+    edge_list = []
+    for u, v, d in G.edges(data=True):
+        edge_list.append((node_mapping[int(u)], node_mapping[int(v)], d['timestamp']))
+
+    edge_list = sorted(edge_list, key=lambda x: (x[0], x[1], x[2]))
+
+    with open(target_dir + dataset_name + ".txt", 'w') as f:
+        for u, v, timestamp in edge_list:
+            f.write(f"{u} {v} {timestamp}\n")
+
+
 # I2ACSM Dataset Format (Undirected): from_id \t to_id
 def get_I2ACSM_dataset(G, dataset_name, target_path):
     G_undir = nx.Graph(G)
@@ -205,55 +227,28 @@ def get_I2ACSM_dataset(G, dataset_name, target_path):
 
 
 """
-Generate the Repeeling dataset
-1. Read the attributed version of the dataset from the source path, and read the node mapping file from the node mapping directory
-2. The output file format: from_id to_id timestamp
-"""
-def get_Repeeling_dataset(G, dataset_name, node_mapping, target_path):
-
-    target_dir = target_path + f"{dataset_name}/"
-    os.makedirs(target_dir, exist_ok=True)
-    
-    edge_list = []
-    for u, v, d in G.edges(data=True):
-        edge_list.append((node_mapping[u], node_mapping[v], d['timestamp']))
-
-    edge_list = sorted(edge_list, key=lambda x: (x[0], x[1], x[2]))
-
-    with open(target_dir + dataset_name + ".txt", 'w') as f:
-        for u, v, timestamp in edge_list:
-            f.write(f"{u} {v} {timestamp}\n")
-
-
-"""
-Get the dataset for the TransZero_LS_GS algorithm
+TransZero_LS_GS Dataset Format (Undirected): from_id \t to_id
 1. Similar to ST-Exa dataset, but save the edge list as ".edges" file
 2. Save query file as ".query" file
 """
-
 def get_TransZero_dataset(G, dataset_name, query_node_path, node_mapping, target_path):
-    G_dir = nx.Graph(G)
-    print(f"Graph info after converting to undirected simple graph: nodes: {G_dir.number_of_nodes()}, edges: {G_dir.number_of_edges()}, density: {nx.density(G_dir)}")
-
-    # Remove self-loop edges
-    G_dir.remove_edges_from(nx.selfloop_edges(G_dir))
-    print(f"Graph info after removing self-loop edges: nodes: {G_dir.number_of_nodes()}, edges: {G_dir.number_of_edges()}, density: {nx.density(G_dir)}")
+    G_undir = nx.Graph(G)
+    print(f"Graph info after converting to undirected simple graph: nodes: {G_undir.number_of_nodes()}, edges: {G_undir.number_of_edges()}, density: {nx.density(G_undir)}")
+    G_undir.remove_edges_from(nx.selfloop_edges(G_undir))
+    print(f"Graph info after removing self-loop edges: nodes: {G_undir.number_of_nodes()}, edges: {G_undir.number_of_edges()}, density: {nx.density(G_undir)}")
 
     target_dir = target_path + f"{dataset_name}/"
     os.makedirs(target_dir, exist_ok=True)
 
     edge_list = []
-    for u, v in G_dir.edges():
-        u = node_mapping[u]
-        v = node_mapping[v]
-        if u != v:
-            edge_list.append((u, v))
-            edge_list.append((v, u))
+    for u, v in G_undir.edges():
+        mapped_u, mapped_v = node_mapping[int(u)], node_mapping[int(v)]
+        if mapped_u != mapped_v:
+            edge_list.extend([(mapped_u, mapped_v), (mapped_v, mapped_u)])
     
-    edge_list = sorted(edge_list, key=lambda x: (x[0], x[1]))
+    edge_list.sort()
 
     with open(target_dir + dataset_name + ".edges", 'w') as f:
-        # from_id to_id
         for u, v in edge_list:
             f.write(f"{u} {v}\n")
     
@@ -271,8 +266,7 @@ def get_TransZero_dataset(G, dataset_name, query_node_path, node_mapping, target
 
 
 if __name__ == "__main__":
-    # algo_list =["ALS", "WCF-CRC", "CSD", "ST-Exa", "Repeeling", "I2ACSM", "TransZero_LS_GS"]
-    algo_list =["ST-Exa"]
+    algo_list =["ALS", "WCF-CRC", "CSD", "ST-Exa", "Repeeling", "I2ACSM", "TransZero_LS_GS"]
     dataset_list = ["BTW17", "Chicago_COVID", "Crawled_Dataset144", "Crawled_Dataset26"]
 
     source_path = "D:/NTU/Academic/5. Part 2 Experimental Analysis/Code and Datasets/Cohesion_Evaluation/Original_Datasets/Preprocessed_Datasets/"
