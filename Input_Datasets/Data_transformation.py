@@ -39,7 +39,9 @@ WCF-CRC Dataset Format (Dynamic):
     (2) Divide them into X partitions
     i.e., |E|/|T| edges, where |T| is the target number of graph instances. 
 3. Calculate the edge weight from the interaction frequency and is normalized to [0, 1] by min-max normalization.
-    Note that the frequency is calculated in each partition and the min-max normalization is performed on the entire dataset.
+
+Note that the frequency is calculated in each partition and the min-max normalization is performed on the entire dataset.
+Besides, according to the paper, all instances share the same node set.
 """
 def get_CRC_dataset(G, dataset_name, target_path, num_instances):
     print(f"**********{dataset_name}**********")
@@ -64,7 +66,10 @@ def get_CRC_dataset(G, dataset_name, target_path, num_instances):
     # Build graph instances and check their maximum k-core components
     graph_instances = {}
     for i, edge_partition in enumerate(edge_partitions):
+        # Build the graph instance based on the node set of the original graph
         G_instance = nx.MultiDiGraph()
+        G_instance.add_nodes_from(G.nodes())
+
         for edge in edge_partition:
             G_instance.add_edge(edge[0], edge[1], timestamp=edge[2]['timestamp'])
         
