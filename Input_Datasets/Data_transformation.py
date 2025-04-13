@@ -46,7 +46,7 @@ def get_I2ACSM_dataset(G, dataset_name, target_path):
 
 
 """
-CSD Dataset Format (Directed Multigraph with no self-loop):
+CSD Dataset (Directed Multigraph with no self-loop):
 1. Read the original attributed dataset and node mapping file
 3. Generate two file for each dataset use node mapping:
     (1) File recording every node's in degree and out degree: DatasetName_Degree.dat
@@ -87,26 +87,22 @@ def get_CSD_dataset(G, dataset_name, node_mapping, target_path):
 
 
 """
-Generate the data needed for the WCF-CRC algorithm, following are the rules for generating the data:
+WCF-CRC Dataset Format (Dynamic):
 1. Read the attributed graph dataset
-2. Generate graph instances: 
-    (1) First sort the edges by chronological order
-    (2) Then divide them into X partitions
+2. Generate graph instances (Undirected with no self-loop): guarantee each graph instance contains meaningful k-core components.
+    (1) Sort the edges by chronological order
+    (2) Divide them into X partitions
     i.e., |E|/|T| edges, where |T| is the target number of graph instances. 
-    It guarantees each graph instance contains meaningful k-core components.
-3. Calculate the edge weight:
-    (1) The edge weight is calculated from the interaction frequency. 
-    (2) The edge weight of all the datasets is normalized to [0, 1] by min-max normalization.
-
+3. Calculate the edge weight from the interaction frequency and is normalized to [0, 1] by min-max normalization.
     Note that the frequency is calculated in each partition and the min-max normalization is performed on the entire dataset.
 """
-def get_CRC_dataset(G, dataset_name, target_path, num_instances = 10):
+def get_CRC_dataset(G, dataset_name, target_path, num_instances):
     print(f"**********{dataset_name}**********")
     
-    # Split the edges into X partitions
-    edges = list(G.edges(data=True))
-    edges = sorted(edges, key=lambda x: x[2]['timestamp'])
-
+    # Remove self-loop edges
+    G.remove_edges_from(nx.selfloop_edges(G))
+    # Sort edges by timestamp and split into partitions
+    edges = sorted(G.edges(data=True), key=lambda x: x[2]['timestamp'])
     num_edges = len(edges)
     num_edges_per_instance = num_edges // num_instances
 
@@ -120,7 +116,7 @@ def get_CRC_dataset(G, dataset_name, target_path, num_instances = 10):
 
     print(f"Number of edges in each partition: {[len(partition) for partition in edge_partitions]}")
 
-    # Build the graph instances and check the maximum k-core components manually
+    # Build graph instances and check their maximum k-core components
     graph_instances = {}
     for i, edge_partition in enumerate(edge_partitions):
         G_instance = nx.MultiDiGraph()
@@ -129,25 +125,17 @@ def get_CRC_dataset(G, dataset_name, target_path, num_instances = 10):
         
         print(f"Graph instance {i}: nodes: {G_instance.number_of_nodes()}, edges: {G_instance.number_of_edges()}, density: {nx.density(G_instance)}")
 
+        # Tranfer the graph instance to undirected graph, use the edge number between two nodes as the edge weight
         G_instance_undirected = nx.Graph()
-        
-        # Tranfer the graph instance to undirected graph but use the edge number between two nodes as the weight of undirected edge
-        for edge in G_instance.edges():
-            if not G_instance_undirected.has_edge(edge[0], edge[1]):
-                freq = len(G_instance[edge[0]][edge[1]]) 
-
-                if G_instance.has_edge(edge[1], edge[0]):
-                    freq +=  len(G_instance[edge[1]][edge[0]])
-                G_instance_undirected.add_edge(edge[0], edge[1], weight=freq)
+        for u, v in G_instance.edges():
+            if not G_instance_undirected.has_edge(u, v):
+                forward_count = len(G_instance[u][v])
+                reverse_count = len(G_instance[v][u]) if G_instance.has_edge(v, u) else 0
+                G_instance_undirected.add_edge(u, v, weight=forward_count + reverse_count)
 
         # Check the k-core components of the graph instance
         core_number = 2 
-
-        # Remove self-loop edges
-        G_instance_undirected.remove_edges_from(nx.selfloop_edges(G_instance_undirected)) # Our simplified dataset has self-loop edges, but CRC algorithm does not consider self-loop edges
-        
         k_core = nx.k_core(G_instance_undirected, k=core_number)
-
         print(f"{core_number}-core info: nodes: {k_core.number_of_nodes()}, edges: {k_core.number_of_edges()} \n")
 
         # Save the graph instance
@@ -159,13 +147,10 @@ def get_CRC_dataset(G, dataset_name, target_path, num_instances = 10):
     # Iterate through all the graph instances to calculate the min and max frequency
     for i in range(num_instances):
         G_instance = graph_instances[f"graph_instance_{i}"]
-        
-        # Get the weight of each edge as a list
         edge_weights = [G_instance[edge[0]][edge[1]]['weight'] for edge in G_instance.edges()]
 
         temp_min_freq = min(min_freq, min(edge_weights))
         temp_max_freq = max(max_freq, max(edge_weights))
-
         print(f"Partition {i}: min_weight: {min(edge_weights)}, max_weight: {max(edge_weights)}")
 
         if temp_max_freq > max_freq:
@@ -299,7 +284,7 @@ def get_TransZero_dataset(G, dataset_name, query_node_path, node_mapping, target
 
 if __name__ == "__main__":
     # algo_list =["ALS", "WCF-CRC", "CSD", "ST-Exa", "Repeeling", "I2ACSM", "TransZero_LS_GS"]
-    algo_list =["CSD"]
+    algo_list =["WCF-CRC"]
     dataset_list = ["BTW17", "Chicago_COVID", "Crawled_Dataset144", "Crawled_Dataset26"]
 
     source_path = "D:/NTU/Academic/5. Part 2 Experimental Analysis/Code and Datasets/Cohesion_Evaluation/Original_Datasets/Preprocessed_Datasets/"
