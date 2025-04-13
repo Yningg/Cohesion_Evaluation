@@ -77,6 +77,7 @@ def get_CRC_dataset(G, dataset_name, target_path, num_instances):
 
         # Tranfer the graph instance to undirected graph, use the edge number between two nodes as the edge weight
         G_instance_undirected = nx.Graph()
+        G_instance_undirected.add_nodes_from(G_instance.nodes())
         for u, v in G_instance.edges():
             if not G_instance_undirected.has_edge(u, v):
                 forward_count = len(G_instance[u][v])
@@ -96,8 +97,8 @@ def get_CRC_dataset(G, dataset_name, target_path, num_instances):
 
     # Iterate through all the graph instances to calculate the min and max frequency
     for i in range(num_instances):
-        G_instance = graph_instances[f"graph_instance_{i}"]
-        edge_weights = [G_instance[edge[0]][edge[1]]['weight'] for edge in G_instance.edges()]
+        G_instance_undirected = graph_instances[f"graph_instance_{i}"]
+        edge_weights = [G_instance_undirected[edge[0]][edge[1]]['weight'] for edge in G_instance_undirected.edges()]
 
         temp_min_freq = min(min_freq, min(edge_weights))
         temp_max_freq = max(max_freq, max(edge_weights))
@@ -109,12 +110,12 @@ def get_CRC_dataset(G, dataset_name, target_path, num_instances):
     print("\n After normalization:")
     # Normalize the edge weights to [0, 1] using min-max normalization
     for i in range(num_instances):
-        G_instance = graph_instances[f"graph_instance_{i}"]
-        for edge in G_instance.edges():
-            G_instance[edge[0]][edge[1]]['weight'] = (G_instance[edge[0]][edge[1]]['weight'] - min_freq) / (max_freq - min_freq)
+        G_instance_undirected = graph_instances[f"graph_instance_{i}"]
+        for edge in G_instance_undirected.edges():
+            G_instance_undirected[edge[0]][edge[1]]['weight'] = (G_instance_undirected[edge[0]][edge[1]]['weight'] - min_freq) / (max_freq - min_freq)
 
-        print(f"Partition {i}: min_weight: {min([G_instance[edge[0]][edge[1]]['weight'] for edge in G_instance.edges()])}, "
-            f"max_weight: {max([G_instance[edge[0]][edge[1]]['weight'] for edge in G_instance.edges()])}")
+        print(f"Partition {i}: min_weight: {min([G_instance_undirected[edge[0]][edge[1]]['weight'] for edge in G_instance_undirected.edges()])}, "
+            f"max_weight: {max([G_instance_undirected[edge[0]][edge[1]]['weight'] for edge in G_instance_undirected.edges()])}")
 
     # Ensure the target directory exists
     target_dir = target_path + f"{dataset_name}/" 
