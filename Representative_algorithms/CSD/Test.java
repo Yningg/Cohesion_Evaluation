@@ -95,9 +95,6 @@ public class Test {
 
         // Write the results to a file
 		try (BufferedWriter writer = new BufferedWriter(new FileWriter(results_path))) {
-            // Write the first line
-            // writer.write("Query node\tParameters\tCommunity");
-            writer.newLine();
             for (String result : results) {
                 writer.write(result);
                 writer.newLine();
