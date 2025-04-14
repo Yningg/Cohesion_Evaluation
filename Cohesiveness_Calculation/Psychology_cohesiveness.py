@@ -27,13 +27,13 @@ def cohesiveness_calculation(algorithm, dataset_list, njobs):
                 lambda_value_list = [0.0001, 0.0005, 0.001, 0.005, 0.01]
                 for lambda_value in lambda_value_list:
                     output_file = cohesiveness_dir + algorithm + "_results_" + dataset_name + "_" + decay_method + "_" + str(lambda_value) + ".txt"
-                    tasks.append((algorithm, dataset_name, decay_method, lambda_value, attribute_file, node_mapping_file, result_file, output_file, njobs))
+                    tasks.append((algorithm, decay_method, lambda_value, attribute_file, node_mapping_file, result_file, output_file, njobs))
             
             elif decay_method == 'poly':
                 mu_value_list = [0.5, 1, 1.5, 2]
                 for mu_value in mu_value_list:
                     output_file = cohesiveness_dir + algorithm + "_results_" + dataset_name + "_" + decay_method + "_" + str(mu_value) + ".txt"
-                    tasks.append((algorithm, dataset_name, decay_method, mu_value, attribute_file, node_mapping_file, result_file, output_file, njobs))
+                    tasks.append((algorithm, decay_method, mu_value, attribute_file, node_mapping_file, result_file, output_file, njobs))
 
     Parallel(n_jobs=njobs)(delayed(pa.cal_results)(*task) for task in tasks)
 
