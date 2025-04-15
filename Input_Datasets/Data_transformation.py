@@ -26,9 +26,15 @@ def read_node_mapping(node_mapping_file):
 # Note the the transformation from directed graph to undirected graph is handled within the algorithm, 
 # so we do not need to convert the graph to undirected graph here
 def get_ALS_dataset(G, dataset_name, target_path):
+    edges_list = []
+    for u, v, d in G.edges(data=True):
+            edges_list.append((u, v, d["timestamp"]))
+    
+    edges_list = sorted(edges_list, key=lambda x: (x[2]))
+
     with open(target_path + dataset_name + "_timestamp.txt", "w") as f:
-        for u, v, d in G.edges(data=True):
-            f.write(str(u) + "\t" + str(v) + "\t" + str(d["timestamp"]) + "\n")
+        for u, v, d in edges_list:
+            f.write(str(u) + "\t" + str(v) + "\t" + str(d) + "\n")
 
 
 """
@@ -203,17 +209,13 @@ Repeeling Dataset Format (Streaming Directed Multigraph with no self-loop):
 Note that Repeeling algorithm deals with self-loop edges, so we do not need to remove them here.
 """
 def get_Repeeling_dataset(G, dataset_name, node_mapping, target_path):
-
-    target_dir = target_path + f"{dataset_name}/"
-    os.makedirs(target_dir, exist_ok=True)
-    
     edge_list = []
     for u, v, d in G.edges(data=True):
         edge_list.append((node_mapping[int(u)], node_mapping[int(v)], d['timestamp']))
 
-    edge_list = sorted(edge_list, key=lambda x: (x[0], x[1], x[2]))
+    edge_list = sorted(edge_list, key=lambda x: (x[2]))
 
-    with open(target_dir + dataset_name + ".txt", 'w') as f:
+    with open(target_path + dataset_name + ".txt", 'w') as f:
         for u, v, timestamp in edge_list:
             f.write(f"{u} {v} {timestamp}\n")
 
@@ -225,7 +227,7 @@ def get_I2ACSM_dataset(G, dataset_name, target_path):
 
     # Remove self-loop edges
     G_undir.remove_edges_from(nx.selfloop_edges(G_undir))
-    # print(f"Graph info after removing self-loop edges: nodes: {G_undir.number_of_nodes()}, edges: {G_undir.number_of_edges()}, density: {nx.density(G_undir)}")
+    print(f"Graph info after removing self-loop edges: nodes: {G_undir.number_of_nodes()}, edges: {G_undir.number_of_edges()}, density: {nx.density(G_undir)}")
 
     with open(target_path + dataset_name + "_non_attributed.txt", "w") as f:
         for u, v in G_undir.edges():
@@ -272,7 +274,7 @@ def get_TransZero_dataset(G, dataset_name, query_node_path, node_mapping, target
 
 
 if __name__ == "__main__":
-    algo_list =["ALS", "WCF-CRC", "CSD", "ST-Exa", "Repeeling", "I2ACSM", "TransZero_LS_GS"]
+    algo_list = ["ALS", "WCF-CRC", "CSD", "ST-Exa", "Repeeling", "I2ACSM", "TransZero_LS_GS"]
     dataset_list = ["BTW17", "Chicago_COVID", "Crawled_Dataset144", "Crawled_Dataset26"]
 
     source_path = "D:/Cohesion_Evaluation/Original_Datasets/Preprocessed_Datasets/"
