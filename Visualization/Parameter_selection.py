@@ -146,11 +146,11 @@ def draw_graph_STExa(cohesiveness_mean, cohesiveness_std, structural_mean, struc
         ax.bar(x + i * bar_width, [cohesiveness[i] for cohesiveness in sorted_cohesiveness], bar_width, label=measure, color=color_list[i], hatch=hatch_list[i])
 
     ax.set_xlabel(r'$[l, h]$', fontsize=font_size)
-    ax.set_ylabel('Cohesiveness', fontsize=font_size)
-    ax.legend(loc='upper center', bbox_to_anchor=(0.5, 1.20), ncol=5, fontsize=15, handlelength=0.9, handletextpad=0.6, columnspacing=0.5)
+    ax.set_ylabel('ST-Exa Cohesiveness', fontsize=font_size)
+    ax.legend(loc='upper center', ncol=5, fontsize=15, handlelength=0.9, handletextpad=0.6, columnspacing=0.5)
     ax.set_xticks(x + bar_width * (len(measures) - 1) / 2)
     ax.set_xticklabels([f"[{lb}-{ub}]" for (lb, ub) in sorted_params], fontsize=font_size)
-    ax.set_ylim(0, 7)
+    ax.set_ylim(0, 7.5)
     ax.set_yticklabels([f"{y:.1f}" for y in np.arange(0, 8, 1)], fontsize=font_size)
     plt.tight_layout()
     
@@ -166,7 +166,7 @@ def draw_graph_STExa(cohesiveness_mean, cohesiveness_std, structural_mean, struc
         ax.plot(x, [structural_mean[param][i] for param in sorted_params], label=measure, color=color_list[i], marker=marker_list[i])
     
     ax.set_xlabel(r'$[l, h]$', fontsize=font_size)
-    ax.set_ylabel('Structural Cohesiveness', fontsize=font_size)
+    ax.set_ylabel('ST-Exa Struct. Cohesiveness', fontsize=font_size)
     ax.legend(fontsize=15, ncol=1)
     ax.set_xticks(x)
     ax.set_xticklabels([f"[{lb}-{ub}]" for (lb, ub) in sorted_params], fontsize=font_size)
@@ -198,11 +198,11 @@ def draw_graph_ALS(cohesiveness_mean, cohesiveness_std, structural_mean, structu
         ax.bar(x + i * bar_width, [cohesiveness[i] for cohesiveness in sorted_cohesiveness], bar_width, label=measure, color=color_list[i], hatch=hatch_list[i])
 
     ax.set_xlabel(r'$\alpha$', fontsize=font_size)
-    ax.set_ylabel('Cohesiveness', fontsize=font_size)
-    ax.legend(loc='upper center', bbox_to_anchor=(0.5, 1.20), ncol=5, fontsize=16, handlelength=0.9, handletextpad=0.6, columnspacing=0.5)
+    ax.set_ylabel('ALS Cohesiveness', fontsize=font_size)
+    ax.legend(loc='upper center', ncol=5, fontsize=16, handlelength=0.9, handletextpad=0.6, columnspacing=0.5)
     ax.set_xticks(x + bar_width * (len(measures) - 1) / 2)
     ax.set_xticklabels([f"{param}" for param in sorted_params], fontsize=font_size)
-    ax.set_ylim(0, 0.30)
+    ax.set_ylim(0, 0.33)
     ax.set_yticklabels([f"{y:.2f}" for y in np.arange(0, 0.35, 0.05)], fontsize=font_size)
     plt.tight_layout()
     
@@ -221,7 +221,7 @@ def draw_graph_ALS(cohesiveness_mean, cohesiveness_std, structural_mean, structu
         ax.plot(x, [structural_mean[param][i] for param in sorted_params], label=measure, color=color_list[i], marker=marker_list[i])
     
     ax.set_xlabel(r'$\alpha$', fontsize=font_size)
-    ax.set_ylabel('Structural Cohesiveness', fontsize=font_size)
+    ax.set_ylabel('ALS Structural Cohesiveness', fontsize=font_size)
     ax.legend(fontsize=16, ncol=1)
     ax.set_xticks(x)
     ax.set_xticklabels([f"{param}" for param in sorted_params], fontsize=font_size)
@@ -246,7 +246,7 @@ save_path = "D:/Cohesion_Evaluation/Figures/Param_Selection/"
 STExa_params_list = [[1, 10], [11, 20], [21, 30], [31, 40], [41, 50], [51, 60], [61, 70], [71, 80]]
 ALS_params_list = [0.1, 0.15, 0.2, 0.25, 0.3]
 
-algo = "ALS"
+algo = "ST-Exa" # "ST-Exa" or "ALS"
 measures = ['EI', 'SIT', 'CED', 'GIP', 'GID']
 
 color_list = [(112, 163, 196), (245, 180, 111), (223, 91, 63), (251, 236, 171), (175, 175, 175), (219, 219, 219)]
@@ -254,7 +254,7 @@ color_list = [(r/255, g/255, b/255) for r, g, b in color_list]
 hatch_list = ['/', '\\', '|', 'x','.']
 marker_list = ['o', '^', 's']
 font_size = 17
-# Set the font family to Times New Roman
+# Set the font family to Arial
 plt.rcParams['font.family'] = 'arial'
 
 
