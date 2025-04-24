@@ -62,7 +62,7 @@ def build_tadj(attribute_file):
         tadj_list[u] = sorted(tadj_list[u], key=lambda x: x[2]) 
 
     endtime = time.time()
-    print(f"Loding graph time(s): {endtime - starttime}")
+    print(f"Loading graph time(s): {endtime - starttime}")
     return tadj_list, latest_timestamp
 
 
