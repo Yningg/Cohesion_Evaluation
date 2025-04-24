@@ -4,11 +4,11 @@ Code and dataset for the paper "How Cohesive Are Community Search Results on Onl
     .
     ├── Original_Datasets           # Preprocessed datasets, scripts to generate queries and node mapping, and print network statistics
     ├── Input_Datasets              # Scripts to generate transformed graphs for each algorithms, and corresponding transformed graphs
-    ├── Representative_Algorithms   # Code to running representative algorithms
-    ├── Algorithm_Output            # The initial CS output from representative algorithms
-    ├── Cohesiveness_Calculation    # The scripts for calculating structural and psychology-informed cohesiveness, and conducting sensitivity analysis
+    ├── Representative_Algorithms   # Revised scripts for representative algorithms in our study
+    ├── Algorithm_Output            # Initial CS output from representative algorithms
+    ├── Cohesiveness_Calculation    # Scripts for calculating structural and psychology-informed cohesiveness, and conducting sensitivity analysis
     ├── Cohesiveness_Output         # Cohesiveness calculation results, the script to condense the results, and the corresponding condensed results
-    ├── Visualization               # Scripts for data visualization
+    ├── Visualization               # Scripts for result visualization
     ├── Figures                     # Figures
     └── README.md
 
