@@ -42,7 +42,7 @@ if __name__ == "__main__":
     algo_results_dir = "D:/Cohesion_Evaluation/Algorithm_Output/"
     algo_cohesiveness_dir = "D:/Cohesion_Evaluation/Cohesiveness_Output/"
 
-    algo_list =["ALS", "WCF-CRC", "CSD", "ST-Exa", "Repeeling", "I2ACSM", "TransZero_LS"]
+    algo_list = ["ALS", "WCF-CRC", "CSD", "ST-Exa", "Repeeling", "I2ACSM", "TransZero_LS"]
 
     # Use default values for decay method and decay rate
     decay_method = 'exp'

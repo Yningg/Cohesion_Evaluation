@@ -43,7 +43,7 @@ if __name__ == "__main__":
     algo_results_dir = "D:/Cohesion_Evaluation/Algorithm_Output/"
     algo_cohesiveness_dir = "D:/Cohesion_Evaluation/Cohesiveness_Output/"
 
-    algo_list =["ALS", "WCF-CRC", "CSD", "ST-Exa", "Repeeling", "I2ACSM", "TransZero_LS", "TransZero_GS"]
+    algo_list = ["ALS", "WCF-CRC", "CSD", "ST-Exa", "Repeeling", "I2ACSM", "TransZero_LS"]
     njobs = -1
 
     for algorithm in algo_list:

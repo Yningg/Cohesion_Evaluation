@@ -118,7 +118,7 @@ if __name__ == "__main__":
     node_mapping_dir = "D:/Cohesion_Evaluation/Original_Datasets/Node_Mapping/"
     njobs = -1
 
-    algo_index ={"ALS": 3, "WCF-CRC": 3, "CSD": 2, "ST-Exa": 2, "Repeeling": 2, "I2ACSM": 3, "TransZero_LS": 1, "TransZero_GS": 1}
+    algo_index = {"ALS": 3, "WCF-CRC": 3, "CSD": 2, "ST-Exa": 2, "Repeeling": 2, "I2ACSM": 3, "TransZero_LS": 1, "TransZero_GS": 1}
 
     for algorithm, dim_index in algo_index.items():
         if algorithm == "Repeeling":
