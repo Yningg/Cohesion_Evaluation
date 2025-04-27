@@ -5,9 +5,10 @@ Using nodes in Chicago_COVID as the query node
 3. Draw the communities identified by all algorithms, and plot the cohesiveness score of each community.
 """
 
-import os
 import networkx as nx
 import matplotlib.pyplot as plt
+import matplotlib.transforms as mtransforms
+from matplotlib.ticker import FuncFormatter, FixedLocator
 import ast
 import numpy as np
 
@@ -153,7 +154,7 @@ def plot_network_with_background(combined_graph, graph, community, title, pos, n
     normalized_edge_widths = [width / max_log_width * 5 for width in log_edge_widths]  # Scale factor for visibility
     
     # Set node colors
-    node_colors = ['red' if node == "1099134757" else node_color for node in graph.nodes()]
+    node_colors = ['red' if node == "162088750" else node_color for node in graph.nodes()]
     
     # Draw the community nodes and edges with normalized edge widths
     nx.draw(graph, pos=pos, node_color=node_colors, node_size=30, edge_color=edge_color, width=normalized_edge_widths, with_labels=False)
@@ -161,11 +162,11 @@ def plot_network_with_background(combined_graph, graph, community, title, pos, n
     # Draw the community node labels with mapped numbers
     labels = {node: node_mapping[int(node)] for node in community}
     label_pos = {node: (x, y - 0.05) for node, (x, y) in pos.items()}  # Adjust the y-coordinate to position the label below the node
-    nx.draw_networkx_labels(graph, label_pos, labels=labels, font_color='black', font_size=12, verticalalignment='top')
+    nx.draw_networkx_labels(graph, label_pos, labels=labels, font_color='black', font_size=14, verticalalignment='top')
     
     # plt.show()
     plt.tight_layout()
-    plt.savefig("D:/Cohesion_Evaluation/Figures/Case_Study/" + title + ".png", dpi=300, bbox_inches='tight')
+    plt.savefig("D:/Cohesion_Evaluation/Figures/Case_Study/" + title + ".png", dpi=600, bbox_inches='tight')
 
 
 """
@@ -192,6 +193,55 @@ def get_core_truss_number(graph):
     k_truss_value = min(count_triangles_per_edge(undirected_graph).values())
     return k_core_value, k_truss_value + 2
 
+
+
+def plot_broken_bar(combined_scores, measure_name, communities, low_ticks, high_ticks, height_ratios, bar_width):
+    font_size = 17
+    fig, (ax_high, ax_low) = plt.subplots(2, 1, sharex=True, figsize=(8, 4), gridspec_kw={'height_ratios': height_ratios})
+    ax_low.set_ylim(0, 3)
+    ax_high.set_ylim(15, np.max(combined_scores) * 1.05)
+    
+    color_sublist = [(53, 78, 151), (112, 163, 196), (199, 229, 236), (245, 180, 111), (251, 236, 171), (175, 175, 175), (219, 219, 219)] 
+    color_sublist = [(r/255, g/255, b/255) for r, g, b in color_sublist]
+    hatch_list = ['/', '\\', '|', '-', '+', 'x','.']
+
+    indices = np.arange(len(combined_scores))  # Number of metrics per community
+
+    for j in range(len(combined_scores[0])):  # 每个 measure
+        vals = [scores[j] for scores in combined_scores]
+        pos  = indices + j * bar_width
+        ax_low .bar(pos, vals, bar_width, label=measure_name[j], color=color_sublist[j], hatch=hatch_list[j])
+        ax_high.bar(pos, vals, bar_width, label=measure_name[j], color=color_sublist[j], hatch=hatch_list[j])
+
+    ax_high.tick_params(axis='x', which='both', bottom=False, labelbottom=False)
+    ax_low.spines['top'].set_visible(False)
+    ax_high.spines['bottom'].set_visible(False)
+    ax_low.tick_params(labeltop=False)
+    ax_high.tick_params(labelbottom=False)
+
+    d = .015
+    ax_low.plot((-d, +d), (1 - d, 1 + d), transform=ax_low.transAxes, color='k', clip_on=False)
+    ax_low.plot((1 - d, 1 + d), (1 - d, 1 + d), transform=ax_low.transAxes, color='k', clip_on=False)
+
+    ax_high.plot((-d, +d), (-d, +d), transform=ax_high.transAxes, color='k', clip_on=False)
+    ax_high.plot((1 - d, 1 + d), (-d, +d), transform=ax_high.transAxes, color='k', clip_on=False)
+
+    ax_low.set_xticks(indices + bar_width * (len(combined_scores[0]) - 1)/2)
+    ax_low.set_xticklabels(communities, fontsize=17)
+    ax_low.set_yticks(low_ticks)
+    ax_high.set_yticks(high_ticks)
+    ax_low.set_yticklabels(low_ticks, fontsize=font_size)
+    ax_high.set_yticklabels(high_ticks, fontsize=font_size)
+
+    ax_high.legend(loc='upper center', bbox_to_anchor=(0.5, 1.62), fontsize=17, ncol=7, columnspacing=0.5, handlelength=0.9, handletextpad=0.6)
+    fig.supylabel('Values', fontsize=font_size)
+
+    # Show the plot
+    plt.tight_layout()
+    # plt.show()
+    plt.savefig("D:/Cohesion_Evaluation/Figures/Case_Study/Case_study_measures.png")
+
+
 if __name__ == "__main__":
     # Set the dataset and algo list
     dataset = "Chicago_COVID"
@@ -216,61 +266,61 @@ if __name__ == "__main__":
     reply_G = gu.graph_construction(attribute_file)
 
     # Read query node file
-    # query_nodes = gu.get_query_nodes(query_dir, dataset)
+    query_nodes = gu.get_query_nodes(query_dir, dataset)
 
     # Read the results of all algorithms
-    # total_results = load_results(dataset, result_dir, algo_list)
+    total_results = load_results(dataset, result_dir, algo_list)
 
 
     # Find communities for query node that have valid communities in all algorithms
-    # node_community = find_community(total_results, query_nodes)
-    # print(f"Number of query nodes with valid communities: {len(node_community)}")
+    node_community = find_community(total_results, query_nodes)
+    print(f"Number of query nodes with valid communities: {len(node_community)}")
 
     # For each query node, print: query node, and number of communities identified by each algorithm
     # For each community, print the size of the community
-    # print_query_community(node_community, algorithm_dict)
+    print_query_community(node_community, algorithm_dict)
 
 
-
-    # WCF-CRC Community: reliability score: 0.3371472158657513 parameter: [0.0, 2, 4, 6], for communities with same size, no matter how to change the parameter, the community and cohesiveness score is the same
-    CRC_community = ['1043676244771053568', '261514017', '120677834', '26708318', '1099134757', '101868197', '1140372799594389632', '875179181331673089', '3403201023', '114170205', '1032433488560054400', '1047977523320160384', '232785287', '2579503212', '1089495612', '826495641983528960', '59253988', '195639161', '387676464', '105581789', '1055847424747622400', '22578954', '26174781', '97613792', '1156006445114171392', '1132020458868609024']
-    CRC_cohesiveness = [0.01349734642883741, -2.788500604640415e-144, 0.0134973464288222, 0.42924528301886794, 2.8]
+    # Record the selected communities to speed up the visualization
+    # WCF-CRC Community: reliability score: 0.2874583795782464, parameter: [0.0, 2, 8, 5], for communities with same size, no matter how to change the parameter, the community and cohesiveness score is the same
+    CRC_community = ['94512839', '5080801075847665442', '162088750', '741999510', '150694468', '7776953622', '7261737861155061262', '75977458', '40353110', '4137952675600432269', '837746582', '6394328176', '378050237', '3841782767']
+    CRC_cohesiveness = [0.49813319197913625, 7.287152212926613e-32, 0.5137679826307116, 0.2432345774015647, 20.84065934065934]
 
     # STExa: size 30
-    STExa_community = ['826495641983528960', '110801838', '4546645175', '123276343', '1099134757', '1511414336', '1076713315102089217', '106010466', '1163317745628450818', '1043676244771053568', '1092566360771739648', '1143262478027186176', '1026320534647263232', '101598743', '1156006445114171392', '1050655603', '1217938840834465798', '21213366', '116977325', '208322515', '117879582', '31049466', '1151565926350897152', '2649430386', '102807189', '1165117868150796288', '360188566', '37831300', '714669102', '74191033']
-    STExa_cohesiveness = [0.24395339527887888, 5.3074290099383305e-137, 0.23940617079635856, 0.14757969303423848, 3.4482758620689653]
+    STExa_community = ['33925570', '109840068', '1316737784', '7222563205723261216', '378050237', '228128246', '5854801956', '304730466', '5080801075847665442', '564495923', '901095202', '633990130', '150694468', '6501281292778189260', '9990212403', '7943261589', '4137952675600432269', '76037566', '162088750', '895069896', '2529232071985340475', '468500969', '94512839', '7124806190109198830', '600551878', '7776953622', '821289741', '18736702', '84881588', '226307942']
+    STExa_cohesiveness = [0.23215962555227074, -6.528389989147983e-06, 0.22761240045036332, 0.15215159152431626, 3.7471264367816093]
 
-    # I2ACSM: score: 0.9779547, parameter: [1, 4, 0.1], for communities with same size, no matter how to change the parameter, the community and cohesiveness score is the same
-    # Among size 8, 9, and 14, choose the largest one
-    I2ACSM_community = ['1099134757', '636003798', '1511414336', '284829979', '1253831120', '826495641983528960', '1026320534647263232', '1156006445114171392', '2455289731', '282949556', '331971443', '570477589', '913110838889926784', '2767170695']
-    I2ACSM_cohesiveness = [0.02506650051069805, 5.698594907508587e-159, 0.0250665005106698, 0.16223067173637515, 1.4065934065934067]
-
-    # Repeeling: ['50000000', '5000000', '0', '2'], for communities with same size, no matter how to change the parameter, the community and cohesiveness score is the same
-    Repeeling_community = ['1156006445114171392', '1217938840834465798', '1050655603', '101823277', '21213366', '37831300', '1099134757', '1020328250', '102128701', '287286722', '117879582', '1165117868150796288', '1076713315102089217', '360188566', '106010466', '1026320534647263232', '31049466', '101598743', '1092566360771739648', '110801838', '102807189', '1304129868', '116977325', '1109445494390980608', '119191281', '826495641983528960', '2649430386', '208322515', '1142864340']
+    # Repeeling: Among size 6, 9, 10, 15, 21 and 29, choose the largest one, [50000000, 250000, 0, 2], for communities with same size, no matter how to change the parameter, the community and cohesiveness score is the same
+    Repeeling_community = ['2247039860705069469', '4137952675600432269', '7943261589', '564495923', '76037566', '18736702', '2458852536', '5854801956', '162088750', '468500969', '895069896', '7124806190109198830', '7222563205723261216', '821289741', '378050237', '4167528449671673144', '94512839', '228128246', '5080801075847665442', '150694468', '600551878', '1316737784', '901095202', '7089516562377264512', '109840068', '221698907989844221', '7776953622', '633990130', '7934378213']
     Repeeling_cohesiveness = [0.21291206102763036, -6.7535068853255e-06, 0.18852692197912613, 0.13970983342289092, 3.8423645320197046]
 
 
+    # I2ACSM: score: 0.7287828, parameter: [1, 6, 0.2], for communities with same size, no matter how to change the parameter, the community and cohesiveness score is the same
+    # Among size 5, 6, 7 and 12, choose the largest one
+    I2ACSM_community = ['162088750', '313928883', '2443485611', '543585783', '3107304570', '449220885', '83819299', '50253428', '603404173', '63004935', '63348468', '3820169876654478576']
+    I2ACSM_cohesiveness = [2.8936112510389412e-09, 0.0, 8.163235291235083e-06, 0.22448979591836735, 0.75]
+
     # TransZero_LS: 
-    Local_community = ['1099134757', '1026320534647263232', '1143262478027186176', '1028356298503532555', '1087543962943004800', '1151565926350897152']
-    Local_cohesiveness = [0.058488501191628774, 0.0, 0.058488501191628774, 0.009086050240513094, 0.5666666666666667]
+    TransZero_LS_community = ['162088750', '564495923', '8384922591', '603404173', '2886016294']
+    TransZero_LS_cohesiveness = [-3.6800212730827588e-22, 0.0, 1.9581453645148323e-05, 0.02826585179526356, 1.85]
 
 
     # Find the combination of the community nodes in all algorithms
-    combined_community = list(set(CRC_community + STExa_community + Repeeling_community + I2ACSM_community + Local_community))
+    combined_community = list(set(CRC_community + STExa_community + Repeeling_community + I2ACSM_community + TransZero_LS_community))
 
     # Extract corresponding subgraph
     CRC_graph = reply_G.subgraph(CRC_community)
     STExa_graph = reply_G.subgraph(STExa_community)
     I2ACSM_graph = reply_G.subgraph(I2ACSM_community)
     Repeeling_graph = reply_G.subgraph(Repeeling_community)
-    Local_graph = reply_G.subgraph(Local_community)
+    TransZero_LS_graph = reply_G.subgraph(TransZero_LS_community)
     combined_graph = reply_G.subgraph(combined_community)
 
     print(f"WCF-CRC graph info: nodes: {CRC_graph.number_of_nodes()}, edges: {CRC_graph.number_of_edges()}")
     print(f"ST-Exa graph info: nodes: {STExa_graph.number_of_nodes()}, edges: {STExa_graph.number_of_edges()}")
     print(f"I2ACSM graph info: nodes: {I2ACSM_graph.number_of_nodes()}, edges: {I2ACSM_graph.number_of_edges()}")
     print(f"Repeeling graph info: nodes: {Repeeling_graph.number_of_nodes()}, edges: {Repeeling_graph.number_of_edges()}")
-    print(f"LS graph info: nodes: {Local_graph.number_of_nodes()}, edges: {Local_graph.number_of_edges()}")
+    print(f"TransZero_LS graph info: nodes: {TransZero_LS_graph.number_of_nodes()}, edges: {TransZero_LS_graph.number_of_edges()}")
     print(f"Combined graph info: nodes: {combined_graph.number_of_nodes()}, edges: {combined_graph.number_of_edges()}")
 
     # For easy presentation, we exclude the self-loop edges
@@ -279,7 +329,7 @@ if __name__ == "__main__":
     STExa_graph = STExa_graph.copy()
     I2ACSM_graph = I2ACSM_graph.copy()
     Repeeling_graph = Repeeling_graph.copy()
-    Local_graph = Local_graph.copy()
+    TransZero_LS_graph = TransZero_LS_graph.copy()
     combined_graph = combined_graph.copy()
 
     # Remove self-loop edges from each graph
@@ -287,16 +337,14 @@ if __name__ == "__main__":
     STExa_graph.remove_edges_from(nx.selfloop_edges(STExa_graph))
     I2ACSM_graph.remove_edges_from(nx.selfloop_edges(I2ACSM_graph))
     Repeeling_graph.remove_edges_from(nx.selfloop_edges(Repeeling_graph))
-    Local_graph.remove_edges_from(nx.selfloop_edges(Local_graph))
+    TransZero_LS_graph.remove_edges_from(nx.selfloop_edges(TransZero_LS_graph))
     combined_graph.remove_edges_from(nx.selfloop_edges(combined_graph))
 
     """
-    Draw all the communities in the same figure
-    1. For each figure, use combine graph as background, and draw the community nodes and edges on top of it.
-    2. Seven communities placed with two rows and four columns. 
-    3. The last figure is the cohesiveness score of each community, draw as a line plot, each line represents a community.
+    Draw all five communities in the same background graph
+    For each figure, use combine graph as background, and draw the community nodes and edges on top of it.
     """
-    # Set the font family to Times New Roman
+    # Set the font family to Arial
     plt.rcParams['font.family'] = 'arial'
 
     background_node_color = 'lightgrey'  
@@ -306,11 +354,11 @@ if __name__ == "__main__":
 
     pos = nx.kamada_kawai_layout(combined_graph)
 
-    # plot_network_with_background(combined_graph, CRC_graph, CRC_community, 'CRC Network', pos, node_color, edge_color, background_node_color, background_edge_color)
+    # plot_network_with_background(combined_graph, CRC_graph, CRC_community, 'WCF-CRC Network', pos, node_color, edge_color, background_node_color, background_edge_color)
     # plot_network_with_background(combined_graph, STExa_graph, STExa_community, 'STExa Network',pos, node_color, edge_color, background_node_color, background_edge_color)
     # plot_network_with_background(combined_graph, I2ACSM_graph, I2ACSM_community, 'I2ACSM Network', pos, node_color, edge_color, background_node_color, background_edge_color)
     # plot_network_with_background(combined_graph, Repeeling_graph, Repeeling_community, 'Repeeling Network', pos, node_color, edge_color, background_node_color, background_edge_color)
-    # plot_network_with_background(combined_graph, Local_graph, Local_community, 'Local Network', pos, node_color, edge_color, background_node_color, background_edge_color)
+    # plot_network_with_background(combined_graph, TransZero_LS_graph, TransZero_LS_community, 'TransZero_LS Network', pos, node_color, edge_color, background_node_color, background_edge_color)
 
     """
     Find the max core number and truss number for each community
@@ -319,64 +367,26 @@ if __name__ == "__main__":
     STExa_k_core, STExa_truss = get_core_truss_number(STExa_graph)
     Repeeling_k_core, Repeeling_truss = get_core_truss_number(Repeeling_graph)
     I2ACSM_k_core, I2ACSM_truss = get_core_truss_number(I2ACSM_graph)
-    Local_k_core, Local_truss = get_core_truss_number(Local_graph)
+    TransZero_LS_k_core, TransZero_LS_truss = get_core_truss_number(TransZero_LS_graph)
 
     print(f"WCF-CRC community: k-core: {CRC_k_core}, truss: {CRC_truss}")
     print(f"ST-Exa community: k-core: {STExa_k_core}, truss: {STExa_truss}")
     print(f"Repeeling community: k-core: {Repeeling_k_core}, truss: {Repeeling_truss}")
     print(f"I2ACSM community: k-core: {I2ACSM_k_core}, truss: {I2ACSM_truss}")
-    print(f"LS community: k-core: {Local_k_core}, truss: {Local_truss}")
+    print(f"TransZero_LS community: k-core: {TransZero_LS_k_core}, truss: {TransZero_LS_truss}")
 
     """
     Draw the cohesiveness score of each community
-    1. The figure contains five groups of bars, each group represents a algo's community
-    2. Each group contains seven bars
-    --> For first five bars, each bar represents a cohesiveness score of a community
-    --> For the last two bars, each bar represents the k-core number and truss number of the community
     """
-
-    font_size = 17
-    fig, ax = plt.subplots(figsize=(8, 3))
     communities = ['WCF-CRC', 'ST-Exa', 'Repeeling+', 'I2ACSM', 'TransZero_LS']
     measure_name = ['EI', 'SIT', 'CED', 'GIP', 'GID', r'$k$-core', r'$k$-truss']
-    cohesiveness_scores = [
-        CRC_cohesiveness,
-        STExa_cohesiveness,
-        I2ACSM_cohesiveness,
-        Repeeling_cohesiveness,
-        Local_cohesiveness
-    ]
-    k_core_numbers = [CRC_k_core, STExa_k_core, Repeeling_k_core, I2ACSM_k_core, Local_k_core]
-    truss_numbers = [CRC_truss, STExa_truss, Repeeling_truss, I2ACSM_truss , Local_truss]
+    cohesiveness_scores = [CRC_cohesiveness, STExa_cohesiveness, I2ACSM_cohesiveness, Repeeling_cohesiveness, TransZero_LS_cohesiveness]
+    k_core_numbers = [CRC_k_core, STExa_k_core, Repeeling_k_core, I2ACSM_k_core, TransZero_LS_k_core]
+    truss_numbers = [CRC_truss, STExa_truss, Repeeling_truss, I2ACSM_truss , TransZero_LS_truss]
 
     # Combine cohesiveness scores with k-core and truss numbers
     combined_scores = [scores + [k_core, truss] for scores, k_core, truss in zip(cohesiveness_scores, k_core_numbers, truss_numbers)]
 
-    color_sublist = [(53, 78, 151), (112, 163, 196), (199, 229, 236), (245, 180, 111), (251, 236, 171), (175, 175, 175), (219, 219, 219)] 
-    color_sublist = [(r/255, g/255, b/255) for r, g, b in color_sublist]
-    hatch_list = ['/', '\\', '|', '-', '+', 'x','.']
-
-    bar_width = 0.1
-    indices = np.arange(len(combined_scores))  # Number of metrics per community
-
-    # Plot the bars for each measure
-    for j in range(len(combined_scores[0])):  # Iterate over each measure
-        measure_values = [scores[j] for scores in combined_scores]  # Values for the current measure
-        bar_positions = indices + j * bar_width  # Shift each bar group
-        ax.bar(bar_positions, measure_values, bar_width, 
-            label=measure_name[j], color=color_sublist[j], hatch=hatch_list[j])
-
-    # Set the x-axis labels
-    ax.set_xticks(indices + bar_width * (len(combined_scores[0]) - 1) / 2)
-    ax.set_xticklabels(communities, fontsize=font_size)
-
-    # Set labels, title, and legend
-    ax.set_ylabel('Values', fontsize=font_size)
-    ax.set_ysticks = np.linspace(0, 1, num=6)
-    ax.set_yticklabels(ax.get_yticks(), fontsize=font_size)
-    ax.legend(loc='upper center', bbox_to_anchor=(0.5, 1.30), fontsize=17, ncol=7, columnspacing=0.5, handlelength=0.9, handletextpad=0.6)
-
-    # Show the plot
-    plt.tight_layout()
-    # plt.show()
-    plt.savefig("D:/Cohesion_Evaluation/Figures/Case_Study/Case_study_measures.png")
+    low_ticks = [1, 2, 3]
+    high_ticks = [15, 20]
+    plot_broken_bar(combined_scores, measure_name, communities, low_ticks, high_ticks, [1, 2], 0.1)
