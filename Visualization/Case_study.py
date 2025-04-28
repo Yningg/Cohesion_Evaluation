@@ -354,11 +354,11 @@ if __name__ == "__main__":
 
     pos = nx.kamada_kawai_layout(combined_graph)
 
-    # plot_network_with_background(combined_graph, CRC_graph, CRC_community, 'WCF-CRC Network', pos, node_color, edge_color, background_node_color, background_edge_color)
-    # plot_network_with_background(combined_graph, STExa_graph, STExa_community, 'STExa Network',pos, node_color, edge_color, background_node_color, background_edge_color)
-    # plot_network_with_background(combined_graph, I2ACSM_graph, I2ACSM_community, 'I2ACSM Network', pos, node_color, edge_color, background_node_color, background_edge_color)
-    # plot_network_with_background(combined_graph, Repeeling_graph, Repeeling_community, 'Repeeling Network', pos, node_color, edge_color, background_node_color, background_edge_color)
-    # plot_network_with_background(combined_graph, TransZero_LS_graph, TransZero_LS_community, 'TransZero_LS Network', pos, node_color, edge_color, background_node_color, background_edge_color)
+    # plot_network_with_background(combined_graph, CRC_graph, CRC_community, 'WCF-CRC_Network', pos, node_color, edge_color, background_node_color, background_edge_color)
+    # plot_network_with_background(combined_graph, STExa_graph, STExa_community, 'STExa_Network',pos, node_color, edge_color, background_node_color, background_edge_color)
+    # plot_network_with_background(combined_graph, I2ACSM_graph, I2ACSM_community, 'I2ACSM_Network', pos, node_color, edge_color, background_node_color, background_edge_color)
+    # plot_network_with_background(combined_graph, Repeeling_graph, Repeeling_community, 'Repeeling_Network', pos, node_color, edge_color, background_node_color, background_edge_color)
+    # plot_network_with_background(combined_graph, TransZero_LS_graph, TransZero_LS_community, 'TransZero_LS_Network', pos, node_color, edge_color, background_node_color, background_edge_color)
 
     """
     Find the max core number and truss number for each community
