@@ -2,7 +2,6 @@
 Using STExa results on COVID as an example, group the results by the parameters and calculate the average coheisveness scores for each measure
 """
 
-import os
 import ast
 import joblib
 import numpy as np
@@ -54,9 +53,7 @@ def process_ALS_results(Graph, file):
     with open(file, 'r') as f:
         lines = f.readlines()
 
-    results = joblib.Parallel(n_jobs=-1)(
-        joblib.delayed(process_ALS_line)(Graph, line) for line in tqdm.tqdm(lines)
-    )
+    results = joblib.Parallel(n_jobs=-1)(joblib.delayed(process_ALS_line)(Graph, line) for line in tqdm.tqdm(lines))
     return results
 
 
@@ -87,11 +84,11 @@ def get_mean_std(grouped_results):
         cohesiveness = [result[0] for result in results]
         structural_cohesiveness = [result[1] for result in results]
 
-        cohesiveness_mean[params] = list(np.mean(cohesiveness, axis=0))
-        cohesiveness_std[params] = list(np.std(cohesiveness, axis=0))
+        cohesiveness_mean[params] = np.mean(cohesiveness, axis=0).tolist()
+        cohesiveness_std[params] = np.std(cohesiveness, axis=0).tolist()
 
-        structural_cohesiveness_mean[params] = list(np.mean(structural_cohesiveness, axis=0))
-        structural_cohesiveness_std[params] = list(np.std(structural_cohesiveness, axis=0))
+        structural_cohesiveness_mean[params] = np.mean(structural_cohesiveness, axis=0).tolist()
+        structural_cohesiveness_std[params] = np.std(structural_cohesiveness, axis=0).tolist()
 
     return cohesiveness_mean, cohesiveness_std, structural_cohesiveness_mean, structural_cohesiveness_std
 
@@ -151,11 +148,11 @@ def draw_graph_STExa(cohesiveness_mean, cohesiveness_std, structural_mean, struc
     ax.set_xticks(x + bar_width * (len(measures) - 1) / 2)
     ax.set_xticklabels([f"[{lb}-{ub}]" for (lb, ub) in sorted_params], fontsize=font_size)
     ax.set_ylim(0, 7.5)
-    ax.set_yticklabels([f"{y:.1f}" for y in np.arange(0, 8, 1)], fontsize=font_size)
+    ax.set_yticklabels([f"{y}" for y in np.arange(0, 8, 1)], fontsize=font_size)
     plt.tight_layout()
     
     # save the figure
-    plt.savefig(f"{save_path}{algorithm}_{dataset_name}_params_cohesiveness.png")
+    plt.savefig(f"{save_path}{algorithm}_{dataset_name}_params_cohesiveness.png", dpi=600)
     plt.show()
 
     # Draw the line chart
@@ -173,7 +170,7 @@ def draw_graph_STExa(cohesiveness_mean, cohesiveness_std, structural_mean, struc
     ax.set_ylim(y_lb, y_ub)
     ax.set_yticklabels([f"{y}" for y in np.arange(y_lb, y_ub+1, 10)], fontsize=font_size)
     plt.tight_layout()
-    plt.savefig(f"{save_path}{algorithm}_{dataset_name}_params_structural_cohesiveness.png")
+    plt.savefig(f"{save_path}{algorithm}_{dataset_name}_params_structural_cohesiveness.png", dpi=600)
     plt.show()
 
 
@@ -207,7 +204,7 @@ def draw_graph_ALS(cohesiveness_mean, cohesiveness_std, structural_mean, structu
     plt.tight_layout()
     
     # save the figure
-    plt.savefig(f"{save_path}{algorithm}_{dataset_name}_params_cohesiveness.png")
+    plt.savefig(f"{save_path}{algorithm}_{dataset_name}_params_cohesiveness.png", dpi=600)
     plt.show()
 
     # Draw the line chart
@@ -228,12 +225,12 @@ def draw_graph_ALS(cohesiveness_mean, cohesiveness_std, structural_mean, structu
   
     # Set y-ticks and labels
     y_lb, y_ub = 0, 20 # Example bounds
-    y_ticks = np.linspace(y_lb, y_ub, num=5)
+    y_ticks = np.linspace(y_lb, y_ub, num=6)
     ax.set_yticks(y_ticks)
     ax.set_yticklabels([f"{int(y)}" for y in y_ticks], fontsize=font_size)
 
     plt.tight_layout()
-    plt.savefig(f"{save_path}{algorithm}_{dataset_name}_params_structural_cohesiveness.png")
+    plt.savefig(f"{save_path}{algorithm}_{dataset_name}_params_structural_cohesiveness.png", dpi=600)
     plt.show()
 
 
@@ -242,7 +239,7 @@ attribute_dir = "D:/Cohesion_Evaluation/Original_Datasets/Preprocessed_Datasets/
 results_dir = "D:/Cohesion_Evaluation/Cohesiveness_Output/"
 save_path = "D:/Cohesion_Evaluation/Figures/Param_Selection/"
     
-# Parameters for the ST-Exa results
+# Parameters for the results
 STExa_params_list = [[1, 10], [11, 20], [21, 30], [31, 40], [41, 50], [51, 60], [61, 70], [71, 80]]
 ALS_params_list = [0.1, 0.15, 0.2, 0.25, 0.3]
 
@@ -261,6 +258,8 @@ plt.rcParams['font.family'] = 'arial'
 if algo == "ALS":
     structural_measures = [r'$d$', r'Size ($10^3$)', r'$Deg_{min}$']
     # cohesiveness_mean, cohesiveness_std, structural_mean, structural_std = read_results(results_dir, "ALS", "Chicago_COVID", 2, 4)
+    
+    # Record the results for fast access
     cohesiveness_mean = {0.1: [0.0028348293805377928, -3.943318856516453e-08, 0.0028348293805377928, 0.2779106012785452, 0.01174340537875847], 0.15: [0.002981548952111736, -4.296945797411619e-08, 0.002938534263530323, 0.27530327435241964, 0.0163392223194381], 0.2: [0.0033255095639530712, -4.734898268193645e-08, 0.00327119141713949, 0.2660400585669525, 0.042732578063490054], 0.25: [0.004629854985771444, -6.96966132529493e-08, 0.00455942715338269, 0.2552128520431046, 0.08060348112767819], 0.3: [0.006493411959997443, -5.856853839345115e-08, 0.0062662391938188575, 0.2587928092148737, 0.14108569681556593]}
     cohesiveness_std = {0.1: [0.00028491107272483375, 3.963184568423761e-09, 0.00028491107272483375, 0.02705455388782668, 0.0883594759836271], 0.15: [0.0013377613766788529, 2.8628117729097236e-08, 0.001507473350835971, 0.03315817661943525, 0.09410886033111145], 0.2: [0.002466283033673564, 4.5884646456404205e-08, 0.0023310920010255923, 0.05633178775762061, 0.19533132390479915], 0.25: [0.006193938557990232, 1.22050204353031e-07, 0.006246211781278841, 0.08094179635197817, 0.2541196617026462], 0.3: [0.01111683091606338, 1.6444947056850663e-07, 0.010720634952969007, 0.11084485955259595, 0.31110427795405865]}
     structural_mean = {0.1: [18.84, 4867.94, 1.01], 0.15: [18.22, 4663.86, 1.01], 0.2: [16.81, 4225.24, 1.12], 0.25: [14.78, 3528.06, 1.32], 0.3: [12.4, 2706.53, 1.46]}
@@ -272,10 +271,11 @@ elif algo == "ST-Exa":
     structural_measures = [r'$d$', r'$Size$', r'$Deg_{min}$']
     # cohesiveness_mean, cohesiveness_std, structural_mean, structural_std = read_results(results_dir, "ST-Exa", "Chicago_COVID", 1, 3)
     
-    cohesiveness_mean = {("11", "20"): [0.1615997222393276, -5.875550990233185e-07, 0.14976179602684672, 0.17582545393569604, 4.162272993088784], ("1", "10"): [0.2027202162803341, -1.2403940979381168e-06, 0.19357930074615426, 0.1236931326522336, 6.090646825396826], ("21", "30"): [0.13135091005807917, -4.569872992403587e-07, 0.12750011914888024, 0.20210303646811956, 2.770965517241379], ("31", "40"): [0.11220962519487182, -6.365180239419283e-07, 0.10955471385763618, 0.22957158275599776, 2.3143832658569496], ("41", "50"): [0.09436393219727687, -8.617474785675342e-07, 0.09146696120996488, 0.2265146363352783, 1.7799224489795922], ("51", "60"): [0.0908633849410931, -1.5668135974757747e-06, 0.08835758948978689, 0.2249408422419007, 1.4542994350282488], ("61", "70"): [0.08550440912207939, -1.622771226011513e-06, 0.08311931393031291, 0.2304207471120586, 1.217372670807453], ("71", "80"): [0.07946012299054918, -1.4447161771644813e-06, 0.07833122050671937, 0.2296425709335233, 1.0317533674131776]}
-    cohesiveness_std = {("11", "20"): [0.15330733072461933, 2.325610080262108e-06, 0.14621209054570947, 0.0806973397970272, 2.468295734619508], ("1", "10"): [0.26257047716245574, 7.25180424527702e-06, 0.26245255619189367, 0.11386962066692155, 5.065839206415121], ("21", "30"): [0.1161840028060218, 1.6656992279104705e-06, 0.11692806480626608, 0.07368003403744672, 1.4749013292537516], ("31", "40"): [0.09109378016539477, 1.646639980918146e-06, 0.09174912912522293, 0.0786216205292985, 1.2799394773520727], ("41", "50"): [0.07405156642563536, 1.622616852659548e-06, 0.07421930925959817, 0.06905721700771027, 0.9008214728406855], ("51", "60"): [0.06796897687490527, 1.6307912966832677e-06, 0.06837294739578068, 0.06626985744796668, 0.6881867142839967], ("61", "70"): [0.05829365347341467, 1.380918178946333e-06, 0.0585449166871577, 0.05976675244185963, 0.5279725778562404], ("71", "80"): [0.05129305319550141, 1.2043421097836228e-06, 0.05271151234951, 0.06042764240581968, 0.4213346971750918]}
-    structural_mean = {("11", "20"): [4.96, 19.91, 15.4], ("1", "10"): [3.76, 9.11, 22.26], ("21", "30"): [5.34, 30.0, 14.19], ("31", "40"): [5.7, 39.99, 14.33], ("41", "50"): [5.89, 50.0, 10.24], ("51", "60"): [6.19, 60.0, 10.56], ("61", "70"): [6.35, 70.0, 9.97], ("71", "80"): [6.62, 79.99, 7.76]}
-    structural_std = {("11", "20"): [1.5679285698015715, 0.8011866199581715, 14.15697707845852], ("1", "10"): [1.4361058456812994, 2.2311207945783664, 30.85891119271709], ("21", "30"): [1.7900837969212497, 0.0, 12.887742238266561], ("31", "40"): [1.8466185312619385, 0.09949874371066207, 12.974632942784929], ("41", "50"): [1.984414271264949, 0.0, 7.646070886409567], ("51", "60"): [2.1572899666016156, 0.0, 8.357415868556501], ("61", "70"): [2.2951034835057, 0.0, 8.45393990988817], ("71", "80"): [2.34, 0.09949874371066199, 5.1305360343730175]}
+    # Record the results for fast access
+    cohesiveness_mean = {('11', '20'): [0.16159972223932756, -5.875550990233185e-07, 0.1497617960268467, 0.17582545393569604, 4.162272993088784], ('1', '10'): [0.20272021628033407, -1.2403940979381168e-06, 0.19357930074615426, 0.1236931326522336, 6.090646825396826], ('21', '30'): [0.1313509100580792, -4.569872992403587e-07, 0.12750011914888024, 0.20210303646811956, 2.770965517241379], ('31', '40'): [0.1122096251948718, -6.365180239419283e-07, 0.1095547138576362, 0.22957158275599776, 2.3143832658569496], ('41', '50'): [0.09436393219727687, -8.617474785675342e-07, 0.09146696120996488, 0.2265146363352783, 1.7799224489795922], ('51', '60'): [0.0908633849410931, -1.5668135974757747e-06, 0.08835758948978692, 0.2249408422419007, 1.4542994350282488], ('61', '70'): [0.08550440912207939, -1.622771226011513e-06, 0.08311931393031292, 0.2304207471120586, 1.217372670807453], ('71', '80'): [0.07946012299054918, -1.4447161771644813e-06, 0.07833122050671937, 0.2296425709335233, 1.0317533674131776]}
+    cohesiveness_std = {('11', '20'): [0.15330733072461936, 2.325610080262108e-06, 0.1462120905457095, 0.0806973397970272, 2.468295734619508], ('1', '10'): [0.26257047716245574, 7.25180424527702e-06, 0.26245255619189367, 0.11386962066692155, 5.065839206415121], ('21', '30'): [0.11618400280602179, 1.6656992279104705e-06, 0.11692806480626608, 0.07368003403744672, 1.4749013292537516], ('31', '40'): [0.09109378016539474, 1.646639980918146e-06, 0.09174912912522293, 0.0786216205292985, 1.2799394773520727], ('41', '50'): [0.07405156642563537, 1.622616852659548e-06, 0.07421930925959817, 0.06905721700771027, 0.9008214728406855], ('51', '60'): [0.06796897687490529, 1.6307912966832677e-06, 0.06837294739578069, 0.06626985744796668, 0.6881867142839967], ('61', '70'): [0.05829365347341467, 1.380918178946333e-06, 0.0585449166871577, 0.05976675244185963, 0.5279725778562404], ('71', '80'): [0.05129305319550141, 1.2043421097836228e-06, 0.05271151234951, 0.06042764240581968, 0.4213346971750918]}
+    structural_mean = {('11', '20'): [4.96, 19.91, 15.4], ('1', '10'): [3.76, 9.11, 22.26], ('21', '30'): [5.34, 30.0, 14.19], ('31', '40'): [5.7, 39.99, 14.33], ('41', '50'): [5.89, 50.0, 10.24], ('51', '60'): [6.19, 60.0, 10.56], ('61', '70'): [6.35, 70.0, 9.97], ('71', '80'): [6.62, 79.99, 7.76]}
+    structural_std = {('11', '20'): [1.5679285698015715, 0.8011866199581715, 14.15697707845852], ('1', '10'): [1.4361058456812994, 2.2311207945783664, 30.85891119271709], ('21', '30'): [1.7900837969212497, 0.0, 12.887742238266561], ('31', '40'): [1.8466185312619385, 0.09949874371066207, 12.974632942784929], ('41', '50'): [1.984414271264949, 0.0, 7.646070886409567], ('51', '60'): [2.1572899666016156, 0.0, 8.357415868556501], ('61', '70'): [2.2951034835057, 0.0, 8.45393990988817], ('71', '80'): [2.34, 0.09949874371066199, 5.1305360343730175]}
     
     draw_graph_STExa(cohesiveness_mean, cohesiveness_std, structural_mean, structural_std, "ST-Exa", "Chicago_COVID", 0, 90)
 
