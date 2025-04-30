@@ -110,11 +110,13 @@ def draw_graphs(dataset_llama_results, dataset_vader_results, dataset_label, alg
             ax.set_ylim(10**-1, 10**0)
             
             ax.set_yscale('symlog', linthresh=threshold)
-            y_ticks = [-1, -pow(10, -3), -pow(10, -6), 0, pow(10, -8), pow(10, -4), 1]
+            y_ticks = [-1.2, -pow(10, -3), -pow(10, -6), 0, pow(10, -8), pow(10, -4), 1.2]
             
             def format_func(value, tick_number):
-                if value in [-1, 0, 1]:
+                if value == 0:
                     return str(int(value))
+                elif value in [-1.2, 1.2]:
+                    return str(value)
                 exponent = int(np.log10(abs(value)))
                 sign = "-" if value < 0 else ""
                 return f"${sign}10^{{{exponent}}}$"
@@ -177,16 +179,16 @@ if __name__ == "__main__":
         if dataset == "BTW17":
             llama_results = load_llama_results(dataset, condense_result_dir, algo_list)
             vader_results = load_vader_results(dataset, condense_result_dir, algo_list)
-            draw_graphs(llama_results, vader_results, dataset_label, algo_list, algo_label_list, color_list, hatch_list, llama_threshold, font_size, -0.6, 0.6, 5)
+            draw_graphs(llama_results, vader_results, dataset_label, algo_list, algo_label_list, color_list, hatch_list, llama_threshold, font_size, -0.6, 0.1, 6)
         elif dataset == "Chicago_COVID":
             llama_results = load_llama_results(dataset, condense_result_dir, algo_list)
             vader_results = load_vader_results(dataset, condense_result_dir, algo_list)
-            draw_graphs(llama_results, vader_results, dataset_label, algo_list, algo_label_list, color_list, hatch_list, llama_threshold, font_size, -0.8, 0.8, 6)
+            draw_graphs(llama_results, vader_results, dataset_label, algo_list, algo_label_list, color_list, hatch_list, llama_threshold, font_size, -0.05, 0.2, 6)
         elif dataset == "Crawled_Dataset144":
             llama_results = load_llama_results(dataset, condense_result_dir, algo_sublist)
             vader_results = load_vader_results(dataset, condense_result_dir, algo_sublist)
-            draw_graphs(llama_results, vader_results, dataset_label, algo_sublist, algo_label_sublist, color_sublist, hatch_sublist, llama_threshold, font_size, -1.1, 1.1, 6)
+            draw_graphs(llama_results, vader_results, dataset_label, algo_sublist, algo_label_sublist, color_sublist, hatch_sublist, llama_threshold, font_size, -0.6, 0.9, 6)
         elif dataset == "Crawled_Dataset26":
             llama_results = load_llama_results(dataset, condense_result_dir, algo_sublist)
             vader_results = load_vader_results(dataset, condense_result_dir, algo_sublist)
-            draw_graphs(llama_results, vader_results, dataset_label, algo_sublist, algo_label_sublist, color_sublist, hatch_sublist, llama_threshold, font_size, -120, 120, 7)
+            draw_graphs(llama_results, vader_results, dataset_label, algo_sublist, algo_label_sublist, color_sublist, hatch_sublist, llama_threshold, font_size, -2, 220, 6)
