@@ -137,7 +137,7 @@ if __name__ == "__main__":
             ax.set_yticklabels([f"{tick:.1f}" for tick in y_ticks], fontsize=font_size)
     
         elif measure == "GID":
-            y_ticks = np.linspace(0, 7, num=5)
+            y_ticks = np.linspace(0, 27, num=7)
             ax.set_yticklabels([f"{tick:.1f}" for tick in y_ticks], fontsize=font_size)
 
         ax.set_yticks(y_ticks)
