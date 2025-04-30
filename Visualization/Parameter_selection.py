@@ -147,8 +147,8 @@ def draw_graph_STExa(cohesiveness_mean, cohesiveness_std, structural_mean, struc
     ax.legend(loc='upper center', ncol=5, fontsize=15, handlelength=0.9, handletextpad=0.6, columnspacing=0.5)
     ax.set_xticks(x + bar_width * (len(measures) - 1) / 2)
     ax.set_xticklabels([f"[{lb}-{ub}]" for (lb, ub) in sorted_params], fontsize=font_size)
-    ax.set_ylim(0, 7.5)
-    ax.set_yticklabels([f"{y}" for y in np.arange(0, 8, 1)], fontsize=font_size)
+    ax.set_ylim(0, 6.5)
+    ax.set_yticklabels([f"{y}" for y in np.arange(0, 7, 1)], fontsize=font_size)
     plt.tight_layout()
     
     # save the figure
@@ -243,7 +243,7 @@ save_path = "D:/Cohesion_Evaluation/Figures/Param_Selection/"
 STExa_params_list = [[1, 10], [11, 20], [21, 30], [31, 40], [41, 50], [51, 60], [61, 70], [71, 80]]
 ALS_params_list = [0.1, 0.15, 0.2, 0.25, 0.3]
 
-algo = "ST-Exa" # "ST-Exa" or "ALS"
+algo = "ST-Exa" # "ALS" or "ST-Exa"
 measures = ['EI', 'SIT', 'CED', 'GIP', 'GID']
 
 color_list = [(112, 163, 196), (245, 180, 111), (223, 91, 63), (251, 236, 171), (175, 175, 175), (219, 219, 219)]
