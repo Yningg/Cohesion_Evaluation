@@ -52,7 +52,6 @@ def build_tadj(attribute_file):
             
             if u != v:
                 tadj_list[v].append((u, v, timestamp, sentiment))
-                
             tadj_list[u].append((u, v, timestamp, sentiment))
             
     latest_timestamp = timestamp # The latest timestamp is the last timestamp in the file

@@ -66,7 +66,6 @@ def process_CSD_STExa_Repeeling_results(file, node_mapping):
     return results
 
 
-
 def process_TransZero_results(file, node_mapping):
     results = []
     with open(file, 'r') as f:
