@@ -6,7 +6,7 @@ import tqdm
 import sys
 target_path = "./"
 sys.path.append(target_path)
-import Cohesiveness_Calculation.Utils.Graph_utils as gu
+import Cohesiveness_Calculation.Utils.Graph_utils_temp as gu
 import Cohesiveness_Calculation.Utils.Cohesiveness_score as cs
 
 
