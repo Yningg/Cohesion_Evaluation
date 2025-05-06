@@ -13,7 +13,7 @@ Code and dataset for the paper "How Cohesive Are Community Search Results on Onl
     └── README.md
 
 ### Original_Datasets
-1. Preprocessed_Dataset: The preprocessed four datasets are provided, including llama version and vader version
+1. Preprocessed_Dataset: The preprocessed four datasets are provided, including the Llama version and the Vader version
 2. Node_Mapping: The mapping file for transferring node id between original_id and mapped_id started from index 0 
 3. Query_Nodes: Code, query nodes, and mapped query nodes are all provided
 
@@ -32,13 +32,13 @@ Code and dataset for the paper "How Cohesive Are Community Search Results on Onl
     |           | I2ACSM    |[Effective influential community search on attributed graph](https://github.com/Smj765/InfluentialAttributeCS)   | Java   |
     | Learning-based  | TransZero_LS & TransZero_GS|[Efficient Unsupervised Community Search with Pre-trained Graph Transformer](https://github.com/guaiyoui/TransZero)            | Python |
 
-2. For each algorithms, only the revised scripts are provided to save the space, with only input and output changed, other code are directly use the exsiting code without changes
+2. For each algorithm, only the revised scripts are provided to save space, with only the input and output changed
 + ALS: replace `qtcs.py` with `qtcs_batch.py`
 + WCF-CRC: replace `run.py` with `run_batch.py`
 + CSD: replace `Test.java` and `Config.java` with their revised updated version, replace `DataReader.java` with updated `DataReader.java` under the "util" folder
-+ ST-Exa and Repeeling: No code has been changed, the commands to run the code are written in corresponding `.bat` file for execution  
-+ I2ACSM: all updated files are provided
-+ TransZero_LS and TransZero_GS: all changed files and intermediate results are provided, the generation of .pt files is referred to link: https://pytorch-geometric.readthedocs.io/en/2.6.1/get_started/introduction.html.
++ ST-Exa and Repeeling: No code has been changed, the commands to run the code are written in the corresponding `.bat` file for execution  
++ I2ACSM: All updated files are provided
++ TransZero_LS and TransZero_GS: all changed files and intermediate results are provided, the generation of .pt files is referred to the link: https://pytorch-geometric.readthedocs.io/en/2.6.1/get_started/introduction.html.
 
 
 ### Cohesiveness_Output
